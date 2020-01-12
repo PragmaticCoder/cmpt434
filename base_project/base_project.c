@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[]) {
 
-  printf("Got to main");
+  printf("Got to main\n");
 
   return 0;
 
