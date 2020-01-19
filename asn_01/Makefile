@@ -41,9 +41,9 @@ clean-build: ## Remove build artifacts
 .PHONY: clean-debug
 clean-debug: ## Remove debug artifacts
 	@echo "+ $@"
-	@rm -f output.txt
-	@rm -f .gdb_history
-	@rm -rf vgcore*
+	-$(RM) output.txt
+	-$(RM) .gdb_history
+	-$(RM) -r vgcore*
 
 .PHONY: release
 release: clean  ## Generate release version
