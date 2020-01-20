@@ -42,6 +42,9 @@ build:
 install: all
 	install -d $(DESTDIR)/$(PREFIX)/lib/
 	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
+	install $(SO_TARGET) $(DESTDIR)/$(PREFIX)/lib/
+	install -d $(DESTDIR)/$(PREFIX)/include/baseproject/
+	install $(HEADERS) $(DESTDIR)/$(PREFIX)/include/baseproject/
 
 check:
 	@echo Files with potentially dangerous functions.
