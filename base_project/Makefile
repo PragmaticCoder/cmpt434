@@ -17,13 +17,6 @@ TESTS				:= $(patsubst %.c,%,$(TEST_SRC))
 TARGET			:= build/libbase.a
 SO_TARGET		:= $(patsubst %.a,%.so,$(TARGET))
 
-# The Target Build
-all: $(TARGET) $(SO_TARGET) tests
-
-dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
-dev: all
-
-# The Target Build
 all: $(TARGET) $(SO_TARGET) tests
 
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
@@ -43,12 +36,10 @@ build:
 	@mkdir -p build
 	@mkdir -p bin
 
-# The Install
 install: all
 	install -d $(DESTDIR)/$(PREFIX)/lib/
 	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
 
-# The Checker
 check:
 	@echo Files with potentially dangerous functions.
 	@egrep '[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)\
