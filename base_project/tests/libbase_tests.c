@@ -5,7 +5,9 @@ typedef int (*lib_function)(const char *data);
 char *lib_file = "build/libbase.so";
 void *lib = NULL;
 
-char *test_dummy() {}
+char *test_dummy() {
+    return NULL;
+}
 
 char *all_tests() {
   mu_suite_start();
