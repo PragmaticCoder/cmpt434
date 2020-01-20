@@ -56,6 +56,10 @@ tests: CFLAGS += $(TARGET)
 tests: $(TESTS) ## Run Unit Tests Suite
 	sh ./tests/runtests.sh
 
+.PHONY: valgrind
+valgrind: ## Check Memory Leaks using Valgrind
+	VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
+
 .PHONY: clean
 clean: clean-build clean-debug ## Remove all file artifact
 
