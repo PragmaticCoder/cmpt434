@@ -1,22 +1,26 @@
-CC					:= gcc
-CFLAGS			:= -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
-LIBS 				:= -ldl $(OPTLIBS)
-PREFIX			?= /usr/local
+CC						:= gcc
+CFLAGS				:= -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
+LDFLAGS				:= -ldl $(OPTLIBS)
+PREFIX				?= /usr/local
 
-BIN					:= bin
-SRC					:= src
-TESTS 			:= tests
+BIN						:= bin
+SRC						:= src
+TESTS 				:= tests
 
-SOURCES			:= $(wildcard $(SRC)/**/*.c src/*.c)
-OBJECTS			:= $(patsubst %.c,%.o,$(SOURCES))
+SOURCES				:= $(wildcard $(SRC)/**/*.c src/*.c)
+HEADERS				:= $(wildcard $(SRC)/**/*.h src/*.h)
+OBJECTS				:= $(patsubst %.c,%.o,$(SOURCES))
 
-TEST_SRC		:= $(wildcard $(TESTS)/*_tests.c)
-TESTS				:= $(patsubst %.c,%,$(TEST_SRC))
+TEST_SRC			:= $(wildcard $(TESTS)/*_tests.c)
+TESTS					:= $(patsubst %.c,%,$(TEST_SRC))
+
+PROGRAMS_SRC	:= $(wildcard bin/*.c)
+PROGRAMS			:= $(patsubst %.c,%,$(PROGRAMS_SRC))
 
 TARGET			:= build/libbase.a
 SO_TARGET		:= $(patsubst %.a,%.so,$(TARGET))
 
-all: $(TARGET) $(SO_TARGET) tests
+all: $(TARGET) $(SO_TARGET) $(TESTS) $(PROGRAMS)
 
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
@@ -29,7 +33,7 @@ $(TARGET): build $(OBJECTS)
 	ranlib $@
 
 $(SO_TARGET): $(TARGET) $(OBJECTS)
-	$(CC) -shared -o $@ $(OBJECTS)
+	$(CC) $(LDFLAGS) -shared -o $@ $(OBJECTS)
 
 build:
 	@mkdir -p build
@@ -78,3 +82,5 @@ release: clean  ## Generate release version
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
 	@echo "Contact author for help: ala273@mail.usask.ca"
+
+$(PROGRAMS): CFLAGS += $(TARGET)
