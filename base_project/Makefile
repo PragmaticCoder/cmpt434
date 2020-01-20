@@ -17,10 +17,11 @@ TESTS					:= $(patsubst %.c,%,$(TEST_SRC))
 PROGRAMS_SRC	:= $(wildcard bin/*.c)
 PROGRAMS			:= $(patsubst %.c,%,$(PROGRAMS_SRC))
 
-TARGET			:= build/libbase.a
-SO_TARGET		:= $(patsubst %.a,%.so,$(TARGET))
+TARGET				:= build/libbase.a
+SO_TARGET			:= $(patsubst %.a,%.so,$(TARGET))
 
-all: $(TARGET) $(SO_TARGET) $(TESTS) $(PROGRAMS)
+all: $(TARGET) $(SO_TARGET) $(TESTS)
+# all: $(TARGET) $(SO_TARGET) $(TESTS) $(PROGRAMS)
 
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
@@ -43,8 +44,8 @@ install: all
 	install -d $(DESTDIR)/$(PREFIX)/lib/
 	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
 	install $(SO_TARGET) $(DESTDIR)/$(PREFIX)/lib/
-	install -d $(DESTDIR)/$(PREFIX)/include/baseproject/
-	install $(HEADERS) $(DESTDIR)/$(PREFIX)/include/baseproject/
+	install -d $(DESTDIR)/$(PREFIX)/include/base/
+	install $(HEADERS) $(DESTDIR)/$(PREFIX)/include/base/
 
 check:
 	@echo Files with potentially dangerous functions.
@@ -90,4 +91,4 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
 	@echo "Contact author for help: ala273@mail.usask.ca"
 
-$(PROGRAMS): CFLAGS += $(TARGET)
+# $(PROGRAMS): CFLAGS += $(TARGET)
