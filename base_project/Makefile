@@ -1,6 +1,5 @@
 CC					:= gcc
 CFLAGS			:= -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
-
 LIBS 				:= -ldl $(OPTLIBS)
 PREFIX			?= /usr/local
 
@@ -34,7 +33,7 @@ $(SO_TARGET): $(TARGET) $(OBJECTS)
 
 build:
 	@mkdir -p build
-	@mkdir -p bin
+	@mkdir -p $(BIN)
 
 install: all
 	install -d $(DESTDIR)/$(PREFIX)/lib/
