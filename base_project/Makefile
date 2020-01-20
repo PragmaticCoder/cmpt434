@@ -6,7 +6,6 @@ PREFIX			?= /usr/local
 
 BIN					:= bin
 SRC					:= src
-LIB					:= lib
 TESTS 			:= tests
 
 SOURCES			:= $(wildcard $(SRC)/**/*.c src/*.c)
@@ -15,7 +14,7 @@ OBJECTS			:= $(patsubst %.c,%.o,$(SOURCES))
 TEST_SRC		:= $(wildcard $(TESTS)/*_tests.c)
 TESTS				:= $(patsubst %.c,%,$(TEST_SRC))
 
-TARGET			:= build/libYOUR_LIBRARY.a
+TARGET			:= build/libbase.a
 SO_TARGET		:= $(patsubst %.a,%.so,$(TARGET))
 
 # The Target Build
@@ -53,7 +52,7 @@ install: all
 check:
 	@echo Files with potentially dangerous functions.
 	@egrep '[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)\
-		|stpn?cpy|a?sn?printf|byte_)' $(SOURCES) || tru
+		|stpn?cpy|a?sn?printf|byte_)' $(SOURCES) || true
 
 .PHONY: tests
 tests: CFLAGS += $(TARGET)
