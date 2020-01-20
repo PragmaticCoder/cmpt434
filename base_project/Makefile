@@ -1,12 +1,14 @@
 CC		:= gcc
-CFLAGS	:= -std=gnu99 -g -O2 -Wall -Wextra -pedantic $(OPTFLAGS)
+CFLAGS := -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
+
+LIBS := -ldl $(OPTLIBS)
+PREFIX ?= /usr/loca
 
 BIN		:= bin
 SRC		:= src
 INCLUDE	:= include
 LIB		:= lib
-
-LIBRARIES	:= -ldl $(OPTLIBS)
+TESTS := tests
 
 ifeq ($(OS),Windows_NT)
 EXECUTABLE	:= main.exe
@@ -28,6 +30,12 @@ OBJECTS		:= $(SOURCES:.c=.o)
 
 all: clean $(BIN)/$(EXECUTABLE)
 
+
+.PHONY: tests
+tests: CFLAGS += $(TARGET)
+tests: $(TESTS) ## Run Unit Test Suite
+	sh ./tests/runtests.s
+
 .PHONY: clean
 clean: clean-build clean-debug ## Remove all file artifact
 
@@ -48,7 +56,7 @@ clean-debug: ## Remove debug artifacts
 .PHONY: release
 release: clean  ## Generate release version
 	@echo "+ $@"
-	@tar -cvzf ala273_asn_01.tar.gz .
+	@tar -cvzf ala273_base_project.tar.gz .
 
 .PHONY: help
 help:
@@ -60,4 +68,4 @@ run: all ## Build and Run
 	./$(BIN)/$(EXECUTABLE)
 
 $(BIN)/$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(CINCLUDES) $(CLIBS) $^ -o $@ $(LIBRARIES)
+	$(CC) $(CFLAGS) $(CINCLUDES) $(CLIBS) $^ -o $@ $(LIBS)
