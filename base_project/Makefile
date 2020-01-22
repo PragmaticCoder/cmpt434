@@ -14,13 +14,12 @@ TEST_SOURCES	:= $(wildcard $(TESTS)/*_tests.c)
 TESTS					:= $(patsubst %.c, %, $(TEST_SOURCES))
 
 PROGRAMS_SRC	:= $(wildcard bin/*.c)
-PROGRAMS			:= $(patsubst %.c,%,$(PROGRAMS_SRC))
+PROGRAMS			:= $(patsubst %.c, %, $(PROGRAMS_SRC))
 
 TARGET				:= build/libbase.a
 SO_TARGET			:= $(patsubst %.a, %.so,$(TARGET))
 
-all: $(TARGET) $(SO_TARGET) $(TESTS)
-# all: $(TARGET) $(SO_TARGET) $(TESTS) $(PROGRAMS)
+all: $(TARGET) $(SO_TARGET) tests $(PROGRAMS)
 
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
@@ -54,12 +53,11 @@ clean: clean-build clean-debug ## Remove all file artifact
 .PHONY: clean-build
 clean-build: ## Remove build artifacts
 	@echo "+ $@"
+	@find . -name "*.gc*" -exec rm {} \;
 	-$(RM) -rf $(OBJECTS) $(BUILD_DIR) || true
 	-$(RM) $(OBJECTS) || true
 	-$(RM) $(TESTS) || true
 	-$(RM) *.tar.gz
-
-	@find . -name "*.gc*" -exec rm {} \;
 	-$(RM) -r `find . -name "*.dSYM" -print`
 
 .PHONY: clean-debug
@@ -80,4 +78,4 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
 	@echo "Contact author for help: ala273@mail.usask.ca"
 
-# $(PROGRAMS): CFLAGS += $(TARGET)
+$(PROGRAMS): CFLAGS += $(TARGET)
