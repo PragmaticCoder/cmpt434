@@ -3,22 +3,21 @@ CFLAGS				:= -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
 LDFLAGS				:= -ldl $(OPTLIBS)
 PREFIX				?= /usr/local
 
-BIN						:= bin
-SRC						:= src
-TESTS 				:= tests
+SRC_DIR				:= ./src
+BUILD_DIR			:= ./build
+TESTS_DIR			:= ./tests
 
-SOURCES				:= $(wildcard $(SRC)/**/*.c src/*.c)
-HEADERS				:= $(wildcard $(SRC)/**/*.h src/*.h)
-OBJECTS				:= $(patsubst %.c,%.o,$(SOURCES))
+SOURCES				:= $(wildcard $(SRC_DIR)/**/*.c src/*.c)
+OBJECTS				:= $(patsubst %.c, %.o, $(SOURCES))
 
-TEST_SRC			:= $(wildcard $(TESTS)/*_tests.c)
-TESTS					:= $(patsubst %.c,%,$(TEST_SRC))
+TEST_SOURCES	:= $(wildcard $(TESTS)/*_tests.c)
+TESTS					:= $(patsubst %.c, %, $(TEST_SOURCES))
 
 PROGRAMS_SRC	:= $(wildcard bin/*.c)
 PROGRAMS			:= $(patsubst %.c,%,$(PROGRAMS_SRC))
 
 TARGET				:= build/libbase.a
-SO_TARGET			:= $(patsubst %.a,%.so,$(TARGET))
+SO_TARGET			:= $(patsubst %.a, %.so,$(TARGET))
 
 all: $(TARGET) $(SO_TARGET) $(TESTS)
 # all: $(TARGET) $(SO_TARGET) $(TESTS) $(PROGRAMS)
@@ -37,20 +36,8 @@ $(SO_TARGET): $(TARGET) $(OBJECTS)
 	$(CC) $(LDFLAGS) -shared -o $@ $(OBJECTS)
 
 build:
-	@mkdir -p build
-	@mkdir -p $(BIN)
-
-install: all
-	install -d $(DESTDIR)/$(PREFIX)/lib/
-	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
-	install $(SO_TARGET) $(DESTDIR)/$(PREFIX)/lib/
-	install -d $(DESTDIR)/$(PREFIX)/include/base/
-	install $(HEADERS) $(DESTDIR)/$(PREFIX)/include/base/
-
-check:
-	@echo Files with potentially dangerous functions.
-	@egrep '[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)\
-		|stpn?cpy|a?sn?printf|byte_)' $(SOURCES) || true
+	mkdir -p $(BUILD_DIR)
+	mkdir -p $(TESTS_DIR)
 
 .PHONY: tests
 tests: CFLAGS += $(TARGET)
@@ -67,8 +54,9 @@ clean: clean-build clean-debug ## Remove all file artifact
 .PHONY: clean-build
 clean-build: ## Remove build artifacts
 	@echo "+ $@"
-	-$(RM) -r build $(OBJECTS) $(TESTS)
-	-$(RM) tests/tests.log 
+	-$(RM) -rf $(OBJECTS) $(BUILD_DIR) || true
+	-$(RM) $(OBJECTS) || true
+	-$(RM) $(TESTS) || true
 	-$(RM) *.tar.gz
 
 	@find . -name "*.gc*" -exec rm {} \;
@@ -77,9 +65,10 @@ clean-build: ## Remove build artifacts
 .PHONY: clean-debug
 clean-debug: ## Remove debug artifacts
 	@echo "+ $@"
-	-$(RM) output.txt
-	-$(RM) .gdb_history
-	-$(RM) -r vgcore*
+	-$(RM) tests/tests.log || true
+	-$(RM) output.txt || true
+	-$(RM) .gdb_history || true
+	-$(RM) -r vgcore* || true
 
 .PHONY: release
 release: clean  ## Generate release version
