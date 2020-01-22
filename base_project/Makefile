@@ -8,6 +8,7 @@ BUILD_DIR			:= ./build
 TESTS_DIR			:= ./tests
 
 SOURCES				:= $(wildcard $(SRC_DIR)/**/*.c src/*.c)
+HEADERS				:= $(wildcard $(SRC_DIR)/**/*.h src/*.h)
 OBJECTS				:= $(patsubst %.c, %.o, $(SOURCES))
 
 TEST_SOURCES	:= $(wildcard $(TESTS_DIR)/*_tests.c)
