@@ -71,7 +71,7 @@ clean-debug: ## Remove debug artifacts
 .PHONY: release
 release: clean  ## Generate release version
 	@echo "+ $@"
-	@tar -cvzf ala273_base_project.tar.gz .
+	@tar -cvzf ala273_base_project.tar.gz *
 
 .PHONY: help
 help:
