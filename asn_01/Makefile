@@ -1,32 +1,51 @@
-CC		:= gcc
-CFLAGS	:= -std=gnu99 -g -O2 -Wall -Wextra -pedantic $(OPTFLAGS)
+CC						:= gcc
+CFLAGS				:= -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
+LDFLAGS				:= -ldl $(OPTLIBS)
+PREFIX				?= /usr/local
 
-BIN		:= bin
-SRC		:= src
-INCLUDE	:= include
-LIB		:= lib
+SRC_DIR				:= ./src
+BUILD_DIR			:= ./build
+TESTS_DIR			:= ./tests
 
-LIBRARIES	:= -ldl $(OPTLIBS)
+SOURCES				:= $(wildcard $(SRC_DIR)/**/*.c src/*.c)
+OBJECTS				:= $(patsubst %.c, %.o, $(SOURCES))
 
-ifeq ($(OS),Windows_NT)
-EXECUTABLE	:= main.exe
-else
-EXECUTABLE	:= main
-endif
+TEST_SOURCES	:= $(wildcard $(TESTS_DIR)/*_tests.c)
+TESTS					:= $(patsubst %.c, %, $(TEST_SOURCES))
 
-SOURCEDIRS	:= $(shell find $(SRC) -type d)
-INCLUDEDIRS	:= $(shell find $(INCLUDE) -type d)
-LIBDIRS		:= $(shell find $(LIB) -type d)
+PROGRAMS_SRC	:= $(wildcard bin/*.c)
+PROGRAMS			:= $(patsubst %.c, %, $(PROGRAMS_SRC))
 
-CINCLUDES	:= $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
-CLIBS		:= $(patsubst %,-L%, $(LIBDIRS:%/=%))
+TARGET				:= build/libbase.a
+SO_TARGET			:= $(patsubst %.a, %.so,$(TARGET))
 
-SOURCES		:= $(wildcard $(patsubst %,%/*.c, $(SOURCEDIRS)))
-OBJECTS		:= $(SOURCES:.c=.o)
+all: $(TARGET) $(SO_TARGET) tests $(PROGRAMS)
 
-.DEFAULT_GOAL := run
+dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
+dev: all
 
-all: clean $(BIN)/$(EXECUTABLE)
+$(TESTS):	$(TARGET) $(SO_TARGET)
+
+$(TARGET): CFLAGS += -fPIC
+$(TARGET): build $(OBJECTS)
+	ar rcs $@ $(OBJECTS)
+	ranlib $@
+
+$(SO_TARGET): $(TARGET) $(OBJECTS)
+	$(CC) $(LDFLAGS) -shared -o $@ $(OBJECTS)
+
+build:
+	mkdir -p $(BUILD_DIR)
+	mkdir -p $(TESTS_DIR)
+
+.PHONY: tests
+tests: CFLAGS += $(TARGET)
+tests: $(TESTS) ## Run Unit Tests Suite
+	sh ./tests/runtests.sh
+
+.PHONY: valgrind
+valgrind: ## Check Memory Leaks using Valgrind
+	VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
 
 .PHONY: clean
 clean: clean-build clean-debug ## Remove all file artifact
@@ -34,13 +53,17 @@ clean: clean-build clean-debug ## Remove all file artifact
 .PHONY: clean-build
 clean-build: ## Remove build artifacts
 	@echo "+ $@"
-	-$(RM) $(BIN)/$(EXECUTABLE)
+	@find . -name "*.gc*" -exec rm {} \;
+	-$(RM) -r $(OBJECTS) $(BUILD_DIR)
 	-$(RM) $(OBJECTS)
+	-$(RM) $(TESTS)
 	-$(RM) *.tar.gz
+	-$(RM) -r `find . -name "*.dSYM" -print`
 
 .PHONY: clean-debug
 clean-debug: ## Remove debug artifacts
 	@echo "+ $@"
+	-$(RM) tests/tests.log
 	-$(RM) output.txt
 	-$(RM) .gdb_history
 	-$(RM) -r vgcore*
@@ -48,16 +71,11 @@ clean-debug: ## Remove debug artifacts
 .PHONY: release
 release: clean  ## Generate release version
 	@echo "+ $@"
-	@tar -cvzf ala273_asn_01.tar.gz .
+	@tar -cvzf ala273_base_project.tar.gz *
 
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
 	@echo "Contact author for help: ala273@mail.usask.ca"
 
-.PHONY: run
-run: all ## Build and Run
-	./$(BIN)/$(EXECUTABLE)
-
-$(BIN)/$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) $(CINCLUDES) $(CLIBS) $^ -o $@ $(LIBRARIES)
+$(PROGRAMS): CFLAGS += $(TARGET)
