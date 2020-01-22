@@ -10,7 +10,7 @@ TESTS_DIR			:= ./tests
 SOURCES				:= $(wildcard $(SRC_DIR)/**/*.c src/*.c)
 OBJECTS				:= $(patsubst %.c, %.o, $(SOURCES))
 
-TEST_SOURCES	:= $(wildcard $(TESTS)/*_tests.c)
+TEST_SOURCES	:= $(wildcard $(TESTS_DIR)/*_tests.c)
 TESTS					:= $(patsubst %.c, %, $(TEST_SOURCES))
 
 PROGRAMS_SRC	:= $(wildcard bin/*.c)
