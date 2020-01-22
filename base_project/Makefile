@@ -55,19 +55,19 @@ clean: clean-build clean-debug ## Remove all file artifact
 clean-build: ## Remove build artifacts
 	@echo "+ $@"
 	@find . -name "*.gc*" -exec rm {} \;
-	-$(RM) -rf $(OBJECTS) $(BUILD_DIR) || true
-	-$(RM) $(OBJECTS) || true
-	-$(RM) $(TESTS) || true
+	-$(RM) -rf $(OBJECTS) $(BUILD_DIR)
+	-$(RM) $(OBJECTS)
+	-$(RM) $(TESTS)
 	-$(RM) *.tar.gz
 	-$(RM) -r `find . -name "*.dSYM" -print`
 
 .PHONY: clean-debug
 clean-debug: ## Remove debug artifacts
 	@echo "+ $@"
-	-$(RM) tests/tests.log || true
-	-$(RM) output.txt || true
-	-$(RM) .gdb_history || true
-	-$(RM) -r vgcore* || true
+	-$(RM) tests/tests.log
+	-$(RM) output.txt
+	-$(RM) .gdb_history
+	-$(RM) -r vgcore*
 
 .PHONY: release
 release: clean  ## Generate release version
