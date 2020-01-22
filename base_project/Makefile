@@ -55,7 +55,7 @@ clean: clean-build clean-debug ## Remove all file artifact
 clean-build: ## Remove build artifacts
 	@echo "+ $@"
 	@find . -name "*.gc*" -exec rm {} \;
-	-$(RM) -rf $(OBJECTS) $(BUILD_DIR)
+	-$(RM) -r $(OBJECTS) $(BUILD_DIR)
 	-$(RM) $(OBJECTS)
 	-$(RM) $(TESTS)
 	-$(RM) *.tar.gz
