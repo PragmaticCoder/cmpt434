@@ -1,10 +1,9 @@
 SRC_DIR				:= ./src
-ASN_DIR				:= $(SRC_DIR)/base_project
 BUILD_DIR			:= ./build
 TESTS_DIR			:= ./tests
 
 CC						:= gcc
-INCLUDES			:= -I$(SRC_DIR) -I$(ASN_DIR)
+INCLUDES			:= -I$(SRC_DIR)
 CFLAGS				:= -g -std=c99 -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(INCLUDES) $(OPTFLAGS)
 LDFLAGS				:= -ldl -lm $(OPTLIBS)
 PREFIX				?= /usr/local
