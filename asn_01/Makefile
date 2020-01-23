@@ -44,6 +44,7 @@ build:
 
 .PHONY: rebuild
 rebuild: clean all ## Clean and rebuild
+	@echo "+ $@"
 
 .PHONY: tests
 tests: CFLAGS += $(TARGET)
