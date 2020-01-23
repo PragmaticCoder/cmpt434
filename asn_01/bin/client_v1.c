@@ -1,5 +1,6 @@
 #undef NDEBUG
 
+#include <dbg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +22,6 @@ int main(int argc, char const *argv[]) {
   int socket = 0;
   // socket = client_connect();
 
-  printf("Reached main()\n");
+  debug("Reached main()");
   return 0;
 }
