@@ -5,8 +5,9 @@ set pagination off
 set logging file output.txt
 set logging on
 
-set args localhost 8000
+set args 0.0.0.0 30000
 b main
+b connect_client
 r
 
 refresh

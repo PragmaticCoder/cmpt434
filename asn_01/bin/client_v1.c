@@ -1,6 +1,7 @@
 #undef NDEBUG
 
 #include <dbg.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,11 +11,15 @@
 
 #include <netinet/in.h>
 
-int client_connect(char *host, char *port) {
-  debug("Inside client_connection()");
+int connect_client(char *host, char *port) {
+  int status = 0;
+  struct addrinfo *addr = NULL;
+
+  status = getaddrinfo(host, port, NULL, &addr);
+  check(status == 0, "Failed to lookup %s:%s", host, port);
 
   int conn = socket(AF_INET, SOCK_STREAM, 0);
-  check(conn > 0, "Create Connection: Failed");
+  check(conn > 0, "Socket Creation Failed");
 
   return conn;
 
@@ -24,13 +29,13 @@ error:
 
 int main(int argc, char const *argv[]) {
 
-  check(argc == 3, "USAGE: netclient <host> <port>");
+  check(argc == 3, "USAGE: ./client_v1 <host> <port>");
+
+  log_info("HOST: %s \tPORT: %s", argv[1], argv[2]);
 
   int conn = 0;
-  conn = client_connect(argv[1], argv[2]);
-  check(conn >= 0, "Connection to %s:%s failed", argv[1], argv[2]);
-
-  debug("Reached main()");
+  conn = connect_client(argv[1], argv[2]);
+  check(conn >= 0, "Connection to %s:%s Failed", argv[1], argv[2]);
 
 error:
   return -1;

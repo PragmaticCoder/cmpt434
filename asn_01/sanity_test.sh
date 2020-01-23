@@ -17,7 +17,7 @@ debug_gdb() {
 
 debug_valgrind() {
   echo 'Debugging with Valgrind'
-  valgrind ./bin/client_v1 localhost 30000
+  valgrind ./bin/client_v1 0.0.0.0 30000
   exit 0
 }
 
@@ -39,5 +39,5 @@ while getopts dv OPTION; do
   esac
 done
 
-./bin/client_v1 localhost 30000
+./bin/client_v1 0.0.0.0 30000
 exit 0
