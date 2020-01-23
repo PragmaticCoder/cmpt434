@@ -18,7 +18,7 @@ TESTS					:= $(patsubst %.c, %.tst, $(TEST_SOURCES))
 PROGRAMS_SRC	:= $(wildcard bin/*.c)
 PROGRAMS			:= $(patsubst %.c, %, $(PROGRAMS_SRC))
 
-TARGET				:= $(BUILD_DIR)/libbase.a
+TARGET				:= $(BUILD_DIR)/libasn_01.a
 SO_TARGET			:= $(patsubst %.a, %.so,$(TARGET))
 
 all: target tests
@@ -78,7 +78,7 @@ clean-debug: ## Remove debug artifacts
 .PHONY: release
 release: clean  ## Generate release version
 	@echo "+ $@"
-	@tar -cvzf ala273_base_project.tar.gz *
+	@tar -cvzf ala273_asn_01.tar.gz *
 
 .PHONY: help
 help:
