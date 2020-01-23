@@ -9,12 +9,12 @@
 
 #include <netinet/in.h>
 
-int client_connect(char *host, char *port) {
+// int client_connect(char *host, char *port) {
 
-  int network_socket = socket(AF_INET, SOCK_STREAM, 0);
+  // int network_socket = socket(AF_INET, SOCK_STREAM, 0);
 
-  return network_socket;
-}
+  // return network_socket;
+// }
 
 int main(int argc, char const *argv[]) {
 
