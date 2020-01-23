@@ -11,18 +11,15 @@
 #include <netinet/in.h>
 
 int client_connect(char *host, char *port) {
-  debug("Inside client_connection");
+  debug("Inside client_connection()");
 
   int conn = socket(AF_INET, SOCK_STREAM, 0);
   check(conn > 0, "Create Connection: Failed");
 
-
-
   return conn;
 
-  error:
-    return -1;
-
+error:
+  return -1;
 }
 
 int main(int argc, char const *argv[]) {
@@ -35,8 +32,8 @@ int main(int argc, char const *argv[]) {
 
   debug("Reached main()");
 
-  error:
-    return -1;
+error:
+  return -1;
 
   return 0;
 }

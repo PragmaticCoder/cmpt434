@@ -5,6 +5,7 @@ set pagination off
 set logging file output.txt
 set logging on
 
+set args localhost 8000
 b main
 r
 
