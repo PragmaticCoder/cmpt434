@@ -1,25 +1,29 @@
-CC						:= gcc
-CFLAGS				:= -g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS)
-LDFLAGS				:= -ldl $(OPTLIBS)
-PREFIX				?= /usr/local
-
 SRC_DIR				:= ./src
+ASN_DIR				:= $(SRC_DIR)/asn_01
 BUILD_DIR			:= ./build
 TESTS_DIR			:= ./tests
+
+CC						:= gcc
+INCLUDES			:= -I$(SRC_DIR) -I$(ASN_DIR)
+CFLAGS				:= -g -std=c99 -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(INCLUDES) $(OPTFLAGS)
+LDFLAGS				:= -ldl -lm $(OPTLIBS)
+PREFIX				?= /usr/local
 
 SOURCES				:= $(wildcard $(SRC_DIR)/**/*.c src/*.c)
 OBJECTS				:= $(patsubst %.c, %.o, $(SOURCES))
 
 TEST_SOURCES	:= $(wildcard $(TESTS_DIR)/*_tests.c)
-TESTS					:= $(patsubst %.c, %, $(TEST_SOURCES))
+TESTS					:= $(patsubst %.c, %.tst, $(TEST_SOURCES))
 
 PROGRAMS_SRC	:= $(wildcard bin/*.c)
 PROGRAMS			:= $(patsubst %.c, %, $(PROGRAMS_SRC))
 
-TARGET				:= build/libbase.a
+TARGET				:= $(BUILD_DIR)/libbase.a
 SO_TARGET			:= $(patsubst %.a, %.so,$(TARGET))
 
-all: $(TARGET) $(SO_TARGET) tests $(PROGRAMS)
+all: target tests
+
+target: build $(TARGET) $(SO_TARGET) $(PROGRAMS)
 
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
@@ -27,16 +31,19 @@ dev: all
 $(TESTS):	$(TARGET) $(SO_TARGET)
 
 $(TARGET): CFLAGS += -fPIC
-$(TARGET): build $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	ar rcs $@ $(OBJECTS)
 	ranlib $@
 
-$(SO_TARGET): $(TARGET) $(OBJECTS)
+$(SO_TARGET): $(OBJECTS)
 	$(CC) $(LDFLAGS) -shared -o $@ $(OBJECTS)
 
 build:
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(TESTS_DIR)
+
+.PHONY: rebuild
+rebuild: clean all ## Clean and rebuild
 
 .PHONY: tests
 tests: CFLAGS += $(TARGET)
