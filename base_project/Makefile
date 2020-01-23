@@ -1,5 +1,5 @@
 SRC_DIR				:= ./src
-ASN_DIR				:= $(SRC_DIR)/asn_01
+ASN_DIR				:= $(SRC_DIR)/base_project
 BUILD_DIR			:= ./build
 TESTS_DIR			:= ./tests
 
