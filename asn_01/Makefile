@@ -28,7 +28,9 @@ target: build $(TARGET) $(SO_TARGET) $(PROGRAMS)
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
 
-$(TESTS):	$(TARGET) $(SO_TARGET)
+# $(TESTS):	$(TARGET) $(SO_TARGET)
+$(TESTS_DIR)/%.tst:	$(TESTS_DIR)/%.c
+	$(CC) $(CFLAGS) $< $(TARGET) -o $@ $(LDFLAGS)
 
 $(TARGET): CFLAGS += -fPIC
 $(TARGET): $(OBJECTS)
@@ -49,7 +51,7 @@ rebuild: clean all ## Clean and rebuild
 .PHONY: tests
 tests: CFLAGS += $(TARGET)
 tests: $(TESTS) ## Run Unit Tests Suite
-	sh ./tests/runtests.sh
+	sh $(TESTS_DIR)/runtests.sh
 
 .PHONY: valgrind
 valgrind: ## Check Memory Leaks using Valgrind
