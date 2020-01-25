@@ -11,6 +11,7 @@
 #include <netinet/in.h>
 
 #define BUFFSIZE 1024
+#define MAX_CONNECTION 5
 
 int
 setup_server(const char* host, const char* port)
@@ -22,12 +23,12 @@ setup_server(const char* host, const char* port)
   /* create the server socket */
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-  // define the server address
+  /* configure server address */
   server_address.sin_family = AF_INET;
   server_address.sin_port = htons(30000);
-  server_address.sin_addr.s_addr = INADDR_ANY;
+  server_address.sin_addr.s_addr = inet_addr(host);
 
-  // bind the socket to our specified IP and port
+  /* bind the socket to our specified IP and port */
   bind(sockfd, (struct sockaddr*)&server_address, sizeof(server_address));
 
   return sockfd;
@@ -49,20 +50,23 @@ main(int argc, char const* argv[])
   check(conn >= 0, "Server Setup using %s:%s Failed", argv[1], argv[2]);
 
   /* Listening to incoming connections */
-  listen(conn, 5);
+  listen(conn, MAX_CONNECTION);
 
   int client_socket;
   client_socket = accept(conn, NULL, NULL);
 
-  // send the message
-  char message[] = "You have reached the server!";
-  send(client_socket, message, sizeof(message), 0);
+  /* send the message */
+  char* message = "You have reached the server!";
 
-  // close the socket
+  int status = 0;
+  status = send(client_socket, message, sizeof(message), 0);
+  check(status == -1, "Error received while sending.");
+
+  /* close the socket */
   close(conn);
 
-  error:
-    return (-1);
-
   return (0);
+
+error:
+  return (-1);
 }
