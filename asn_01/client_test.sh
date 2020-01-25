@@ -6,4 +6,4 @@
 #  - the while loop is there so reopen the port after a client has disconnected
 #  - supports only one client at a time
 PORT=30000;
-while :; do ./bin/client_v1 0.0.0.0 30000 | tee  output.log; sleep 1; done
+while :; do ./bin/client_v1 127.0.0.1 30000 | tee  output.log; sleep 1; done

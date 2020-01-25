@@ -34,8 +34,6 @@ select_program() {
   fi
 }
 
-make clean && clear && make
-
 echo 'Running Sanity Test'
 
 while getopts "mr:d:v:" OPTION; do
