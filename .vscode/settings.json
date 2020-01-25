@@ -1,6 +1,7 @@
 {
   "files.associations": {
-    "*.c": "c"
+    "*.c": "c",
+    "*.h": "c"
   },
   "clang-format.fallbackStyle": "Mozilla"
 }
