@@ -6,24 +6,38 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <fcntl.h>
+#include <netdb.h>
+#include <unistd.h>
+
+#include <arpa/inet.h>
+#include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/uio.h>
 
-#include <netinet/in.h>
-
-int connect_client(char *host, char *port) {
+int connect_client(const char *host, const char *port) {
   int status = 0;
-  struct addrinfo *addr = NULL;
 
-  status = getaddrinfo(host, port, NULL, &addr);
-  check(status == 0, "Failed to lookup %s:%s", host, port);
+  /* socket creation */
+  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  check(sockfd >= 0, "Failed to created socket.");
 
-  int conn = socket(AF_INET, SOCK_STREAM, 0);
-  check(conn > 0, "Socket Creation Failed");
+  /* specifying an destination address for the socket*/
+  struct sockaddr_in server_addr;
+  server_addr.sin_family = AF_INET;
 
-  return conn;
+  server_addr.sin_port = htons(port);
+  server_addr.sin_addr.s_addr = INADDR_ANY;
+
+  status = connect(sockfd, (struct sockaddr *)&server_addr,
+                   sizeof(struct sockaddr_in));
+  check(status == -1, "Failed to create connection");
+
+  return sockfd;
 
 error:
+  freeaddrinfo(server_addr);
   return -1;
 }
 
