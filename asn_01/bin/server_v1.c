@@ -56,11 +56,11 @@ main(int argc, char const* argv[])
   client_socket = accept(conn, NULL, NULL);
 
   /* send the message */
-  char* message = "You have reached the server!";
+  char message[BUFFSIZE] = "You have reached the server!\0";
 
   int status = 0;
   status = send(client_socket, message, sizeof(message), 0);
-  check(status == -1, "Error received while sending.");
+  check(status != -1, "Error received while sending.");
 
   /* close the socket */
   close(conn);

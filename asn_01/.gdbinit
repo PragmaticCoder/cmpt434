@@ -5,17 +5,16 @@ set pagination off
 set logging file output.txt
 set logging on
 
-
-
 set args 127.0.0.1 30000
 
 # For client
-b main
-b connect_client
+# b main
+# b connect_client
 
 # For server
 # b main
 # b setup_server
+b 56
 
 r
 

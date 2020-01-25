@@ -34,10 +34,11 @@ connect_client(const char* host, const char* port)
   server_addr.sin_family = AF_INET;
   server_addr.sin_addr.s_addr = htonl(host);
   server_addr.sin_port = htons(port);
+
   inet_pton(AF_INET, host, &server_addr.sin_addr);
 
   status = connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
-  check(status == -1, "Failed to create connection");
+  check(status != -1, "Failed to create connection");
 
   return sockfd;
 
@@ -58,7 +59,11 @@ main(int argc, char const* argv[])
   conn = connect_client(argv[1], argv[2]);
   check(conn >= 0, "Connection to Server %s:%s Failed", argv[1], argv[2]);
 
-  /* TODO: Refactor this to it's own separate procedure */
+  /* First we send a message */
+  char buf[BUFFSIZE] = "Hello Server! This is Client Calling\0";
+  send(conn, (void*) buf, sizeof(buf), 0);
+
+  /* Receiving Message from Client */
   char response[BUFFSIZE];
   recv(conn, &response, sizeof(response), 0);
 
