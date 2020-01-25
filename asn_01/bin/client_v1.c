@@ -16,6 +16,8 @@
 #include <sys/types.h>
 #include <sys/uio.h>
 
+#define BUFFSIZE 1024
+
 int connect_client(const char *host, const char *port) {
   int status = 0;
 
@@ -30,8 +32,8 @@ int connect_client(const char *host, const char *port) {
   server_addr.sin_port = htons(port);
   server_addr.sin_addr.s_addr = INADDR_ANY;
 
-  status = connect(sockfd, (struct sockaddr *)&server_addr,
-                   sizeof(struct sockaddr_in));
+  status =
+      connect(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
   check(status == -1, "Failed to create connection");
 
   return sockfd;
@@ -44,12 +46,21 @@ error:
 int main(int argc, char const *argv[]) {
 
   check(argc == 3, "USAGE: ./client_v1 <host> <port>");
-
   log_info("HOST: %s \tPORT: %s", argv[1], argv[2]);
 
+  /* creating connection to servers*/
   int conn = 0;
   conn = connect_client(argv[1], argv[2]);
-  check(conn >= 0, "Connection to %s:%s Failed", argv[1], argv[2]);
+  check(conn >= 0, "Connection to Server %s:%s Failed", argv[1], argv[2]);
+
+  char response[BUFFSIZE];
+  recv(conn, &response, sizeof(response), 0);
+
+  /* printing the data received from server */
+  log_info("Response data from server: %s", response);
+
+  /* close pre-existing open socket */
+  close(conn);
 
 error:
   return -1;
