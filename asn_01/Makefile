@@ -71,6 +71,7 @@ clean-debug: ## Remove debug artifacts
 	@echo "+ $@"
 	-$(RM) tests/tests.log
 	-$(RM) output.txt
+	-$(RM) -r *.log
 	-$(RM) .gdb_history
 	-$(RM) -r vgcore*
 

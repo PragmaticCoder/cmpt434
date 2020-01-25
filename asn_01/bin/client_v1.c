@@ -30,7 +30,6 @@ connect_client(const char* host, const char* port)
   /* specifying an destination address for the socket */
   struct sockaddr_in server_addr;
   server_addr.sin_family = AF_INET;
-
   server_addr.sin_port = htons(port);
   server_addr.sin_addr.s_addr = INADDR_ANY;
 
@@ -56,6 +55,11 @@ main(int argc, char const* argv[])
   conn = connect_client(argv[1], argv[2]);
   check(conn >= 0, "Connection to Server %s:%s Failed", argv[1], argv[2]);
 
+
+  char request[256] = "Test Data";
+  send(conn, request, sizeof(request), 0);
+
+  /* TODO: Refactor this to it's own separate procedure */
   char response[BUFFSIZE];
   recv(conn, &response, sizeof(response), 0);
 
@@ -65,8 +69,8 @@ main(int argc, char const* argv[])
   /* close pre-existing open socket */
   close(conn);
 
-error:
-  return (-1);
+  error:
+    return (-1);
 
   return (0);
 }
