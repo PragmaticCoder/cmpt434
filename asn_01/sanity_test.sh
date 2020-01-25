@@ -36,7 +36,7 @@ make clean && clear && make
 
 echo 'Running Sanity Test'
 
-while getopts "r:d:v:" OPTION; do
+while getopts "mr:d:v:" OPTION; do
   case ${OPTION} in
   r)
     echo "selected - RUN MODE"
@@ -52,12 +52,16 @@ while getopts "r:d:v:" OPTION; do
     select_program
     debug_valgrind $PROGRAM
     ;;
+  m)
+    echo "Rebuild using Make"
+    make clean && clear && make
+    ;;
   ?)
     usage
     ;;
   esac
 done
 
-./bin/$PROGRAM 0.0.0.0 30000
+./bin/$PROGRAM 127.0.0.1 30000
 
 exit 0
