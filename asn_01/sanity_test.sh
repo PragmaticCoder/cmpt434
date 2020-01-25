@@ -3,6 +3,8 @@
 
 # Setting Default
 PROGRAM="client_v1"
+IP="127.0.0.1"
+PORT="30000"
 
 usage() {
   echo "Usage ${0} [-r][-d][-v] <client|server>" >&2
@@ -20,7 +22,7 @@ debug_gdb() {
 
 debug_valgrind() {
   echo 'Debugging with Valgrind'
-  valgrind ./bin/$1 0.0.0.0 30000
+  valgrind ./bin/$1 $IP $PORT
   exit 0
 }
 
@@ -62,6 +64,6 @@ while getopts "mr:d:v:" OPTION; do
   esac
 done
 
-./bin/$PROGRAM 127.0.0.1 30000
+./bin/$PROGRAM $IP $PORT
 
 exit 0
