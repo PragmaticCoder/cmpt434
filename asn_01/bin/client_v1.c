@@ -18,7 +18,8 @@
 
 #define BUFFSIZE 1024
 
-int connect_client(const char *host, const char *port) {
+int connect_client(const char *host, const char *port)
+{
   int status = 0;
 
   /* socket creation */
@@ -43,7 +44,8 @@ error:
   return -1;
 }
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char const *argv[])
+{
 
   check(argc == 3, "USAGE: ./client_v1 <host> <port>");
   log_info("HOST: %s \tPORT: %s", argv[1], argv[2]);
