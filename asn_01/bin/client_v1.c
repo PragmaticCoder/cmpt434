@@ -14,8 +14,10 @@
 #define SA struct sockaddr
 #define h_addr h_addr_list[0] /* for backward compatibility */
 
+struct hostent* server;
+
 int
-connect_client(const char* host, const char* port)
+connect_server(const char* host, const char* port)
 {
   /* Socket creation */
   int sockfd = 0;
@@ -23,20 +25,20 @@ connect_client(const char* host, const char* port)
   check(sockfd != -1, "Socket creation failed!");
 
   /* Specify destination address */
-  struct sockaddr_in server_addr;
-  bzero(&server_addr, sizeof(server_addr));
+  struct sockaddr_in serv_addr;
+  bzero((char*)&serv_addr, sizeof(serv_addr));
 
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_port = htons(port);
+  serv_addr.sin_family = AF_INET;
+  serv_addr.sin_port = htons(port);
 
-  check(inet_pton(AF_INET, host, &server_addr.sin_addr) <= 0,
-        "inet_pton error for %s",
-        host);
+  server = gethostbyname(host);
+  check(server != NULL, "ERROR, no such host");
 
-  debug("Clinet connecting to Server PORT: %s", server_addr.sin_port);
+  bcopy(
+    (char*)server->h_addr, (char*)&serv_addr.sin_addr.s_addr, server->h_length);
 
   /* Establish connection client & server socket */
-  check(connect(sockfd, (SA*)&server_addr, sizeof(server_addr)) != -1,
+  check(connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) != -1,
         "Connection to server failed ...");
 
   return sockfd;
@@ -60,37 +62,12 @@ main(int argc, char const* argv[])
   log_info("HOST: %s \tPORT: %s", argv[1], argv[2]);
 
   int port = 0;
-  int sockfd = 0;
-
-  struct hostent* server;
+  port = atoi(argv[2]);
 
   char buffer[MAX];
 
-  port = atoi(argv[2]);
-
-  sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  check(sockfd >= 0, "Connection to Server %s:%s Failed", argv[1], argv[2]);
-
-  // sockfd = connect_client(argv[1], argv[2]);
-
-  server = gethostbyname(argv[1]);
-  if (server == NULL) {
-    fprintf(stderr, "ERROR, no such host\n");
-    exit(0);
-  }
-
-  struct sockaddr_in serv_addr;
-  bzero((char*)&serv_addr, sizeof(serv_addr));
-
-  serv_addr.sin_family = AF_INET;
-
-  bcopy(
-    (char*)server->h_addr, (char*)&serv_addr.sin_addr.s_addr, server->h_length);
-
-  serv_addr.sin_port = htons(port);
-
-  check(connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) != -1,
-        "Connection to server failed ...");
+  int sockfd = 0;
+  sockfd = connect_server(argv[1], port);
 
   printf("Client: ");
 

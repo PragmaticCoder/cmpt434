@@ -5,14 +5,13 @@ set pagination off
 set logging file output.txt
 set logging on
 
-set args 0.0.0.0 31416
+set args 0.0.0.0 36580
 
 b main
 
 # For client
 b connect_client
 b chat
-b 54
 
 # For server
 

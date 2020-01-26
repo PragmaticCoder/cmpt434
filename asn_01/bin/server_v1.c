@@ -12,7 +12,7 @@
 
 #include <netinet/in.h>
 
-#define BUFFSIZE 1024
+#define BUFFSIZE 12005
 #define MAX_CONNECTION 5
 
 int
@@ -38,7 +38,6 @@ setup_server(const char* host, const char* port)
 
   /* bind the socket to our specified IP and port */
   bind(sockfd, (struct sockaddr*)&server_address, sizeof(server_address));
-
   return sockfd;
 
 error:
