@@ -1,48 +1,37 @@
-#undef NDEBUG
-
 #include <dbg.h>
 
+#include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
 
-#include <fcntl.h>
-#include <netdb.h>
 #include <unistd.h>
 
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/uio.h>
+#define MAX 1024
+#define PORT 61187
+#define SA struct sockaddr
 
-#define BUFFSIZE 1024
-
-int
-connect_client(const char* host, const char* port)
+void
+chat(int sockfd)
 {
-  int status = 0;
-
-  /* socket creation */
-  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  check(sockfd >= 0, "Failed to created socket.");
-
-  /* specifying an destination address for the socket */
-  struct sockaddr_in server_addr;
-  bzero(&server_addr, sizeof(server_addr));
-
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_addr.s_addr = htonl(host);
-  server_addr.sin_port = htons(port);
-
-  status = connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr));
-  check(status != -1, "Failed to create connection");
-
-  return sockfd;
-
-error:
-  freeaddrinfo(server_addr);
-  return (-1);
+  char buff[MAX];
+  int n;
+  for (;;) {
+    bzero(buff, sizeof(buff));
+    printf("Enter the string : ");
+    n = 0;
+    while ((buff[n++] = getchar()) != '\n')
+      ;
+    // write(sockfd, buff, sizeof(buff));
+    bzero(buff, sizeof(buff));
+    read(sockfd, buff, sizeof(buff));
+    printf("From Server : %s", buff);
+    if ((strncmp(buff, "exit", 4)) == 0) {
+      printf("Client Exit...\n");
+      break;
+    }
+  }
 }
 
 int
@@ -52,28 +41,28 @@ main(int argc, char const* argv[])
   check(argc == 3, "USAGE: ./client_v1 <host> <port>");
   log_info("HOST: %s \tPORT: %s", argv[1], argv[2]);
 
-  /* creating connection to servers */
-  int conn = 0;
-  conn = connect_client(argv[1], argv[2]);
-  check(conn >= 0, "Connection to Server %s:%s Failed", argv[1], argv[2]);
+  int sockfd = 0;
+  struct sockaddr_in servaddr;
 
-  /* First we send a message */
-  char buf[BUFFSIZE] = "Hello Server! This is Client Calling\0";
-  send(conn, (void*)buf, sizeof(buf), 0);
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  check(sockfd != -1, "Socket creation failed!");
 
-  /* Receiving Message from Client */
-  char response[BUFFSIZE];
-  recv(conn, &response, sizeof(response), 0);
+  bzero(&servaddr, sizeof(servaddr));
 
-  /* printing the data received from server */
-  log_info("Response data from server: %s", response);
+  servaddr.sin_family = AF_INET;
+  servaddr.sin_addr.s_addr = inet_addr(argv[1]);
+  servaddr.sin_port = argv[2];
 
-  /* close pre-existing open socket */
-  close(conn);
+  /* connect client socket to server socket */
+  int status = 0;
+  status = connect(sockfd, (SA*)&servaddr, sizeof(servaddr));
+  check(status == 0, "Connection to server failed ...");
 
+  chat(sockfd);
+
+  close(sockfd);
   return (0);
 
 error:
-  debug("Error");
   return (-1);
 }

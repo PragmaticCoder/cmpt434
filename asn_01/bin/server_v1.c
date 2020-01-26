@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <sys/socket.h>
@@ -18,17 +19,21 @@ int
 setup_server(const char* host, const char* port)
 {
 
-  int sockfd;
-  struct sockaddr_in server_address;
-
   /* create the server socket */
+  int sockfd = 0;
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  check(sockfd != -1, "Socket creation failed");
 
   /* configure server address */
+  struct sockaddr_in server_address;
+
   server_address.sin_family = AF_INET;
+  server_address.sin_addr.s_addr = INADDR_ANY;
   server_address.sin_port = htons(port);
-  server_address.sin_addr.s_addr = inet_addr(INADDR_ANY);
-  
+
+  if (server_address.sin_port != atoi(port))
+    log_info("PORT NOT AVAILABLE. CONNECTED TO PORT: %d",
+             ntohs(server_address.sin_port));
 
   /* bind the socket to our specified IP and port */
   bind(sockfd, (struct sockaddr*)&server_address, sizeof(server_address));

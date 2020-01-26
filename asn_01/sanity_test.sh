@@ -4,7 +4,7 @@
 # Setting Default
 PROGRAM="client_v1"
 IP="127.0.0.1"
-PORT="30550"
+PORT="3843"
 
 usage() {
   echo "Usage ${0} [-r][-d][-v] <client|server>" >&2
