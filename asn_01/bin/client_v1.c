@@ -9,7 +9,6 @@
 #include <unistd.h>
 
 #define MAX 1024
-#define PORT 61187
 #define SA struct sockaddr
 
 void
@@ -47,18 +46,21 @@ connect_client(const char* host, const char* port)
   bzero(&server_addr, sizeof(server_addr));
 
   server_addr.sin_family = AF_INET;
-  server_addr.sin_addr.s_addr = inet_addr(host);
-  server_addr.sin_port = port;
+  server_addr.sin_port = htons(port);
+  check(inet_pton(AF_INET, host, &server_addr.sin_addr) <= 0,
+  "inet_pton error for %s",
+  host);
+
+  debug("Clinet connecting to Server PORT: %s", server_addr.sin_port);
 
   /* Establish connection client & server socket */
   int status = 0;
   status = connect(sockfd, (SA*)&server_addr, sizeof(server_addr));
-  check(status == 0, "Connection to server failed ...");
+  check(status != -1, "Connection to server failed ...");
 
   return sockfd;
 
 error:
-  freeaddrinfo(server_addr);
   return (-1);
 }
 
@@ -79,5 +81,6 @@ main(int argc, char const* argv[])
   return (0);
 
 error:
+  debug("ERROR DETECTED!");
   return (-1);
 }

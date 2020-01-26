@@ -5,17 +5,15 @@ set pagination off
 set logging file output.txt
 set logging on
 
-set args 127.0.0.1 35875
+set args 0.0.0.0 31416
 
 b main
 
 # For client
 # b connect_client
-b func
-b 29
+# b 29
 
 # For server
-# b main
 
 r
 

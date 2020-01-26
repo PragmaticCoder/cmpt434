@@ -26,6 +26,7 @@ setup_server(const char* host, const char* port)
 
   /* configure server address */
   struct sockaddr_in server_address;
+  bzero(&server_address, sizeof(server_address));
 
   server_address.sin_family = AF_INET;
   server_address.sin_addr.s_addr = INADDR_ANY;
@@ -41,7 +42,6 @@ setup_server(const char* host, const char* port)
   return sockfd;
 
 error:
-  freeaddrinfo(server_address);
   return (-1);
 }
 
