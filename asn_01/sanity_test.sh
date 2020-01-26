@@ -3,8 +3,8 @@
 
 # Setting Default
 PROGRAM="client_v1"
-IP="0.0.0.0"
-PORT="31416"
+IP="0"
+PORT="3812"
 
 usage() {
   echo "Usage ${0} [-r][-d][-v] <client|server>" >&2

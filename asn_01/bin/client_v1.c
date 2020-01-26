@@ -1,37 +1,18 @@
 #include <dbg.h>
 
 #include <netdb.h>
+#include <netinet/in.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
-
+#include <sys/types.h>
 #include <unistd.h>
 
 #define MAX 1024
+#define MAXLINE 100
 #define SA struct sockaddr
-
-void
-chat(int sockfd)
-{
-  char buff[MAX];
-  int n;
-  for (;;) {
-    bzero(buff, sizeof(buff));
-    printf("Enter the string : ");
-    n = 0;
-    while ((buff[n++] = getchar()) != '\n')
-      ;
-    // write(sockfd, buff, sizeof(buff));
-    bzero(buff, sizeof(buff));
-    read(sockfd, buff, sizeof(buff));
-    printf("From Server : %s", buff);
-    if ((strncmp(buff, "exit", 4)) == 0) {
-      printf("Client Exit...\n");
-      break;
-    }
-  }
-}
+#define h_addr h_addr_list[0] /* for backward compatibility */
 
 int
 connect_client(const char* host, const char* port)
@@ -47,21 +28,28 @@ connect_client(const char* host, const char* port)
 
   server_addr.sin_family = AF_INET;
   server_addr.sin_port = htons(port);
+
   check(inet_pton(AF_INET, host, &server_addr.sin_addr) <= 0,
-  "inet_pton error for %s",
-  host);
+        "inet_pton error for %s",
+        host);
 
   debug("Clinet connecting to Server PORT: %s", server_addr.sin_port);
 
   /* Establish connection client & server socket */
-  int status = 0;
-  status = connect(sockfd, (SA*)&server_addr, sizeof(server_addr));
-  check(status != -1, "Connection to server failed ...");
+  check(connect(sockfd, (SA*)&server_addr, sizeof(server_addr)) != -1,
+        "Connection to server failed ...");
 
   return sockfd;
 
 error:
   return (-1);
+}
+
+void
+error(const char* msg)
+{
+  perror(msg);
+  exit(0);
 }
 
 int
@@ -71,14 +59,67 @@ main(int argc, char const* argv[])
   check(argc == 3, "USAGE: ./client_v1 <host> <port>");
   log_info("HOST: %s \tPORT: %s", argv[1], argv[2]);
 
+  int port = 0;
   int sockfd = 0;
-  sockfd = connect_client(argv[1], argv[2]);
+
+  struct hostent* server;
+
+  char buffer[MAX];
+
+  port = atoi(argv[2]);
+
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);
   check(sockfd >= 0, "Connection to Server %s:%s Failed", argv[1], argv[2]);
 
-  chat(sockfd);
+  // sockfd = connect_client(argv[1], argv[2]);
+
+  server = gethostbyname(argv[1]);
+  if (server == NULL) {
+    fprintf(stderr, "ERROR, no such host\n");
+    exit(0);
+  }
+
+  struct sockaddr_in serv_addr;
+  bzero((char*)&serv_addr, sizeof(serv_addr));
+
+  serv_addr.sin_family = AF_INET;
+
+  bcopy(
+    (char*)server->h_addr, (char*)&serv_addr.sin_addr.s_addr, server->h_length);
+
+  serv_addr.sin_port = htons(port);
+
+  check(connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) != -1,
+        "Connection to server failed ...");
+
+  printf("Client: ");
+
+  while (1) {
+    bzero(buffer, MAX);
+    fgets(buffer, MAX - 1, stdin);
+
+    int n = 0;
+    n = write(sockfd, buffer, strlen(buffer));
+
+    check(n >= 0, "Error while writing to Socket");
+
+    bzero(buffer, MAX);
+    n = read(sockfd, buffer, MAX - 1);
+
+    check(n >= 0, "Error while reading from Socket");
+
+    printf("Server : %s\n", buffer);
+
+    int i = 0;
+    i = strncmp("Exit", buffer, 4);
+
+    if (i == 0)
+      break;
+  }
 
   close(sockfd);
-  return (0);
+
+  return 0;
 
 error:
   debug("ERROR DETECTED!");

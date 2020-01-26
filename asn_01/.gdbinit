@@ -10,8 +10,9 @@ set args 0.0.0.0 31416
 b main
 
 # For client
-# b connect_client
-# b 29
+b connect_client
+b chat
+b 54
 
 # For server
 
