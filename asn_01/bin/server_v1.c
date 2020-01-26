@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -25,8 +26,9 @@ setup_server(const char* host, const char* port)
 
   /* configure server address */
   server_address.sin_family = AF_INET;
-  server_address.sin_port = htons(30000);
-  server_address.sin_addr.s_addr = inet_addr(host);
+  server_address.sin_port = htons(port);
+  server_address.sin_addr.s_addr = inet_addr(INADDR_ANY);
+  
 
   /* bind the socket to our specified IP and port */
   bind(sockfd, (struct sockaddr*)&server_address, sizeof(server_address));
@@ -55,13 +57,21 @@ main(int argc, char const* argv[])
   int client_socket;
   client_socket = accept(conn, NULL, NULL);
 
-  /* send the message */
-  char message[BUFFSIZE] = "You have reached the server!\0";
+  while (1) {
+    /* send the message */
+    char message[BUFFSIZE] = "You have reached the server!\0";
 
-  int status = 0;
-  status = send(client_socket, message, sizeof(message), 0);
-  check(status != -1, "Error received while sending.");
+    int status = 0;
+    status = send(client_socket, message, sizeof(message), 0);
+    check(status != -1, "Error received while sending.");
 
+    char response[BUFFSIZE];
+    recv(conn, &response, sizeof(response), 0);
+
+    /* printing the data received from client */
+    log_info("Response data from server: %s", response);
+    sleep(1);
+  }
   /* close the socket */
   close(conn);
 
