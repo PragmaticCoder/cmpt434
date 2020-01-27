@@ -70,7 +70,7 @@ main(int argc, char const* argv[])
   check(sockfd >= 0, "Server Setup using %s:%s Failed", argv[1], argv[2]);
 
   /* Client-Server Communication */
-  char buf[MAX] = NULL;
+  char buf[MAX] = '\0';
 
   while (1) {
     /* Receive message from client */
