@@ -13,31 +13,32 @@
 #include <netinet/in.h>
 
 #define BUFFSIZE 12005
-#define MAX_CONNECTION 5
+#define MAX_CONNECTION 10
 
 int
-setup_server(const char* host, const char* port)
+setup_server(int port)
 {
 
   /* create the server socket */
   int sockfd = 0;
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  check(sockfd != -1, "Socket creation failed");
+  check(sockfd >= 0, "Socket creation failed");
 
   /* configure server address */
-  struct sockaddr_in server_address;
-  bzero(&server_address, sizeof(server_address));
+  struct sockaddr_in serv_addr;
+  bzero((char*)&serv_addr, sizeof(serv_addr));
 
-  server_address.sin_family = AF_INET;
-  server_address.sin_addr.s_addr = INADDR_ANY;
-  server_address.sin_port = htons(port);
+  serv_addr.sin_family = AF_INET;
+  serv_addr.sin_addr.s_addr = INADDR_ANY;
+  serv_addr.sin_port = htons(port);
 
-  if (server_address.sin_port != atoi(port))
-    log_info("PORT NOT AVAILABLE. CONNECTED TO PORT: %d",
-             ntohs(server_address.sin_port));
+  log_info("Attempting to connnet to %s:%d",
+           serv_addr.sin_addr.s_addr,
+           ntohs(serv_addr.sin_port));
 
-  /* bind the socket to our specified IP and port */
-  bind(sockfd, (struct sockaddr*)&server_address, sizeof(server_address));
+  /* bind the socket to specified port */
+  check(bind(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) >= 0,
+        "Error detected during binding");
   return sockfd;
 
 error:
@@ -48,15 +49,23 @@ int
 main(int argc, char const* argv[])
 {
 
-  check(argc == 3, "USAGE: ./socket_v1 <host> <port>");
-  log_info("HOST: %s \tPORT: %s", argv[1], argv[2]);
+  check(argc == 2, "USAGE: ./socket_v1 <port>");
+
+  int port = 30000; /* default port number */
+  port = atoi(argv[1]);
 
   int conn = 0;
-  conn = setup_server(argv[1], argv[2]);
+  conn = setup_server(port);
   check(conn >= 0, "Server Setup using %s:%s Failed", argv[1], argv[2]);
+
+  /* TODO: Configuring Client stuff here */
+  // struct sockaddr_in cli_addr;
+  // socklen_t clilen;
 
   /* Listening to incoming connections */
   listen(conn, MAX_CONNECTION);
+
+  log_info("Connection Successful!");
 
   int client_socket;
   client_socket = accept(conn, NULL, NULL);
