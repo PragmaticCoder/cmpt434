@@ -4,7 +4,7 @@
 # Setting Default
 PROGRAM="client_v1"
 IP="0"
-PORT="59971"
+PORT="32000"
 
 usage() {
   echo "Usage ${0} [-r][-d][-v] <client|server>" >&2
@@ -16,13 +16,22 @@ usage() {
 
 debug_gdb() {
   echo 'Debugging with GDB'
-  gdb -x .gdbinit ./bin/$1
+  if [[ "${PROGRAM}" = "server_v1" ]]; then
+    gdb -x .gdbinit_server ./bin/$1
+  elif [[ "${PROGRAM}" = "client_v1" ]]; then
+    gdb -x .gdbinit_client ./bin/$1
+  fi
   exit 0
 }
 
 debug_valgrind() {
   echo 'Debugging with Valgrind'
-  valgrind ./bin/$1 $IP $PORT
+  if [[ "${PROGRAM}" = "server_v1" ]]; then
+    valgrind ./bin/$1 $PORT
+  elif [[ "${PROGRAM}" = "client_v1" ]]; then
+    valgrind ./bin/$1 $IP $PORT
+  fi
+
   exit 0
 }
 
@@ -62,6 +71,10 @@ while getopts "mr:d:v:" OPTION; do
   esac
 done
 
-./bin/$PROGRAM $IP $PORT
+if [[ "${PROGRAM}" = "server_v1" ]]; then
+  ./bin/$PROGRAM $PORT
+elif [[ "${PROGRAM}" = "client_v1" ]]; then
+  ./bin/$PROGRAM $IP $PORT
+fi
 
 exit 0
