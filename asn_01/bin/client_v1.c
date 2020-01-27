@@ -10,8 +10,7 @@
 #include <unistd.h>
 
 #define MAX 1024
-#define MAXLINE 100
-#define SA struct sockaddr
+#define SOCKET_ADDR struct sockaddr
 #define h_addr h_addr_list[0] /* for backward compatibility */
 
 struct hostent* server;
@@ -38,20 +37,13 @@ connect_server(const char* host, const char* port)
     (char*)server->h_addr, (char*)&serv_addr.sin_addr.s_addr, server->h_length);
 
   /* Establish connection client & server socket */
-  check(connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) != -1,
+  check(connect(sockfd, (SOCKET_ADDR*)&serv_addr, sizeof(serv_addr)) != -1,
         "Connection to server failed ...");
 
   return sockfd;
 
 error:
   return (-1);
-}
-
-void
-error(const char* msg)
-{
-  perror(msg);
-  exit(0);
 }
 
 int
@@ -64,41 +56,40 @@ main(int argc, char const* argv[])
   int port = 0;
   port = atoi(argv[2]);
 
-  char buffer[MAX];
-
   int sockfd = 0;
   sockfd = connect_server(argv[1], port);
 
-  printf("Client: ");
+  char buf[MAX];
+  int n = 0;
 
   while (1) {
-    bzero(buffer, MAX);
-    fgets(buffer, MAX - 1, stdin);
+    bzero(buf, MAX);
 
-    int n = 0;
-    n = write(sockfd, buffer, strlen(buffer));
+    /* getting user input */
+    printf("Client: ");
+    fgets(buf, MAX - 1, stdin);
 
+    n = write(sockfd, buf, strlen(buf));
     check(n >= 0, "Error while writing to Socket");
 
-    bzero(buffer, MAX);
-    n = read(sockfd, buffer, MAX - 1);
+    /* clear buffer and write response */
+    /* message from server to buffer */
+    bzero(buf, MAX);
 
+    n = read(sockfd, buf, MAX);
     check(n >= 0, "Error while reading from Socket");
 
-    printf("Server : %s\n", buffer);
-
-    int i = 0;
-    i = strncmp("Exit", buffer, 4);
-
-    if (i == 0)
+    log_info("Server Response Message: %s", buf);
+    if (strncmp("Exit", buf, 4) == 0)
       break;
   }
 
+  log_info("Connection terminated");
   close(sockfd);
 
-  return 0;
+  return (0);
 
 error:
-  debug("ERROR DETECTED!");
+  debug("Error Detected in Client Program!");
   return (-1);
 }

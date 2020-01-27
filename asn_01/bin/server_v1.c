@@ -82,5 +82,6 @@ main(int argc, char const* argv[])
   return (0);
 
 error:
+  debug("Error Detected in Server Program!");
   return (-1);
 }
