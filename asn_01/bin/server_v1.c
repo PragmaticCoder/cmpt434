@@ -92,7 +92,9 @@ main(int argc, char const* argv[])
     if (strncmp("quit", buf, 4) == 0)
       break;
   }
-  /* close the socket */
+
+  /* close all socket */
+  close(cli_sockfd);
   close(sockfd);
 
   return (0);
