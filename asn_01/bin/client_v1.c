@@ -1,3 +1,4 @@
+#undef NDEBUG
 #include <dbg.h>
 
 #include <netdb.h>
