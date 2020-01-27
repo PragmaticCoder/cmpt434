@@ -80,8 +80,9 @@ main(int argc, char const* argv[])
     n = read(sockfd, buf, MAX);
     check(n >= 0, "Error while reading from Socket");
 
-    log_info("Server Response Message: %s", buf);
-    if (strncmp("Exit", buf, 4) == 0)
+    printf("SERVER: %s\n", buf);
+
+    if (strncmp("quit", buf, 4) == 0)
       break;
   }
 

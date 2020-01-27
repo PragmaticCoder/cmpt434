@@ -12,7 +12,7 @@
 
 #include <netinet/in.h>
 
-#define BUFFSIZE 12005
+#define MAX 1024
 #define MAX_CONNECTION 10
 
 int
@@ -54,39 +54,46 @@ main(int argc, char const* argv[])
   int port = 30000; /* default port number */
   port = atoi(argv[1]);
 
-  int conn = 0;
-  conn = setup_server(port);
-  check(conn >= 0, "Server Setup using %s:%s Failed", argv[1], argv[2]);
-
-  /* TODO: Configuring Client stuff here */
-  // struct sockaddr_in cli_addr;
-  // socklen_t clilen;
+  int sockfd = 0;
+  sockfd = setup_server(port);
+  check(sockfd >= 0, "Server Setup using %s:%s Failed", argv[1], argv[2]);
 
   /* Listening to incoming connections */
-  listen(conn, MAX_CONNECTION);
-
+  listen(sockfd, MAX_CONNECTION);
   log_info("Connection Successful!");
 
-  int client_socket;
-  client_socket = accept(conn, NULL, NULL);
+  int cli_sockfd;
+  struct cli_addr;
+  socklen_t clilen;
+
+  cli_sockfd = accept(sockfd, (struct sockaddr*)&cli_addr, &clilen);
+  check(sockfd >= 0, "Server Setup using %s:%s Failed", argv[1], argv[2]);
+
+  /* Client-Server Communication */
+  char buf[MAX] = NULL;
 
   while (1) {
-    /* send the message */
-    char message[BUFFSIZE] = "You have reached the server!\0";
+    /* Receive message from client */
+    bzero(buf, MAX);
 
     int status = 0;
-    status = send(client_socket, message, sizeof(message), 0);
-    check(status != -1, "Error received while sending.");
+    status = read(cli_sockfd, buf, sizeof(buf));
+    check(status >= 0, "Error received while receiving message from client.");
 
-    char response[BUFFSIZE];
-    recv(conn, &response, sizeof(response), 0);
+    printf("CLIENT: %s\n", buf);
 
-    /* printing the data received from client */
-    log_info("Response data from server: %s", response);
-    sleep(1);
+    /* Reply to client */
+    bzero(buf, MAX);
+    fgets(buf, sizeof(buf), stdin);
+
+    n = write(cli_sockfd, buf, strlen(buf));
+    check(n >= 0, "Error while writing to Socket");
+
+    if (strncmp("quit", buf, 4) == 0)
+      break;
   }
   /* close the socket */
-  close(conn);
+  close(sockfd);
 
   return (0);
 
