@@ -67,7 +67,7 @@ main(int argc, char const* argv[])
     bzero(buf, MAX);
 
     /* getting user input */
-    printf("Client: ");
+    printf("CLIENT: ");
     fgets(buf, MAX - 1, stdin);
 
     n = write(sockfd, buf, strlen(buf));
