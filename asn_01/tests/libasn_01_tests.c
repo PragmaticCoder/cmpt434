@@ -2,7 +2,7 @@
 #include <dlfcn.h>
 
 typedef int (*lib_function)(const char *data);
-char *lib_file = "build/libbase.so";
+char *lib_file = "build/libasn_01.so";
 void *lib = NULL;
 
 char *test_dummy() {

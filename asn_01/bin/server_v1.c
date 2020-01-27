@@ -7,6 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 
@@ -18,7 +19,6 @@
 int
 setup_server(int port)
 {
-
   /* create the server socket */
   int sockfd = 0;
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -32,9 +32,8 @@ setup_server(int port)
   serv_addr.sin_addr.s_addr = INADDR_ANY;
   serv_addr.sin_port = htons(port);
 
-  log_info("Attempting to connnet to %s:%d",
-           serv_addr.sin_addr.s_addr,
-           ntohs(serv_addr.sin_port));
+  log_info(
+    "Attempting to connnet to %s:%d", "localhost", ntohs(serv_addr.sin_port));
 
   /* bind the socket to specified port */
   check(bind(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) >= 0,
@@ -51,7 +50,7 @@ main(int argc, char const* argv[])
 {
   check(argc == 2, "USAGE: ./socket_v1 <port>");
 
-  int port = 30000; /* default port number */
+  int port = 0;
   port = atoi(argv[1]);
 
   int sockfd = 0;
@@ -61,7 +60,7 @@ main(int argc, char const* argv[])
   /* Listening to incoming connections */
   listen(sockfd, MAX_CONNECTION);
   log_info("Connection Successful!");
-  log_info("Waiting for client..");
+  log_info("Waiting for client...");
 
   int cli_sockfd;
   struct sockaddr_in cli_addr;
