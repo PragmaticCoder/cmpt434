@@ -39,6 +39,7 @@ setup_server(int port)
   /* bind the socket to specified port */
   check(bind(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) >= 0,
         "Error detected during binding");
+
   return sockfd;
 
 error:
@@ -48,7 +49,6 @@ error:
 int
 main(int argc, char const* argv[])
 {
-
   check(argc == 2, "USAGE: ./socket_v1 <port>");
 
   int port = 30000; /* default port number */
@@ -61,16 +61,17 @@ main(int argc, char const* argv[])
   /* Listening to incoming connections */
   listen(sockfd, MAX_CONNECTION);
   log_info("Connection Successful!");
+  log_info("Waiting for client..");
 
   int cli_sockfd;
-  struct cli_addr;
+  struct sockaddr_in cli_addr;
   socklen_t clilen;
 
   cli_sockfd = accept(sockfd, (struct sockaddr*)&cli_addr, &clilen);
   check(sockfd >= 0, "Server Setup using %s:%s Failed", argv[1], argv[2]);
 
   /* Client-Server Communication */
-  char buf[MAX] = '\0';
+  char buf[MAX];
 
   while (1) {
     /* Receive message from client */
@@ -86,8 +87,8 @@ main(int argc, char const* argv[])
     bzero(buf, MAX);
     fgets(buf, sizeof(buf), stdin);
 
-    n = write(cli_sockfd, buf, strlen(buf));
-    check(n >= 0, "Error while writing to Socket");
+    status = write(cli_sockfd, buf, strlen(buf));
+    check(status >= 0, "Error while writing to Socket");
 
     if (strncmp("quit", buf, 4) == 0)
       break;
