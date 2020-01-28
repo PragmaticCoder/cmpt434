@@ -4,7 +4,7 @@ TESTS_DIR			:= ./tests
 
 CC						:= gcc
 INCLUDES			:= -I$(SRC_DIR)
-CFLAGS				:= -g -std=c99 -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(INCLUDES) $(OPTFLAGS)
+CFLAGS				:= -g -std=c99 -O2 -Wall -Isrc -rdynamic -DNDEBUG $(INCLUDES) $(OPTFLAGS)
 LDFLAGS				:= -ldl -lm $(OPTLIBS)
 PREFIX				?= /usr/local
 
@@ -12,7 +12,7 @@ SOURCES				:= $(wildcard $(SRC_DIR)/**/*.c src/*.c)
 OBJECTS				:= $(patsubst %.c, %.o, $(SOURCES))
 
 TEST_SOURCES	:= $(wildcard $(TESTS_DIR)/*_tests.c)
-TESTS					:= $(patsubst %.c, %.tst, $(TEST_SOURCES))
+TESTS					:= $(patsubst %.c, %, $(TEST_SOURCES))
 
 PROGRAMS_SRC	:= $(wildcard bin/*.c)
 PROGRAMS			:= $(patsubst %.c, %, $(PROGRAMS_SRC))
