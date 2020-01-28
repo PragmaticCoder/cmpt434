@@ -14,15 +14,15 @@ struct HashNode
 };
 
 char*
-_copy(char* s);
+_Hashtable_copy(char* s);
 
 unsigned
-_hash(char* s);
+_Hashtable_hash(char* s);
 
 struct HashNode*
-get(char* s);
+_Hashtable_get(char* s);
 
 struct HashNode*
-put(char* name, char* value);
+_Hashtable_put(char* name, char* value);
 
 #endif

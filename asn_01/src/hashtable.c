@@ -6,7 +6,7 @@
 static struct HashNode* hashtab[HASHSIZE]; /* pointer table */
 
 char*
-_copy(char* s) /* make a duplicate of s */
+_Hashtable_copy(char* s) /* make a duplicate of s */
 {
   char* p;
   p = (char*)malloc(strlen(s) + 1); /* +1 for ’\0’ */
@@ -15,9 +15,9 @@ _copy(char* s) /* make a duplicate of s */
   return p;
 }
 
-/* _hash: form hash value for string s */
+/* _Hashtable_hash: form hash value for string s */
 unsigned
-_hash(char* s)
+_Hashtable_hash(char* s)
 {
   unsigned hash_value;
   for (hash_value = 0; *s != '\0'; s++)
@@ -25,13 +25,13 @@ _hash(char* s)
   return hash_value % HASHSIZE;
 }
 
-/* get: look for s in hashtab */
+/* Hashtable_get: look for s in hashtab */
 struct HashNode*
-get(char* s)
+Hashtable_get(char* s)
 {
   struct HashNode* np;
 
-  for (np = hashtab[_hash(s)]; np != NULL; np = np->next)
+  for (np = hashtab[_Hashtable_hash(s)]; np != NULL; np = np->next)
     if (strcmp(s, np->name) == 0)
       return np; /* found */
 
@@ -39,24 +39,24 @@ get(char* s)
 }
 
 struct HashNode*
-put(char* name, char* value)
+Hashtable_put(char* name, char* value)
 {
   struct HashNode* np;
   unsigned hash_value;
-  if ((np = get(name)) == NULL) { /* not found */
+  if ((np = Hashtable_get(name)) == NULL) { /* not found */
     np = (struct HashNode*)malloc(sizeof(*np));
 
-    if (np == NULL || (np->name = _copy(name)) == NULL)
+    if (np == NULL || (np->name = _Hashtable_copy(name)) == NULL)
       return NULL;
 
-    hash_value = _hash(name);
+    hash_value = _Hashtable_hash(name);
     np->next = hashtab[hash_value];
     hashtab[hash_value] = np;
   } else {                  /* already there */
     free((void*)np->value); /*free previous value */
   }
 
-  if ((np->value = _copy(value)) == NULL)
+  if ((np->value = _Hashtable_copy(value)) == NULL)
     return NULL;
 
   return np;

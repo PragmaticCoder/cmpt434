@@ -2,8 +2,9 @@ SRC_DIR=./src
 BUILD_DIR=./build
 TESTS_DIR=./tests
 
-CC=gcc
 INCLUDES=-I$(SRC_DIR)
+
+CC=gcc
 CFLAGS=-g -std=c99 -O2 -Wall -Wextra -Werror -Wno-unused-function -Wno-unused-but-set-parameter\
 		  -Wno-unused-parameter -Wno-address -rdynamic -DNDEBUG -Du_char="unsigned char"\
 		  -DNDEBUG $(INCLUDES) $(OPTFLAGS)
@@ -35,15 +36,15 @@ $(TESTS_DIR)/%.tst:	$(TESTS_DIR)/%.c
 
 $(TARGET): CFLAGS += -fPIC
 $(TARGET): $(OBJECTS)
-	ar rcs $@ $(OBJECTS)
-	ranlib $@
+	@ar rcs $@ $(OBJECTS)
+	@ranlib $@
 
 $(SO_TARGET): $(OBJECTS)
 	$(CC) $(LDFLAGS) -shared -o $@ $(OBJECTS)
 
 build:
-	mkdir -p $(BUILD_DIR)
-	mkdir -p $(TESTS_DIR)
+	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(TESTS_DIR)
 
 .PHONY: rebuild
 rebuild: clean all ## Clean and rebuild
