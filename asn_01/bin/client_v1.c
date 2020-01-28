@@ -29,7 +29,7 @@ connect_server(const char* host, uint32_t port)
 
   /* Specify destination address */
   struct sockaddr_in serv_addr;
-  memset((char*)&serv_addr, sizeof(serv_addr));
+  bzero((char*)&serv_addr, sizeof(serv_addr));
 
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_port = htons(port);
