@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define HASHSIZE 101
+#define HASHSIZE 100
 
 static struct HashNode* hashtab[HASHSIZE]; /* pointer table */
 
@@ -15,16 +15,10 @@ struct HashNode
   char* value;
 };
 
-char*
-_Hashtable_copy(char* s);
-
-unsigned
-_Hashtable_hash(char* s);
+struct HashNode*
+Hashtable_get(char* s);
 
 struct HashNode*
-_Hashtable_get(char* s);
-
-struct HashNode*
-_Hashtable_put(char* name, char* value);
+Hashtable_put(char* name, char* value);
 
 #endif
