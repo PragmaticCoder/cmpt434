@@ -6,7 +6,7 @@ INCLUDES=-I$(SRC_DIR)
 
 CC=gcc
 CFLAGS=-g -std=c99 -O2 -Wall -Wextra -Werror -Wno-unused-function -Wno-unused-but-set-parameter\
-		  -Wno-unused-parameter -Wno-address -rdynamic -DNDEBUG -Du_char="unsigned char"\
+		  -Wno-unused-parameter -Wno-address -Wno-unused-variable -rdynamic -DNDEBUG -Du_char="unsigned char"\
 		  -DNDEBUG $(INCLUDES) $(OPTFLAGS)
 
 LDFLAGS=-ldl -lm $(OPTLIBS)
