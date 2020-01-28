@@ -3,8 +3,11 @@
 
 #include <netdb.h>
 #include <netinet/in.h>
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -17,7 +20,7 @@
 struct hostent* server;
 
 int
-connect_server(const char* host, const char* port)
+connect_server(const char* host, uint32_t port)
 {
   /* Socket creation */
   int sockfd = 0;
@@ -26,7 +29,7 @@ connect_server(const char* host, const char* port)
 
   /* Specify destination address */
   struct sockaddr_in serv_addr;
-  bzero((char*)&serv_addr, sizeof(serv_addr));
+  memset((char*)&serv_addr, sizeof(serv_addr));
 
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_port = htons(port);

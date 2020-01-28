@@ -1,24 +1,27 @@
-SRC_DIR				:= ./src
-BUILD_DIR			:= ./build
-TESTS_DIR			:= ./tests
+SRC_DIR=./src
+BUILD_DIR=./build
+TESTS_DIR=./tests
 
-CC						:= gcc
-INCLUDES			:= -I$(SRC_DIR)
-CFLAGS				:= -g -std=c99 -O2 -Wall -Isrc -rdynamic -DNDEBUG $(INCLUDES) $(OPTFLAGS)
-LDFLAGS				:= -ldl -lm $(OPTLIBS)
-PREFIX				?= /usr/local
+CC=gcc
+INCLUDES=-I$(SRC_DIR)
+CFLAGS=-g -std=c99 -O2 -Wall -Wextra -Werror -Wno-unused-function \
+		  -Wno-unused-parameter -Wno-address -rdynamic -DNDEBUG -Du_char="unsigned char"\
+		  -DNDEBUG $(INCLUDES) $(OPTFLAGS)
 
-SOURCES				:= $(wildcard $(SRC_DIR)/**/*.c src/*.c)
-OBJECTS				:= $(patsubst %.c, %.o, $(SOURCES))
+LDFLAGS=-ldl -lm $(OPTLIBS)
+PREFIX?=/usr/local
 
-TEST_SOURCES	:= $(wildcard $(TESTS_DIR)/*_tests.c)
-TESTS					:= $(patsubst %.c, %, $(TEST_SOURCES))
+SOURCES=$(wildcard $(SRC_DIR)/**/*.c src/*.c)
+OBJECTS=$(patsubst %.c, %.o, $(SOURCES))
 
-PROGRAMS_SRC	:= $(wildcard bin/*.c)
-PROGRAMS			:= $(patsubst %.c, %, $(PROGRAMS_SRC))
+TEST_SOURCES=$(wildcard $(TESTS_DIR)/*_tests.c)
+TESTS=$(patsubst %.c, %, $(TEST_SOURCES))
 
-TARGET				:= $(BUILD_DIR)/libasn_01.a
-SO_TARGET			:= $(patsubst %.a, %.so,$(TARGET))
+PROGRAMS_SRC=$(wildcard bin/*.c)
+PROGRAMS=$(patsubst %.c, %, $(PROGRAMS_SRC))
+
+TARGET=$(BUILD_DIR)/libasn_01.a
+SO_TARGET=$(patsubst %.a, %.so,$(TARGET))
 
 all: target tests
 
