@@ -8,9 +8,15 @@ _Hashtable_copy(char* s) /* make a duplicate of s */
 {
   char* p;
   p = (char*)malloc(strlen(s) + 1); /* +1 for ’\0’ */
-  if (p != NULL)
-    strcpy(p, s);
+  check_mem(p);
+
+  strcpy(p, s);
   return p;
+
+error:
+  if (p)
+    free(p);
+  return NULL;
 }
 
 /* _Hashtable_hash: form hash value for string s */
@@ -41,16 +47,18 @@ Hashtable_put(char* name, char* value)
 {
   struct HashNode* np;
   unsigned hash_value;
-  if ((np = Hashtable_get(name)) == NULL) { /* not found */
-    np = (struct HashNode*)malloc(sizeof(*np));
 
-    if (np == NULL || (np->name = _Hashtable_copy(name)) == NULL)
+  if ((np = Hashtable_get(name)) == NULL) { /* not found */
+    np = (HashNode_t*)malloc(sizeof(*np));
+    check_mem(np);
+
+    if ((np->name = _Hashtable_copy(name)) == NULL)
       return NULL;
 
     hash_value = _Hashtable_hash(name);
     np->next = hashtab[hash_value];
     hashtab[hash_value] = np;
-  } else {                  /* already there */
+  } else {                  /* already exists */
     free((void*)np->value); /*free previous value */
   }
 
@@ -58,4 +66,9 @@ Hashtable_put(char* name, char* value)
     return NULL;
 
   return np;
+
+  error:
+  if (np)
+    free(np);
+  return NULL;
 }
