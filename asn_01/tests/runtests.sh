@@ -5,7 +5,7 @@ RED='\033[0;31m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
-for i in tests/*_tests.tst; do
+for i in tests/*_tests; do
     if test -f $i; then
         if $VALGRIND ./$i 2>>tests/tests.log; then
             echo "${GREEN}$i PASS${NC}"
