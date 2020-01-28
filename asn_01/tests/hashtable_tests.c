@@ -30,7 +30,7 @@ test_put_success()
 {
 
   lib_Hashtable_put func_Hashtable_put = dlsym(lib, "Hashtable_put");
-  mu_assert(func_Hashtable_put != NULL, "Failed to create Hash Node.");
+  mu_assert(func_Hashtable_put != NULL, "Failed to find Hashtable_put function.");
 
   char* key = "name";
   char * value = "Alvi";
@@ -45,12 +45,32 @@ test_put_success()
 }
 
 char*
+test_get_success()
+{
+
+  lib_Hashtable_get func_Hashtable_get = dlsym(lib, "Hashtable_get");
+  mu_assert(func_Hashtable_get != NULL, "Failed to find Hashtable_get function.");
+
+  char* key = "name";
+  char * value = "Alvi";
+
+  HashNode_t* node = func_Hashtable_get("name");
+  mu_assert(node != NULL, "Failed to get key from hashtable");
+  
+  mu_assert(strcmp(node->name, key) == 0, "Failed: HashNode key mismatch");
+  mu_assert(strcmp(node->value, value) == 0, "Failed: HashNode value mismatch");
+  
+  return NULL;
+}
+
+char*
 all_tests()
 {
   mu_suite_start();
 
   mu_run_test(test_dlopen);
   mu_run_test(test_put_success);
+  mu_run_test(test_get_success);
 
   return NULL;
 }
