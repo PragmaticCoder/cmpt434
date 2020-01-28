@@ -5,6 +5,8 @@ RED='\033[0;31m'
 CYAN='\033[0;36m'
 NC='\033[0m'
 
+# VALGRIND='valgrind'
+
 for i in tests/*_tests; do
     if test -f $i; then
         if $VALGRIND ./$i 2>>tests/tests.log; then
