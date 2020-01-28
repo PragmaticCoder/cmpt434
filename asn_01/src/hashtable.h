@@ -6,19 +6,19 @@
 
 #define HASHSIZE 100
 
-static struct HashNode* hashtab[HASHSIZE]; /* pointer table */
-
-struct HashNode
+typedef struct HashNode
 {
   struct HashNode* next;
   char* name;
   char* value;
-};
+} HashNode_t;
 
-struct HashNode*
+static struct HashNode* hashtab[HASHSIZE]; /* pointer table */
+
+HashNode_t*
 Hashtable_get(char* s);
 
-struct HashNode*
+HashNode_t*
 Hashtable_put(char* name, char* value);
 
 #endif

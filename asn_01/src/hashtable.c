@@ -24,7 +24,7 @@ _Hashtable_hash(char* s)
 }
 
 /* Hashtable_get: look for s in hashtab */
-struct HashNode*
+HashNode_t*
 Hashtable_get(char* s)
 {
   struct HashNode* np;
@@ -36,7 +36,7 @@ Hashtable_get(char* s)
   return NULL; /* not found */
 }
 
-struct HashNode*
+HashNode_t*
 Hashtable_put(char* name, char* value)
 {
   struct HashNode* np;

@@ -6,7 +6,6 @@
 #include <dlfcn.h>
 #include <string.h>
 
-typedef struct HashNode HashNode_t;
 
 typedef HashNode_t* (*lib_Hashtable_get)(const char* data);
 typedef HashNode_t* (*lib_Hashtable_put)(const char* key, const char* value);
