@@ -1,16 +1,8 @@
 #undef NDEBUG
 
 #include <dbg.h>
-#include <stdlib.h>
+#include <hashtable.h>
 
-struct HashNode
-{
-  struct HashNode* next;
-  char* name;
-  char* value;
-};
-
-#define HASHSIZE 101
 static struct HashNode* hashtab[HASHSIZE]; /* pointer table */
 
 char*
