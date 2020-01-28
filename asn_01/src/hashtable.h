@@ -6,6 +6,8 @@
 
 #define HASHSIZE 101
 
+static struct HashNode* hashtab[HASHSIZE]; /* pointer table */
+
 struct HashNode
 {
   struct HashNode* next;

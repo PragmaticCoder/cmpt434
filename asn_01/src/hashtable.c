@@ -1,9 +1,7 @@
 #undef NDEBUG
 
-#include <dbg.h>
-#include <hashtable.h>
-
-static struct HashNode* hashtab[HASHSIZE]; /* pointer table */
+#include "hashtable.h"
+#include "dbg.h"
 
 char*
 _Hashtable_copy(char* s) /* make a duplicate of s */
