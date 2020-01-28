@@ -4,7 +4,7 @@ TESTS_DIR=./tests
 
 CC=gcc
 INCLUDES=-I$(SRC_DIR)
-CFLAGS=-g -std=c99 -O2 -Wall -Wextra -Werror -Wno-unused-function \
+CFLAGS=-g -std=c99 -O2 -Wall -Wextra -Werror -Wno-unused-function -Wno-unused-but-set-parameter\
 		  -Wno-unused-parameter -Wno-address -rdynamic -DNDEBUG -Du_char="unsigned char"\
 		  -DNDEBUG $(INCLUDES) $(OPTFLAGS)
 
