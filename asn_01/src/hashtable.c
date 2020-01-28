@@ -1,6 +1,7 @@
 #undef NDEBUG
 
 #include <dbg.h>
+#include <stdlib.h>
 
 struct HashNode
 {
