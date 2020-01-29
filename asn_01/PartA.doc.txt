@@ -24,7 +24,7 @@ without imbedded blanks or punctuation or other special characters.
 of the server (or proxy server – see below) that it should connect to, and read 
 commands from standard input. 
 
-/* ---------------------- TCP Server API Documentation ---------------------- */
+/* ---------------------- TCP SERVER API DOCUMENTATION ---------------------- */
 
 • Command: add key value
   add (key, value) pair, if no existing pair with same key value
