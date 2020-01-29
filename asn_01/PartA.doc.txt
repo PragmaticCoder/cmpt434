@@ -14,8 +14,8 @@ service, in C.
 
 - Both keys and values are ascii strings with length at most 40 characters.
 
-- You can assume that each string includes only alphanumeric characters, 
-without imbedded blanks or punctuation or other special characters. 
+- We assumption is such that each string includes only alphanumeric characters, 
+  without imbedded blanks or punctuation or other special characters. 
 
 - There can be at most one (key, value) pair stored in the system for any 
   particular key.
@@ -23,23 +23,6 @@ without imbedded blanks or punctuation or other special characters.
 - Your client should take as command line arguments the host name and port number 
   of the server (or proxy server – see below) that it should connect to, and read 
   commands from standard input. 
-
-/* ---------------------- TCP SERVER API DOCUMENTATION ---------------------- */
-
-• Command: add key value
-  add (key, value) pair, if no existing pair with same key value
-
-• Command: getvalue key
-  Return value from matching (key, value) pair, if any
-
-• Command: getall
-  Return all (key, value) pairs
-
-• Command: remove key
-  Remove matching (key, value) pair, if any
-
-• Command: quit
-  Terminate client
 
 /* --------------------- SERVER ARCHITECTURE COMPONENTS --------------------- */
 
@@ -50,7 +33,35 @@ without imbedded blanks or punctuation or other special characters.
   design choice was made with an attempt to simulate a NOSQL Database.
 
 - COMMAND PARSER DESIGN DECISION:
-  
+
+  The server receives the commands from the client over the TCP Socket as
+  standard input. Commands are single line and command description are
+  documented in TCP SERVER API DOCUMENTATION section.
+
+  The parser implementation is 
+
+/* ---------------------- TCP SERVER API DOCUMENTATION ---------------------- */
+
+• Command:      Add item to database
+  Usage:        add key value
+  Description:  Add (key, value) pair, if no existing pair with same key value
+
+• Command:      Get Item from Database
+  Usage:        getvalue key
+  Description:  Return value from matching (key, value) pair, if any
+
+• Command:      Get all items
+  Usage:        getall
+  Description:  Return all (key, value) pairs
+
+• Command:      Remove item from database
+  Usage:        remove key
+  Description:  Remove matching (key, value) pair, if any
+
+• Command:      Quit Session
+  Usage:        quit
+  Description:  Terminate client
+
 /* -------------------------------------------------------------------------- */
 /*                                 QUESTION 2                                 */
 /* -------------------------------------------------------------------------- */
