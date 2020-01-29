@@ -21,8 +21,8 @@ without imbedded blanks or punctuation or other special characters.
   particular key.
 
 - Your client should take as command line arguments the host name and port number 
-of the server (or proxy server – see below) that it should connect to, and read 
-commands from standard input. 
+  of the server (or proxy server – see below) that it should connect to, and read 
+  commands from standard input. 
 
 /* ---------------------- TCP SERVER API DOCUMENTATION ---------------------- */
 
@@ -41,6 +41,16 @@ commands from standard input.
 • Command: quit
   Terminate client
 
+/* --------------------- SERVER ARCHITECTURE COMPONENTS --------------------- */
+
+- DATABASE DESIGN DECISION:
+
+  Our Database is implemented using hashtables to store key value pair. 
+  It has capacity to store 20 items in total and all keys are unique. This
+  design choice was made with an attempt to simulate a NOSQL Database.
+
+- COMMAND PARSER DESIGN DECISION:
+  
 /* -------------------------------------------------------------------------- */
 /*                                 QUESTION 2                                 */
 /* -------------------------------------------------------------------------- */
