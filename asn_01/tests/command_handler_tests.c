@@ -21,7 +21,7 @@ test_dlopen()
 }
 
 char*
-test_get_words()
+test_split_into_words()
 {
   lib_Split_Into_Words func_split_into_words = dlsym(lib, "split_into_words");
   mu_assert(func_split_into_words != NULL, "Failed to find get_word function.");
@@ -54,7 +54,7 @@ all_tests()
   mu_suite_start();
 
   mu_run_test(test_dlopen);
-  mu_run_test(test_get_words);
+  mu_run_test(test_split_into_words);
   // mu_run_test(test_get_cmd_type);
   // mu_run_test(test_get_params);
   mu_run_test(test_dlclose);
