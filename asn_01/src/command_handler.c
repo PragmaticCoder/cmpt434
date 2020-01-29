@@ -18,9 +18,9 @@ split_into_words(char* str, char** words)
 }
 
 void
-command_handler(char* str, char** words)
+command_handler(char* user_input)
 {
-  
+
 }
 
 int

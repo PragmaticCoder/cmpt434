@@ -7,6 +7,7 @@
 
 typedef char* (*lib_Get_Cmd_Type)(char* msg);
 typedef char* (*lib_Split_Into_Words)(char* msg, char** words);
+typedef void (*lib_Command_Handler)(char* user_input);
 
 char* lib_file = "./build/libasn_01.so";
 void* lib = NULL;
@@ -40,6 +41,21 @@ test_split_into_words()
 }
 
 char*
+test_command_handler_put_success()
+{
+  lib_Command_Handler func_command_handler = dlsym(lib, "command_handler");
+  mu_assert(func_command_handler != NULL, "Failed to find command_handler function.");
+  
+  return NULL;
+}
+
+char*
+test_command_handler_get_success()
+{
+  return NULL;
+}
+
+char*
 test_dlclose()
 {
   int rc = dlclose(lib);
@@ -55,8 +71,8 @@ all_tests()
 
   mu_run_test(test_dlopen);
   mu_run_test(test_split_into_words);
-  // mu_run_test(test_get_cmd_type);
-  // mu_run_test(test_get_params);
+  mu_run_test(test_command_handler_put_success);
+  mu_run_test(test_command_handler_get_success);
   mu_run_test(test_dlclose);
 
   return NULL;
