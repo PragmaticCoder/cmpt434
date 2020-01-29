@@ -29,7 +29,7 @@ test_get_words()
   char input[50] = "add name Alvi";
 
   char** words = func_get_words(input);
-  // mu_assert(words != NULL, "Failed: Array of Words is pointing to NULL");
+  mu_assert(words != NULL, "Failed: Array of Words is pointing to NULL");
   // mu_assert((sizeof(words)/sizeof(*words[0])) == 3, "Failed: length of array is not 3");
   
   // int i;
