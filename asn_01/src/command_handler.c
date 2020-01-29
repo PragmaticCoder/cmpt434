@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "hashtable.h"
+
 void
 split_into_words(char* str, char** words)
 {
@@ -17,10 +19,67 @@ split_into_words(char* str, char** words)
   }
 }
 
-void
+char*
 command_handler(char* user_input)
 {
+  int error_status = 0;
+  int already_present = 0;
 
+  check(user_input != NULL, "");
+  check(strlen(user_input) > 0, "");
+
+  char* words[] = { NULL, NULL, NULL };
+
+  split_into_words(user_input, words);
+
+  char* cmd = words[0];
+
+  if (strcmp(cmd, "put") == 0) {
+    check(words[1] != NULL, "Argument 1 cannot be null");
+    check(words[2] != NULL, "Argument 2 cannot be null");
+
+    /* First checking if the key is already present in DB */
+
+    HashNode_t* existingNode = Hashtable_get(words[1]);
+    if (existingNode != NULL) {
+      already_present = 1;
+      goto error;
+    }
+    /* And then attempting to store key, value pair into database */
+    HashNode_t* hashNode = Hashtable_put(words[1], words[2]);
+
+    if ((strcmp(hashNode->name, words[1]) != 0) ||
+        (strcmp(hashNode->value, words[2]) != 0)) {
+
+      log_err("KEY: %s", hashNode->name);
+      log_err("VALUE: %s", hashNode->name);
+
+      error_status = 1;
+      goto error;
+    }
+  }
+
+error:
+  if (user_input == NULL)
+    return "User input cannot be NULL";
+
+  if (strlen(user_input) <= 0)
+    return "User input cannot be empty string";
+
+  if (words[1] == NULL)
+    return "First command param missing!";
+
+  if (words[2] == NULL)
+    return "Second command param missing!";
+
+  if (error_status == 1)
+    return "Error detected while interacting with database";
+
+  if (already_present == 1) {
+    return "Item already present in database";
+  }
+
+  return "Success";
 }
 
 int
