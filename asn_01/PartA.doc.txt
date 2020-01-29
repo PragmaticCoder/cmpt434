@@ -1,0 +1,39 @@
+# Assignment 01
+# Name: Alvi Akbar
+# NSID: ala273
+# Student NO: 11118887
+
+/* -------------------------------------------------------------------------- */
+/*                                   Part A                                   */
+/* -------------------------------------------------------------------------- */
+
+/* ------------------------------- Question 1 ------------------------------- */
+
+- In this part we implement  servers and a client for a simple look-up 
+service, in C. 
+
+- The service provides storage and retrieval of (key, value) pairs. 
+
+- Both keys and values are ascii strings with length at most 40 characters.
+
+- You can assume that each string includes only alphanumeric characters, 
+without imbedded blanks or punctuation or other special characters. 
+
+- There can be at most one (key, value) pair stored in the 
+system for any particular key. 
+
+- Your client should take as command line arguments the host name and port number 
+of the server (or proxy server – see below) that it should connect to, and read 
+commands from standard input. 
+
+- Our client supportss the following commands:
+
+• add key value : add (key, value) pair, if no existing pair with same key value
+• getvalue key : return value from matching (key, value) pair, if any
+• getall : return all (key, value) pairs
+• remove key : remove matching (key, value) pair, if any
+• quit : terminate client
+
+/* ------------------------------- Question 2 ------------------------------- */
+
+/* ------------------------------- Question 3 ------------------------------- */

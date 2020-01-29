@@ -60,7 +60,7 @@ main(int argc, char const* argv[])
   /* Listening to incoming connections */
   listen(sockfd, MAX_CONNECTION);
   log_info("Connection Successful!");
-  log_info("Waiting for client...");
+  log_info("Waiting for client to connect...");
 
   int cli_sockfd;
   struct sockaddr_in cli_addr;
