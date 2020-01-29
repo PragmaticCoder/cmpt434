@@ -4,12 +4,10 @@
 # Student NO: 11118887
 
 /* -------------------------------------------------------------------------- */
-/*                                   Part A                                   */
+/*                                 QUESTION 1                                 */
 /* -------------------------------------------------------------------------- */
 
-/* ------------------------------- Question 1 ------------------------------- */
-
-- In this part we implement  servers and a client for a simple look-up 
+- In this part we implement TCP Server and a TCP Client for a simple look-up 
 service, in C. 
 
 - The service provides storage and retrieval of (key, value) pairs. 
@@ -19,21 +17,34 @@ service, in C.
 - You can assume that each string includes only alphanumeric characters, 
 without imbedded blanks or punctuation or other special characters. 
 
-- There can be at most one (key, value) pair stored in the 
-system for any particular key. 
+- There can be at most one (key, value) pair stored in the system for any 
+  particular key.
 
 - Your client should take as command line arguments the host name and port number 
 of the server (or proxy server – see below) that it should connect to, and read 
 commands from standard input. 
 
-- Our client supportss the following commands:
+/* ---------------------- TCP Server API Documentation ---------------------- */
 
-• add key value : add (key, value) pair, if no existing pair with same key value
-• getvalue key : return value from matching (key, value) pair, if any
-• getall : return all (key, value) pairs
-• remove key : remove matching (key, value) pair, if any
-• quit : terminate client
+• Command: add key value
+  add (key, value) pair, if no existing pair with same key value
 
-/* ------------------------------- Question 2 ------------------------------- */
+• Command: getvalue key
+  Return value from matching (key, value) pair, if any
 
-/* ------------------------------- Question 3 ------------------------------- */
+• Command: getall
+  Return all (key, value) pairs
+
+• Command: remove key
+  Remove matching (key, value) pair, if any
+
+• Command: quit
+  Terminate client
+
+/* -------------------------------------------------------------------------- */
+/*                                 QUESTION 2                                 */
+/* -------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------- */
+/*                                 QUESTION 3                                 */
+/* -------------------------------------------------------------------------- */
