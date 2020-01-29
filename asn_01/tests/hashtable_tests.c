@@ -62,6 +62,14 @@ test_get_success()
   return NULL;
 }
 
+char *test_dlclose()
+{
+    int rc = dlclose(lib);
+    mu_assert(rc == 0, "Failed to close Hashtable lib.");
+
+    return NULL;
+}
+
 char*
 all_tests()
 {
@@ -70,6 +78,7 @@ all_tests()
   mu_run_test(test_dlopen);
   mu_run_test(test_put_success);
   mu_run_test(test_get_success);
+  mu_run_test(test_dlclose);
 
   return NULL;
 }
