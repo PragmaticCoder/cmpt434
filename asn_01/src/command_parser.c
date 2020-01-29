@@ -3,45 +3,19 @@
 #include <stdio.h>
 #include <string.h>
 
-/*
-  COMMANDS:
-• add key value : add (key, value) pair, if no existing pair with same key value
-• getvalue key : return value from matching (key, value) pair, if any
-• getall : return all (key, value) pairs
-• remove key : remove matching (key, value) pair, if any
-• quit : terminate client
-*/
-
-char**
-get_words(char* msg)
+void
+get_word(char* str, char** words)
 {
-  char* words[3];
-
-  char* pch = strtok(msg, " ");
-  check(pch != NULL, "Incorrect string format. No string detected");
+  char* pch = strtok(str, " ");
 
   int i = 0;
-  while (pch != NULL && i < 3) {
-    words[i] = pch;
+  words[i] = pch;
+
+  while (pch != NULL) {
+    i++;
     pch = strtok(NULL, " ");
+    words[i] = pch;
   }
-
-  return words;
-
-error:
-  return words;
-}
-
-char*
-get_cmd_type(char* msg)
-{
-  char** inputs = get_words(msg);
-
-  int i;
-  for (i = 0; i < 3; i++)
-    printf("%s", inputs[i]);
-
-  return "add";
 }
 
 int

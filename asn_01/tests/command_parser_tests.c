@@ -6,7 +6,7 @@
 #include <string.h>
 
 typedef char* (*lib_Get_Cmd_Type)(char* msg);
-typedef char** (*lib_Get_Words)(char* words);
+typedef char* (*lib_Get_Word)(char* msg, char** words);
 
 char* lib_file = "./build/libasn_01.so";
 void* lib = NULL;
@@ -23,52 +23,18 @@ test_dlopen()
 char*
 test_get_words()
 {
-  lib_Get_Words func_get_words = dlsym(lib, "get_words");
-  mu_assert(func_get_words != NULL, "Failed to find get_words function.");
+  lib_Get_Word func_get_word = dlsym(lib, "get_word");
+  mu_assert(func_get_word != NULL, "Failed to find get_word function.");
 
-  char input[50] = "add name Alvi";
+  char input[50] = "put name Alvi";
 
-  char** words = func_get_words(input);
-  mu_assert(words != NULL, "Failed: Array of Words is pointing to NULL");
-  // mu_assert((sizeof(words)/sizeof(*words[0])) == 3, "Failed: length of array is not 3");
-  
-  // int i;
-  // for (i = 0; i < 3; i++)
-  debug("%p", words);
-  // debug("words[0]: %s", words[0]);
-  // mu_assert(strcmp(*words[0], "add"), "Failed: add - wrong word!");
-  // mu_assert(strcmp(words[1], "name"), "Failed: name - wrong word!");
-  // mu_assert(strcmp(words[2], "Alvi"), "Failed: value - wrong word!");
+  char* words[] = { NULL, NULL, NULL };
 
-  return NULL;
-}
+  func_get_word(input, words);
 
-char*
-test_get_cmd_type()
-{
-  lib_Get_Cmd_Type func_get_cmd_type = dlsym(lib, "get_cmd_type");
-  mu_assert(func_get_cmd_type != NULL, "Failed to find get_cmd_type function.");
-
-  char* cmd = NULL;
-  char input[50] = "add name Alvi";
-
-  cmd = func_get_cmd_type(input);
-
-  mu_assert(strcmp(cmd, "add") == 0, "Failed: extracting cmd from string");
-
-  return NULL;
-}
-
-char*
-test_get_param()
-{
-
-  return NULL;
-}
-
-char*
-test_get_params()
-{
+  mu_assert(strcmp(words[0], "put") == 0, "Failed: put - wrong word!");
+  mu_assert(strcmp(words[1], "name") == 0, "Failed: name - wrong key!");
+  mu_assert(strcmp(words[2], "Alvi") == 0, "Failed: name - wrong key!");
 
   return NULL;
 }
