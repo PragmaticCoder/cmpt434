@@ -32,13 +32,21 @@ service, in C.
   It has capacity to store 20 items in total and all keys are unique. This
   design choice was made with an attempt to simulate a NOSQL Database.
 
+
 - COMMAND PARSER DESIGN DECISION:
 
   The server receives the commands from the client over the TCP Socket as
   standard input. Commands are single line and command description are
   documented in TCP SERVER API DOCUMENTATION section.
 
-  The parser implementation is 
+  The parser is implemented using C's regex library. This design choice is partly 
+  selected because of better performace of parsing string instead of utilizing C's 
+  standard string library support. 
+  
+  Personally, I prefer using bstring (Better String 
+  library - Mike Steinert) over C's standard string library, however since this
+  assignment is about sockets, I used C's regex library to keep parsing implementation
+  simple.
 
 /* ---------------------- TCP SERVER API DOCUMENTATION ---------------------- */
 
