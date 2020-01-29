@@ -29,9 +29,6 @@ all: target tests
 
 target: build $(TARGET) $(SO_TARGET) $(PROGRAMS)
 
-# dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
-# dev: all
-
 $(TESTS_DIR)/%.tst:	$(TESTS_DIR)/%.c
 	$(CC) $(CFLAGS) $< $(TARGET) -o $@ $(LDFLAGS)
 

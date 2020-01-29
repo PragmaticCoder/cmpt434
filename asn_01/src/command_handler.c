@@ -6,14 +6,14 @@
 void
 split_into_words(char* str, char** words)
 {
-  char* pch = strtok(str, " ");
+  char* ptr = strtok(str, " ");
 
   int i = 0;
-  words[i] = pch;
+  words[i] = ptr;
 
-  while (pch != NULL) {
-    pch = strtok(NULL, " ");
-    words[++i] = pch;
+  while (ptr != NULL) {
+    ptr = strtok(NULL, " ");
+    words[++i] = ptr;
   }
 }
 
