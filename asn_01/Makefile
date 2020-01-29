@@ -7,8 +7,8 @@ INCLUDES=-I$(SRC_DIR)
 CC=gcc
 CFLAGS=-g -std=c99 -O2 -Wall -Wextra -Werror -Wno-unused-function\
 			-Wno-unused-but-set-parameter -Wno-unused-parameter -Wno-address\
-			-Wno-unused-variable -rdynamic -DNDEBUG -Du_char="unsigned char"\
-		  -DNDEBUG $(INCLUDES) $(OPTFLAGS)
+			-Wno-unused-variable -Wno-return-local-addr -rdynamic -DNDEBUG\
+			-Du_char="unsigned char" -DNDEBUG $(INCLUDES) $(OPTFLAGS)
 
 LDFLAGS=-ldl -lm $(OPTLIBS)
 PREFIX?=/usr/local
@@ -29,8 +29,8 @@ all: target tests
 
 target: build $(TARGET) $(SO_TARGET) $(PROGRAMS)
 
-dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
-dev: all
+# dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
+# dev: all
 
 $(TESTS_DIR)/%.tst:	$(TESTS_DIR)/%.c
 	$(CC) $(CFLAGS) $< $(TARGET) -o $@ $(LDFLAGS)

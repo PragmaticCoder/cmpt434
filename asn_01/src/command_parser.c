@@ -1,6 +1,7 @@
+#undef NDEBUG
 #include "dbg.h"
-#include <regex.h>
 #include <stdio.h>
+#include <string.h>
 
 /*
   COMMANDS:
@@ -11,13 +12,36 @@
 • quit : terminate client
 */
 
-/* Utility Functions */
-int
-dummy_print(const char* msg)
+char**
+get_words(char* msg)
 {
+  char* words[3];
 
-  printf("A STRING: %s\n", msg);
-  return (0);
+  char* pch = strtok(msg, " ");
+  check(pch != NULL, "Incorrect string format. No string detected");
+
+  int i = 0;
+  while (pch != NULL && i < 3) {
+    words[i] = pch;
+    pch = strtok(NULL, " ");
+  }
+
+  return words;
+
+error:
+  return words;
+}
+
+char*
+get_cmd_type(char* msg)
+{
+  char** inputs = get_words(msg);
+
+  int i;
+  for (i = 0; i < 3; i++)
+    printf("%s", inputs[i]);
+
+  return "add";
 }
 
 int
