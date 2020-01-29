@@ -17,6 +17,12 @@ split_into_words(char* str, char** words)
   }
 }
 
+void
+command_handler(char* str, char** words)
+{
+  
+}
+
 int
 fail_function(const char* msg)
 {
