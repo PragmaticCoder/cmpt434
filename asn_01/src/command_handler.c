@@ -24,6 +24,7 @@ command_handler(char* user_input)
 {
   int error_status = 0;
   int already_present = 0;
+  int item_not_available = 0;
 
   check(user_input != NULL, "");
   check(strlen(user_input) > 0, "");
@@ -34,14 +35,15 @@ command_handler(char* user_input)
 
   char* cmd = words[0];
 
+  /* PUT Command Handler */
   if (strcmp(cmd, "put") == 0) {
     check(words[1] != NULL, "Argument 1 cannot be null");
     check(words[2] != NULL, "Argument 2 cannot be null");
 
     /* First checking if the key is already present in DB */
+    HashNode_t* existing_node = Hashtable_get(words[1]);
 
-    HashNode_t* existingNode = Hashtable_get(words[1]);
-    if (existingNode != NULL) {
+    if (existing_node != NULL) {
       already_present = 1;
       goto error;
     }
@@ -59,6 +61,16 @@ command_handler(char* user_input)
     }
   }
 
+  /* GET Command Handler */
+  if (strcmp(cmd, "get") == 0) {
+    check(words[1] != NULL, "Argument 1 cannot be null");
+    HashNode_t* node = Hashtable_get(words[1]);
+    check(node != NULL, "Item not available");
+
+    return node->value;
+  }
+
+  /*All error handlers */
 error:
   if (user_input == NULL)
     return "User input cannot be NULL";
@@ -75,15 +87,11 @@ error:
   if (error_status == 1)
     return "Error detected while interacting with database";
 
-  if (already_present == 1) {
+  if (already_present == 1)
     return "Item already present in database";
-  }
+
+  if (item_not_available == 1)
+    return "Item not available";
 
   return "Success";
-}
-
-int
-fail_function(const char* msg)
-{
-  return (1);
 }

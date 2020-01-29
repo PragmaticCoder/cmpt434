@@ -44,7 +44,8 @@ char*
 test_command_handler_put_success()
 {
   lib_Command_Handler func_command_handler = dlsym(lib, "command_handler");
-  mu_assert(func_command_handler != NULL, "Failed to find command_handler function.");
+  mu_assert(func_command_handler != NULL,
+            "Failed to find command_handler function.");
 
   char input[50] = "put name Alvi";
 
@@ -59,6 +60,17 @@ test_command_handler_put_success()
 char*
 test_command_handler_get_success()
 {
+  lib_Command_Handler func_command_handler = dlsym(lib, "command_handler");
+  mu_assert(func_command_handler != NULL,
+            "Failed to find command_handler function.");
+
+  char input[50] = "get name";
+
+  char* response_msg;
+
+  response_msg = func_command_handler(input);
+  mu_assert(strcmp(response_msg, "Alvi") == 0, "Command Failure!");
+
   return NULL;
 }
 
