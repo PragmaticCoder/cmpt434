@@ -4,7 +4,7 @@
 #include <string.h>
 
 void
-get_word(char* str, char** words)
+split_into_words(char* str, char** words)
 {
   char* pch = strtok(str, " ");
 
@@ -12,9 +12,8 @@ get_word(char* str, char** words)
   words[i] = pch;
 
   while (pch != NULL) {
-    i++;
     pch = strtok(NULL, " ");
-    words[i] = pch;
+    words[++i] = pch;
   }
 }
 

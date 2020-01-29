@@ -6,7 +6,7 @@
 #include <string.h>
 
 typedef char* (*lib_Get_Cmd_Type)(char* msg);
-typedef char* (*lib_Get_Word)(char* msg, char** words);
+typedef char* (*lib_Split_Into_Words)(char* msg, char** words);
 
 char* lib_file = "./build/libasn_01.so";
 void* lib = NULL;
@@ -23,14 +23,14 @@ test_dlopen()
 char*
 test_get_words()
 {
-  lib_Get_Word func_get_word = dlsym(lib, "get_word");
-  mu_assert(func_get_word != NULL, "Failed to find get_word function.");
+  lib_Split_Into_Words func_split_into_words = dlsym(lib, "split_into_words");
+  mu_assert(func_split_into_words != NULL, "Failed to find get_word function.");
 
   char input[50] = "put name Alvi";
 
   char* words[] = { NULL, NULL, NULL };
 
-  func_get_word(input, words);
+  func_split_into_words(input, words);
 
   mu_assert(strcmp(words[0], "put") == 0, "Failed: put - wrong word!");
   mu_assert(strcmp(words[1], "name") == 0, "Failed: name - wrong key!");
