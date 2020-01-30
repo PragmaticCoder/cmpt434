@@ -2,6 +2,7 @@
 #define MAP_H
 
 #include <string.h>
+#include "dbg.h"
 
 struct Map_node_t;
 typedef struct Map_node_t Map_node_t;
