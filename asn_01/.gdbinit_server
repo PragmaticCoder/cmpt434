@@ -5,10 +5,12 @@ set pagination off
 set logging file output.txt
 set logging on
 
-set args 30000
+set args 38000
 
 b main
 b server_setup
+
+b 97
 
 # For server
 

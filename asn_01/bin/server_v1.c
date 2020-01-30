@@ -1,6 +1,7 @@
 #undef NDEBUG
 
 #include <dbg.h>
+#include <dlfcn.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +16,10 @@
 
 #define MAX 1024
 #define MAX_CONNECTION 10
+
+typedef char* (*lib_Command_Handler)(char* user_input);
+char* lib_file = "./build/libasn_01.so";
+void* lib = NULL;
 
 int
 setup_server(int port)
@@ -48,6 +53,8 @@ error:
 int
 main(int argc, char const* argv[])
 {
+  lib_Command_Handler func_command_handler = dlsym(lib, "command_handler");
+
   check(argc == 2, "USAGE: ./socket_v1 <port>");
 
   int port = 0;
@@ -80,11 +87,20 @@ main(int argc, char const* argv[])
     status = read(cli_sockfd, buf, sizeof(buf));
     check(status >= 0, "Error received while receiving message from client.");
 
-    printf("CLIENT: %s\n", buf);
+    debug("CLIENT: %s", buf);
 
-    /* Reply to client */
+    /* Resetting Buffer and writing standard input value*/
     bzero(buf, MAX);
+
     fgets(buf, sizeof(buf), stdin);
+
+    // char* input_msg = malloc(strlen(buf) + 1);
+    // strcpy((char*)b, buf);
+
+    debug("Input Message: input_msg: %s", input_msg);
+
+    char* response_msg = func_command_handler(buf);
+    debug("user_input: %s\n", response_msg);
 
     status = write(cli_sockfd, buf, strlen(buf));
     check(status >= 0, "Error while writing to Socket");
