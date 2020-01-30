@@ -1,5 +1,7 @@
-#ifndef MAP_H
-#define MAP_H
+/* This is inherited from my previous project used in CMPT 332 assignment */
+
+#ifndef _asn_01_MAP_H
+#define _asn_01_MAP_H
 
 #include <string.h>
 #include "dbg.h"

@@ -1,3 +1,5 @@
+
+/* This is inherited from my previous CMPT 332 assignment */
 #include "map.h"
 #include <stdlib.h>
 #include <string.h>
@@ -26,20 +28,22 @@ Map_newnode(const char* key, void* value, int vsize)
   int ksize = strlen(key) + 1;
   int voffset = ksize + ((sizeof(void*) - ksize) % sizeof(void*));
   node = malloc(sizeof(*node) + voffset + vsize);
-  if (!node)
-    return NULL;
+  check_mem(node);
+
   memcpy(node + 1, key, ksize);
   node->hash = Map_hash(key);
   node->value = ((char*)(node + 1)) + voffset;
+
   memcpy(node->value, value, vsize);
+
   return node;
+error:
+  return NULL;
 }
 
 static int
 Map_bucketidx(Map_base_t* m, unsigned hash)
 {
-  /* If the implementation is changed to allow a non-power-of-2 bucket count,
-   * the line below should be changed to use mod instead of AND */
   return hash & (m->nbuckets - 1);
 }
 
@@ -57,7 +61,6 @@ Map_resize(Map_base_t* m, int nbuckets)
   Map_node_t *nodes, *node, *next;
   Map_node_t** buckets;
   int i;
-  /* Chain all nodes together */
   nodes = NULL;
   i = m->nbuckets;
   while (i--) {
@@ -69,7 +72,7 @@ Map_resize(Map_base_t* m, int nbuckets)
       node = next;
     }
   }
-  /* Reset buckets */
+
   buckets = realloc(m->buckets, sizeof(*m->buckets) * nbuckets);
   if (buckets != NULL) {
     m->buckets = buckets;
@@ -77,9 +80,8 @@ Map_resize(Map_base_t* m, int nbuckets)
   }
   if (m->buckets) {
     memset(m->buckets, 0, sizeof(*m->buckets) * m->nbuckets);
-    /* Re-add nodes to buckets */
     node = nodes;
-    while (node) {
+    while (node != NULL) {
       next = node->next;
       Map_addnode(m, node);
       node = next;
@@ -141,6 +143,7 @@ Map_set_(Map_base_t* m, const char* key, void* value, int vsize)
     memcpy((*next)->value, value, vsize);
     return 0;
   }
+
   /* Add new node */
   node = Map_newnode(key, value, vsize);
   if (node == NULL)
