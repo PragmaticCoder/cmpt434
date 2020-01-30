@@ -95,13 +95,14 @@ main(int argc, char const* argv[])
 
     fgets(buf, sizeof(buf), stdin);
 
-    // char* input_msg = malloc(strlen(buf) + 1);
-    // memcpy((char*)input_msg, buf);
+    /**
+     * TODO:
+     * 1. read from stream into character pointer
+     * 2. pass this characterr pointer to library function
+     * 3. print the response message using debug statement
+     * 4. store the char* type response to stream
+    */
 
-    // debug("Input Message: input_msg: %s", input_msg);
-
-    // char* response_msg = func_command_handler(buf);
-    // debug("user_input: %s\n", response_msg);
 
     status = send(cli_sockfd, buf, strlen(buf), 0);
     check(status >= 0, "Error while Send() to Socket");
