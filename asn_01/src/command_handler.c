@@ -24,7 +24,7 @@ command_handler(char* user_input)
 {
   debug("Inside command_handler library function");
   debug("User Input: %s", user_input);
-  
+
   int error_status = 0;
   int already_present = 0;
   int item_not_available = 0;
@@ -33,10 +33,13 @@ command_handler(char* user_input)
   check(strlen(user_input) > 0, "");
 
   char* words[] = { NULL, NULL, NULL };
-
   split_into_words(user_input, words);
 
   char* cmd = words[0];
+
+  debug("COMMAND: %s", cmd);
+  debug("Command Argument 1: %s", words[1]);
+  debug("Command Argument 2: %s", words[2]);
 
   /* PUT Command Handler */
   if (strcmp(cmd, "put") == 0) {
@@ -57,7 +60,7 @@ command_handler(char* user_input)
         (strcmp(hashNode->value, words[2]) != 0)) {
 
       log_err("KEY: %s", hashNode->name);
-      log_err("VALUE: %s", hashNode->name);
+      log_err("VALUE: %s", hashNode->value);
 
       error_status = 1;
       goto error;
@@ -96,5 +99,5 @@ error:
   if (item_not_available == 1)
     return "Item not available";
 
-  return "Success";
+  return "Success\0";
 }

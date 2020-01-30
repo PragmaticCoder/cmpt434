@@ -60,7 +60,7 @@ main(int argc, char const* argv[])
   lib_Command_Handler func_command_handler = dlsym(lib, "command_handler");
   check(func_command_handler != NULL,
         "Failed to find command_handler function.");
-        
+
   check(argc == 2, "USAGE: ./socket_v1 <port>");
 
   int port = 0;
@@ -91,25 +91,26 @@ main(int argc, char const* argv[])
 
     int status = 0;
 
+    debug("START OF WHILE LOOP");
+
     status = recv(cli_sockfd, buf, sizeof(buf), 0);
     check(status >= 0, "Error while recv() from socket.");
     check(buf != NULL, "Cannot read from empty buffer");
 
     debug("CLIENT: %s", buf);
 
-    char* response_msg = func_command_handler((char*)buf);
+    char response_msg[MAX];
+
+    strcpy(response_msg, func_command_handler((char*)buf));
     debug("response_msg: %s", response_msg);
 
-    bzero(buf, MAX);                /* clearing buffer */
-    fgets(buf, sizeof(buf), stdin); /* reading from stdin */
-
-    status = send(cli_sockfd, buf, sizeof(buf), 0);
+    status = send(cli_sockfd, response_msg, sizeof(response_msg), 0);
     check(status >= 0, "Error while Send() to Socket");
 
     if (strncmp("quit", buf, 4) == 0)
       break;
   }
-  
+
   /* close all socket */
   close(cli_sockfd);
   close(sockfd);

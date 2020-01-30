@@ -5,13 +5,10 @@ set pagination off
 set logging file output.txt
 set logging on
 
-set args 34821
+set args 33334
 
 b main
-b Socket_setup
-b command_handler
-b command_handler.c:28
-
+b 109
 r
 
 refresh

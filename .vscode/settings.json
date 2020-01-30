@@ -2,7 +2,9 @@
   "files.associations": {
     "*.c": "c",
     "*.h": "c",
-    "typeinfo": "c"
+    "typeinfo": "c",
+    "*.tcc": "c",
+    "fstream": "c"
   },
   "clang-format.fallbackStyle": "Mozilla"
 }
