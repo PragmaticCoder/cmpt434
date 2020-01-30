@@ -70,8 +70,12 @@ command_handler(char* user_input)
   /* GET Command Handler */
   if (strcmp(cmd, "get") == 0) {
     check(words[1] != NULL, "Argument 1 cannot be null");
+
     HashNode_t* node = Hashtable_get(words[1]);
-    check(node != NULL, "Item not available");
+    if(node == NULL){
+      item_not_available = 1;
+      goto error;
+    }
 
     return node->value;
   }

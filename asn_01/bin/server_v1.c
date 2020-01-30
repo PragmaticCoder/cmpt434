@@ -70,6 +70,7 @@ main(int argc, char const* argv[])
   sockfd = Socket_setup(port);
   check(sockfd >= 0, "Server Setup using %s:%s Failed", argv[1], argv[2]);
 
+search_for_clients:
   /* Listening to incoming connections */
   listen(sockfd, MAX_CONNECTION);
   log_info("Connection Successful!");
@@ -99,6 +100,11 @@ main(int argc, char const* argv[])
 
     debug("CLIENT: %s", buf);
 
+    if (strncmp("quit", buf, 4) == 0) {
+      close(cli_sockfd);
+      goto search_for_clients;
+    }
+
     char response_msg[MAX];
 
     strcpy(response_msg, func_command_handler((char*)buf));
@@ -106,13 +112,8 @@ main(int argc, char const* argv[])
 
     status = send(cli_sockfd, response_msg, sizeof(response_msg), 0);
     check(status >= 0, "Error while Send() to Socket");
-
-    if (strncmp("quit", buf, 4) == 0)
-      break;
   }
 
-  /* close all socket */
-  close(cli_sockfd);
   close(sockfd);
 
   return (0);
