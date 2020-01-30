@@ -22,7 +22,7 @@ char* lib_file = "./build/libasn_01.so";
 void* lib = NULL;
 
 int
-setup_server(int port)
+Socket_setup(int port)
 {
   /* create the server socket */
   int sockfd = 0;
@@ -61,7 +61,7 @@ main(int argc, char const* argv[])
   port = atoi(argv[1]);
 
   int sockfd = 0;
-  sockfd = setup_server(port);
+  sockfd = Socket_setup(port);
   check(sockfd >= 0, "Server Setup using %s:%s Failed", argv[1], argv[2]);
 
   /* Listening to incoming connections */
@@ -78,13 +78,17 @@ main(int argc, char const* argv[])
 
   /* Client-Server Communication */
   char buf[MAX];
+  int nbytes = 0;
 
   while (1) {
     /* Receive message from client */
     bzero(buf, MAX);
 
     int status = 0;
-    status = read(cli_sockfd, buf, sizeof(buf));
+    // status = read(cli_sockfd, buf, sizeof(buf));
+
+    // TODO: replace read and write with send and recv protocols
+
     check(status >= 0, "Error received while receiving message from client.");
 
     debug("CLIENT: %s", buf);
@@ -94,13 +98,13 @@ main(int argc, char const* argv[])
 
     fgets(buf, sizeof(buf), stdin);
 
-    char* input_msg = malloc(strlen(buf) + 1);
+    // char* input_msg = malloc(strlen(buf) + 1);
     // memcpy((char*)input_msg, buf);
 
     // debug("Input Message: input_msg: %s", input_msg);
 
-    char* response_msg = func_command_handler(buf);
-    debug("user_input: %s\n", response_msg);
+    // char* response_msg = func_command_handler(buf);
+    // debug("user_input: %s\n", response_msg);
 
     status = write(cli_sockfd, buf, strlen(buf));
     check(status >= 0, "Error while writing to Socket");
