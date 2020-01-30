@@ -97,7 +97,7 @@ main(int argc, char const* argv[])
     // char* input_msg = malloc(strlen(buf) + 1);
     // strcpy((char*)b, buf);
 
-    debug("Input Message: input_msg: %s", input_msg);
+    // debug("Input Message: input_msg: %s", input_msg);
 
     char* response_msg = func_command_handler(buf);
     debug("user_input: %s\n", response_msg);
