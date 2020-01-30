@@ -94,8 +94,8 @@ main(int argc, char const* argv[])
 
     fgets(buf, sizeof(buf), stdin);
 
-    // char* input_msg = malloc(strlen(buf) + 1);
-    // strcpy((char*)b, buf);
+    char* input_msg = malloc(strlen(buf) + 1);
+    // memcpy((char*)input_msg, buf);
 
     // debug("Input Message: input_msg: %s", input_msg);
 
