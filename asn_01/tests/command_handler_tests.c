@@ -5,7 +5,6 @@
 #include <dlfcn.h>
 #include <string.h>
 
-typedef char* (*lib_Get_Cmd_Type)(char* msg);
 typedef char* (*lib_Split_Into_Words)(char* msg, char** words);
 typedef char* (*lib_Command_Handler)(char* user_input);
 

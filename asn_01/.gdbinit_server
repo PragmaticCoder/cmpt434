@@ -5,14 +5,12 @@ set pagination off
 set logging file output.txt
 set logging on
 
-set args 38000
+set args 34821
 
 b main
-b server_setup
-
-b 97
-
-# For server
+b Socket_setup
+b command_handler
+b command_handler.c:28
 
 r
 

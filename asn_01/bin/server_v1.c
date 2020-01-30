@@ -18,6 +18,7 @@
 #define MAX_CONNECTION 10
 
 typedef char* (*lib_Command_Handler)(char* user_input);
+
 char* lib_file = "./build/libasn_01.so";
 void* lib = NULL;
 
@@ -53,8 +54,13 @@ error:
 int
 main(int argc, char const* argv[])
 {
-  lib_Command_Handler func_command_handler = dlsym(lib, "command_handler");
+  lib = dlopen(lib_file, RTLD_NOW);
+  check(lib != NULL, "Failed to open the library to test.");
 
+  lib_Command_Handler func_command_handler = dlsym(lib, "command_handler");
+  check(func_command_handler != NULL,
+        "Failed to find command_handler function.");
+        
   check(argc == 2, "USAGE: ./socket_v1 <port>");
 
   int port = 0;
@@ -78,7 +84,6 @@ main(int argc, char const* argv[])
 
   /* Client-Server Communication */
   char buf[MAX];
-  int nbytes = 0;
 
   while (1) {
     /* Receive message from client */
@@ -88,25 +93,34 @@ main(int argc, char const* argv[])
 
     status = recv(cli_sockfd, buf, sizeof(buf), 0);
     check(status >= 0, "Error while recv() from socket.");
+    check(buf != NULL, "Cannot read from empty buffer");
+
     debug("CLIENT: %s", buf);
 
     /**
      * TODO:
-     * 1. read from stream into character pointer
-     * 2. pass this characterr pointer to library function
      * 3. print the response message using debug statement
      * 4. store the char* type response to stream
      */
 
-    int i = 0;
-    for (i = 0; i < (int)strlen(buf); i++)
-      debug("%c", (char)buf[i]);
+    // char* user_input = malloc(sizeof(buf)* strlen(buf));
+
+    // while (fgets((char*)user_input, strlen(buf), (FILE*)buf) != NULL)
+    // puts(user_input);
+
+    // debug("user_input: %s", user_input);
+
+    // char* response_msg = func_command_handler((char*)user_input);
+    char* user_input = "put name Alvi";
+    char* response_msg = func_command_handler((char*)user_input);
+    // char* response_msg = func_command_handler((char*)buf);
+    debug("response_msg: %s", response_msg);
 
     bzero(buf, MAX);                /* clearing buffer */
     fgets(buf, sizeof(buf), stdin); /* reading from stdin */
 
-    status = send(cli_sockfd, buf, strlen(buf), 0);
-    check(status >= 0, "Error while Send() to Socket");
+    // status = send(cli_sockfd, sizeof(char), MAX, 0);
+    // check(status >= 0, "Error while Send() to Socket");
 
     if (strncmp("quit", buf, 4) == 0)
       break;
@@ -120,5 +134,6 @@ main(int argc, char const* argv[])
 
 error:
   debug("Error Detected in Server Program!");
+
   return (-1);
 }

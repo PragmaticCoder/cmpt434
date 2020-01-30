@@ -1,8 +1,3 @@
-# Assignment 01
-# Name: Alvi Akbar
-# NSID: ala273
-# Student NO: 11118887
-
 /* -------------------------------------------------------------------------- */
 /*                                 QUESTION 1                                 */
 /* -------------------------------------------------------------------------- */
@@ -39,14 +34,7 @@ service, in C.
   standard input. Commands are single line and command description are
   documented in TCP SERVER API DOCUMENTATION section.
 
-  The parser is implemented using C's regex library. This design choice is partly 
-  selected because of better performace of parsing string instead of utilizing C's 
-  standard string library support. 
   
-  Personally, I prefer using bstring (Better String 
-  library - Mike Steinert) over C's standard string library, however since this
-  assignment is about sockets, I used C's regex library to keep parsing implementation
-  simple.
 
 /* ---------------------- TCP SERVER API DOCUMENTATION ---------------------- */
 

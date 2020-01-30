@@ -22,6 +22,9 @@ split_into_words(char* str, char** words)
 char*
 command_handler(char* user_input)
 {
+  debug("Inside command_handler library function");
+  debug("User Input: %s", user_input);
+  
   int error_status = 0;
   int already_present = 0;
   int item_not_available = 0;
