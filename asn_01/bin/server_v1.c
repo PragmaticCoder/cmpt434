@@ -97,35 +97,19 @@ main(int argc, char const* argv[])
 
     debug("CLIENT: %s", buf);
 
-    /**
-     * TODO:
-     * 3. print the response message using debug statement
-     * 4. store the char* type response to stream
-     */
-
-    // char* user_input = malloc(sizeof(buf)* strlen(buf));
-
-    // while (fgets((char*)user_input, strlen(buf), (FILE*)buf) != NULL)
-    // puts(user_input);
-
-    // debug("user_input: %s", user_input);
-
-    // char* response_msg = func_command_handler((char*)user_input);
-    char* user_input = "put name Alvi";
-    char* response_msg = func_command_handler((char*)user_input);
-    // char* response_msg = func_command_handler((char*)buf);
+    char* response_msg = func_command_handler((char*)buf);
     debug("response_msg: %s", response_msg);
 
     bzero(buf, MAX);                /* clearing buffer */
     fgets(buf, sizeof(buf), stdin); /* reading from stdin */
 
-    // status = send(cli_sockfd, sizeof(char), MAX, 0);
-    // check(status >= 0, "Error while Send() to Socket");
+    status = send(cli_sockfd, buf, sizeof(buf), 0);
+    check(status >= 0, "Error while Send() to Socket");
 
     if (strncmp("quit", buf, 4) == 0)
       break;
   }
-
+  
   /* close all socket */
   close(cli_sockfd);
   close(sockfd);
