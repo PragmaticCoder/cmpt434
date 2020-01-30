@@ -99,5 +99,5 @@ error:
   if (words[2] == NULL)
     return "Second command param missing!";
 
-  return "Success\0";
+  return "Success";
 }
