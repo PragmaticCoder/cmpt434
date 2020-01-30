@@ -90,19 +90,20 @@ main(int argc, char const* argv[])
     check(status >= 0, "Error while recv() from socket.");
     debug("CLIENT: %s", buf);
 
-    /* Resetting Buffer and writing standard input value*/
-    bzero(buf, MAX);
-
-    fgets(buf, sizeof(buf), stdin);
-
     /**
      * TODO:
      * 1. read from stream into character pointer
      * 2. pass this characterr pointer to library function
      * 3. print the response message using debug statement
      * 4. store the char* type response to stream
-    */
+     */
 
+    int i = 0;
+    for (i = 0; i < (int)strlen(buf); i++)
+      debug("%c", (char)buf[i]);
+
+    bzero(buf, MAX);                /* clearing buffer */
+    fgets(buf, sizeof(buf), stdin); /* reading from stdin */
 
     status = send(cli_sockfd, buf, strlen(buf), 0);
     check(status >= 0, "Error while Send() to Socket");
