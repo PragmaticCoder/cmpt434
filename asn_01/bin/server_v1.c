@@ -85,12 +85,9 @@ main(int argc, char const* argv[])
     bzero(buf, MAX);
 
     int status = 0;
-    // status = read(cli_sockfd, buf, sizeof(buf));
 
-    // TODO: replace read and write with send and recv protocols
-
-    check(status >= 0, "Error received while receiving message from client.");
-
+    status = recv(cli_sockfd, buf, sizeof(buf), 0);
+    check(status >= 0, "Error while recv() from socket.");
     debug("CLIENT: %s", buf);
 
     /* Resetting Buffer and writing standard input value*/
@@ -106,8 +103,8 @@ main(int argc, char const* argv[])
     // char* response_msg = func_command_handler(buf);
     // debug("user_input: %s\n", response_msg);
 
-    status = write(cli_sockfd, buf, strlen(buf));
-    check(status >= 0, "Error while writing to Socket");
+    status = send(cli_sockfd, buf, strlen(buf), 0);
+    check(status >= 0, "Error while Send() to Socket");
 
     if (strncmp("quit", buf, 4) == 0)
       break;
