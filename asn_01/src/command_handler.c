@@ -78,6 +78,15 @@ command_handler(char* user_input)
 
   /*All error handlers */
 error:
+  if (error_status == 1)
+    return "Error detected while interacting with database";
+
+  if (already_present == 1)
+    return "Item already present in database";
+
+  if (item_not_available == 1)
+    return "Item not available";
+
   if (user_input == NULL)
     return "User input cannot be NULL";
 
@@ -89,15 +98,6 @@ error:
 
   if (words[2] == NULL)
     return "Second command param missing!";
-
-  if (error_status == 1)
-    return "Error detected while interacting with database";
-
-  if (already_present == 1)
-    return "Item already present in database";
-
-  if (item_not_available == 1)
-    return "Item not available";
 
   return "Success\0";
 }
