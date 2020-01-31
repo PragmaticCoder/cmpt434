@@ -1,6 +1,8 @@
 #undef NDEBUG
 
 #include "dbg.h"
+#include "libasn_01.h"
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,20 +10,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-
-void
-split_into_words(char* str, char** words)
-{
-  char* ptr = strtok(str, " ");
-
-  int i = 0;
-  words[i] = ptr;
-
-  while (ptr != NULL) {
-    ptr = strtok(NULL, " ");
-    words[++i] = ptr;
-  }
-}
 
 void
 Database_put(char* key, char* value)
@@ -93,12 +81,16 @@ Database_getall(char* value)
   char ch;
   FILE* fd = fopen("storage", "r");
   ch = getc(fd);
-  
+
   int i = 0;
   while (ch != EOF) {
     printf("%c", ch);
+
     ch = getc(fd);
-    value[i++] = ch;
+    debug("ch: %c", ch);
+    // strncat(value, &ch, 1);
+    append(value, ch);
+    // value[i++] = ch;
   }
 }
 
