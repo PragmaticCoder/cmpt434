@@ -43,18 +43,16 @@ Database_getval(char key[], char* value)
   FILE* fd = fopen("storage", "r");
 
   while (fgets(line, sizeof(line), fd)) {
-    debug("LINE: %s", line);
 
     if (strlen(line) <= 2) /* will skip if empty line*/
       continue;
 
     char* words[] = { NULL, NULL, NULL };
     split_into_words(line, words);
-    debug("Inside Database --- KEY: %s, VALUE: %s", words[0], words[1]);
 
     if (strcmp(key, words[0]) == 0) {
       debug("FOUND!!!: %s", words[1]);
-      value = words[1];
+      strcpy(value, words[1]);
       return 0;
     }
   }
@@ -90,7 +88,7 @@ command_handler(char* user_input)
     check(words[2] != NULL, "Argument 2 cannot be null");
 
     char value[50];
-    if (Database_getval(words[1], value) == 1) {
+    if (Database_getval(words[1], value) == 0) {
       debug("Already in Database!: %s: %s", words[1], value);
       return "Key already exists in DB.";
     }
@@ -113,6 +111,9 @@ command_handler(char* user_input)
     check_mem(result);
 
     strcpy(result, value);
+
+    debug("result: %s", result);
+    debug("value: %s", value);
 
     return result;
   }

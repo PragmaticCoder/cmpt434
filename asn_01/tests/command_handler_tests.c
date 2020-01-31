@@ -75,7 +75,15 @@ test_command_handler_get_success()
   char* response_msg;
 
   response_msg = func_command_handler(input);
-  mu_assert(strcmp(response_msg, "Alvi") == 0, "Command Failure!");
+  mu_assert(strncmp(response_msg, "Alvi", 4) == 0, "Error getting value during testing!");
+
+  strcpy(input, "get age");
+  response_msg = func_command_handler(input);
+  mu_assert(strncmp(response_msg, "26", 2) == 0, "Error getting value during testing!");
+
+  strcpy(input, "get gender");
+  response_msg = func_command_handler(input);
+  mu_assert(strncmp(response_msg, "male", 4) == 0, "Error getting value during testing!");
 
   return NULL;
 }
@@ -97,7 +105,7 @@ all_tests()
   mu_run_test(test_dlopen);
   mu_run_test(test_split_into_words);
   mu_run_test(test_command_handler_put_success);
-  // mu_run_test(test_command_handler_get_success);
+  mu_run_test(test_command_handler_get_success);
   mu_run_test(test_dlclose);
 
   return NULL;
