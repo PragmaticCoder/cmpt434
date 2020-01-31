@@ -71,21 +71,21 @@ main(int argc, char const* argv[])
 
     /* getting user input */
     printf("CLIENT: ");
-    fgets(buf, MAX - 1, stdin);
+    char *ptr = fgets(buf, MAX - 1, stdin);
 
-    n = write(sockfd, buf, strlen(buf));
+    n = write(sockfd, ptr, strlen(buf));
     check(n >= 0, "Error while writing to Socket");
 
     /* clear buffer and write response */
     /* message from server to buffer */
     bzero(buf, MAX);
 
-    n = read(sockfd, buf, MAX);
+    n = read(sockfd, ptr, MAX);
     check(n >= 0, "Error while reading from Socket");
 
     printf("SERVER: %s\n", buf);
 
-    if (strncmp("quit", buf, 4) == 0)
+    if (strncmp("quit", ptr, 4) == 0)
       break;
   }
 

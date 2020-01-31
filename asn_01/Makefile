@@ -17,10 +17,10 @@ SOURCES=$(wildcard $(SRC_DIR)/**/*.c src/*.c)
 OBJECTS=$(patsubst %.c, %.o, $(SOURCES))
 
 TEST_SOURCES=$(wildcard $(TESTS_DIR)/*_tests.c)
-TESTS=$(patsubst %.c, %, $(TEST_SOURCES))
+TESTS=$(patsubst %.c, %.o, $(TEST_SOURCES))
 
 PROGRAMS_SRC=$(wildcard bin/*.c)
-PROGRAMS=$(patsubst %.c, %, $(PROGRAMS_SRC))
+PROGRAMS=$(patsubst %.c, %.o, $(PROGRAMS_SRC))
 
 TARGET=$(BUILD_DIR)/libasn_01.a
 SO_TARGET=$(patsubst %.a, %.so,$(TARGET))
@@ -30,7 +30,7 @@ all: target tests
 target: build $(TARGET) $(SO_TARGET) $(PROGRAMS)
 
 $(TESTS_DIR)/%.tst:	$(TESTS_DIR)/%.c
-	$(CC) $(CFLAGS) $< $(TARGET) -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) $< -o $@ $(TARGET) $(LDFLAGS)
 
 $(TARGET): CFLAGS += -fPIC
 $(TARGET): $(OBJECTS)
@@ -38,7 +38,13 @@ $(TARGET): $(OBJECTS)
 	@ranlib $@
 
 $(SO_TARGET): $(OBJECTS)
-	$(CC) $(LDFLAGS) -shared -o $@ $(OBJECTS)
+	$(CC) -shared $(LDFLAGS) -o $@ $(OBJECTS) 
+
+$(PROGRAMS): $(PROGRAMS_SRC)
+	$(CC) $(CFLAGS) $< -o $@ $(TARGET) $(LDFLAGS)
+
+$(TESTS): $(TEST_SOURCES)
+	$(CC) $(CFLAGS) $< -o $@ $(TARGET) $(LDFLAGS)
 
 build:
 	@mkdir -p $(BUILD_DIR)
