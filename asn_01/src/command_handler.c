@@ -191,7 +191,7 @@ error:
     return "User input cannot be empty string";
 
   if (words[1] == NULL)
-    return "First command param missing!";
+    return "Wrong command! Please enter a valid command";
 
   if (words[2] == NULL)
     return "Second command param missing!";
