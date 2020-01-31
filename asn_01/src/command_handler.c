@@ -49,8 +49,9 @@ Database_getval(char key[], char* value)
 
     char* words[] = { NULL, NULL, NULL };
     split_into_words(line, words);
+    int len = strlen(words[1]);
 
-    if (strcmp(key, words[0]) == 0) {
+    if (strncmp(key, words[0], len - 2) == 0) {
       debug("FOUND!!!: %s", words[1]);
       strcpy(value, words[1]);
       return 0;

@@ -5,7 +5,7 @@ set pagination off
 set logging file output.txt
 set logging on
 
-set args 0.0.0.0 30000
+set args 0.0.0.0 33333
 
 b main
 b connect_server
