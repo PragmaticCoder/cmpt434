@@ -73,7 +73,6 @@ main(int argc, char const* argv[])
 search_for_clients:
   /* Listening to incoming connections */
   listen(sockfd, MAX_CONNECTION);
-  log_info("Connection Successful!");
   log_info("Waiting for client to connect...");
 
   int cli_sockfd;

@@ -23,9 +23,9 @@ service, in C.
 
 - DATABASE DESIGN DECISION:
 
-  Our Database is implemented using hashtables to store key value pair. 
-  It has capacity to store 20 items in total and all keys are unique. This
-  design choice was made with an attempt to simulate a NOSQL Database.
+  We chose a single store file to store the key value pairs. On a database put
+  operation, the file is opened from the command handler library and executes
+  the operations based on command provided.
 
 
 - COMMAND PARSER DESIGN DECISION:
@@ -34,7 +34,8 @@ service, in C.
   standard input. Commands are single line and command description are
   documented in TCP SERVER API DOCUMENTATION section.
 
-  
+  All utils functions such as the parser libray functions is being fetch from .so
+  file as dynamic libray. On
 
 /* ---------------------- TCP SERVER API DOCUMENTATION ---------------------- */
 
@@ -62,6 +63,14 @@ service, in C.
 /*                                 QUESTION 2                                 */
 /* -------------------------------------------------------------------------- */
 
+I design and implement a TCP-based “proxy” server. My proxy takes host name and 
+port number for server from question 1, which it will need to connect with. 
+
+Proxy server has liking for the lower-case characters “c”, “m”, “p”, and “t”,
+and whenever these are encountered in a value returned by the (real) server, 
+they are duplicated. For example, the returned value.
+
 /* -------------------------------------------------------------------------- */
 /*                                 QUESTION 3                                 */
 /* -------------------------------------------------------------------------- */
+
