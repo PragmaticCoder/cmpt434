@@ -1,5 +1,9 @@
+// NAME: ALVI AKBAR
+// STUDENT NO: 11118887
+// NSID: ALA273
+
+#include "commandLine.h"
 #include <arpa/inet.h>
-#include <commandLine.h>
 #include <dbg.h>
 #include <dictionary.h>
 #include <stdio.h>
@@ -70,7 +74,7 @@ main(int argc, char* argv[])
     }
   }
   return (0);
-  error:
+error:
   return (-1);
 }
 

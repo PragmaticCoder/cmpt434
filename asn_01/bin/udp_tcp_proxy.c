@@ -1,3 +1,7 @@
+// NAME: ALVI AKBAR
+// STUDENT NO: 11118887
+// NSID: ALA273
+
 #include <arpa/inet.h>
 #include <dbh.h>
 #include <stdio.h>
