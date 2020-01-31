@@ -10,7 +10,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define PORT 8080
+#define PORT 30000
 #define MAXLINE 1024
 
 // Driver code
@@ -35,7 +35,7 @@ main()
   servaddr.sin_port = htons(PORT);
   servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-  int n, len;
+  int n;
 
   sendto(sockfd,
          (const char*)hello,
@@ -51,7 +51,7 @@ main()
                  MAXLINE,
                  MSG_WAITALL,
                  (struct sockaddr*)&servaddr,
-                 &len);
+                 (unsigned*)sizeof(servaddr));
     buffer[n] = '\0';
     printf("Server : %s\n", buffer);
   }

@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define PORT 8080
+#define PORT 30000
 #define MAXLINE 1024
 #define MAX 1024
 
