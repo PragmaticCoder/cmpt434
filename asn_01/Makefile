@@ -72,7 +72,7 @@ clean-build: ## Remove build artifacts
 clean-debug: ## Remove debug artifacts
 	@echo "+ $@"
 	-$(RM) tests/tests.log
-	-$(RM) output.txt
+	-$(RM) output.txt storage
 	-$(RM) -r *.log
 	-$(RM) .gdb_history
 	-$(RM) -r vgcore*
