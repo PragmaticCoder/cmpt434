@@ -5,7 +5,7 @@ set pagination off
 set logging file output.txt
 set logging on
 
-set args 33334
+set args 31112
 
 b main
 b command_handler

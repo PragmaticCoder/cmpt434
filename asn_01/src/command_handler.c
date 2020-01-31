@@ -3,6 +3,7 @@
 #include "dbg.h"
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -23,22 +24,6 @@ split_into_words(char* str, char** words)
 }
 
 void
-_parser(char buffer[], char* command, u_int16_t size, u_int16_t* offset)
-{
-  int i = 0;
-
-  for (i = 0; i < size; i++) {
-    if (buffer[i] != ' ') {
-      command[i] = buffer[i];
-    } else {
-      command[i + 1] = '\0';
-      *offset += i + 1;
-      i = size;
-    }
-  }
-}
-
-void
 Database_put(char* key, char* value)
 {
   FILE* fd = fopen("storage", "a");
@@ -55,56 +40,26 @@ int
 Database_getval(char key[], char* value)
 {
   char line[256];
-  int fd;
-  int ndx = 0;
-  char keyLine[40];
-  int lung;
-  u_int16_t offset = 0;
-  int flag = 0;
+  FILE* fd = fopen("storage", "r");
 
-  fd = open("storage", O_RDONLY);
+  while (fgets(line, sizeof(line), fd)) {
+    debug("LINE: %s", line);
 
-  while ((lung = read(fd, line + ndx, 1) > 0) && (flag == 0)) {
-    ndx++;
+    if (strlen(line) <= 2) /* will skip if empty line*/
+      continue;
 
-    if (line[ndx - 1] == ' ') {
-      line[ndx - 1] = '\0';
+    char* words[] = { NULL, NULL, NULL };
+    split_into_words(line, words);
+    debug("Inside Database --- KEY: %s, VALUE: %s", words[0], words[1]);
 
-      if (strcmp(line, key) == 0) {
-        line[ndx - 1] = ' ';
-
-        while (line[ndx - 1] != '\n') {
-          read(fd, line + ndx, 1);
-
-          ndx++;
-        }
-
-        line[ndx - 1] = '\0';
-
-        _parser(line, keyLine, strlen(line), &offset);
-        _parser(line + offset, value, strlen(line), &offset);
-
-        flag = 1;
-      } else {
-        line[ndx - 1] = ' ';
-
-        while (line[ndx - 1] != '\n') {
-          read(fd, line + ndx, 1);
-
-          ndx++;
-        }
-      }
-
-      memset(line, 0, strlen(line));
-
-      ndx = 0;
-      offset = 0;
+    if (strcmp(key, words[0]) == 0) {
+      debug("FOUND!!!: %s", words[1]);
+      value = words[1];
+      return 0;
     }
   }
 
-  close(fd);
-
-  return flag;
+  return -1;
 }
 
 char*
@@ -134,21 +89,32 @@ command_handler(char* user_input)
     check(words[1] != NULL, "Argument 1 cannot be null");
     check(words[2] != NULL, "Argument 2 cannot be null");
 
-    /* TODO:First checking if the key is already present in DB */
+    char value[50];
+    if (Database_getval(words[1], value) == 1) {
+      debug("Already in Database!: %s: %s", words[1], value);
+      return "Key already exists in DB.";
+    }
 
     /* And then attempting to store key, value pair into database */
     Database_put(words[1], words[2]);
   }
 
   /* GET Command Handler */
+  char value[50];
   if (strcmp(cmd, "get") == 0) {
     check(words[1] != NULL, "Argument 1 cannot be null");
 
-    char value[50];
-    if (Database_getval(words[1], value) != 1) {
+    if (Database_getval(words[1], value) == -1) {
       item_not_available = 1;
       goto error;
     }
+
+    char* result = (char*)malloc(50 * sizeof(char));
+    check_mem(result);
+
+    strcpy(result, value);
+
+    return result;
   }
 
   /*All error handlers */
