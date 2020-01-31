@@ -8,7 +8,7 @@ set logging on
 set args 33334
 
 b main
-b 109
+b command_handler
 r
 
 refresh

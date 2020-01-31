@@ -23,7 +23,23 @@ split_into_words(char* str, char** words)
 }
 
 void
-Database_put(char* key, char * value)
+_parser(char buffer[], char* command, u_int16_t size, u_int16_t* offset)
+{
+  int i = 0;
+
+  for (i = 0; i < size; i++) {
+    if (buffer[i] != ' ') {
+      command[i] = buffer[i];
+    } else {
+      command[i + 1] = '\0';
+      *offset += i + 1;
+      i = size;
+    }
+  }
+}
+
+void
+Database_put(char* key, char* value)
 {
   FILE* fd = fopen("storage", "a");
 
@@ -33,6 +49,62 @@ Database_put(char* key, char * value)
   fputs("\n", fd);
 
   fclose(fd);
+}
+
+int
+Database_getval(char key[], char* value)
+{
+  char line[256];
+  int fd;
+  int ndx = 0;
+  char keyLine[40];
+  int lung;
+  u_int16_t offset = 0;
+  int flag = 0;
+
+  fd = open("storage", O_RDONLY);
+
+  while ((lung = read(fd, line + ndx, 1) > 0) && (flag == 0)) {
+    ndx++;
+
+    if (line[ndx - 1] == ' ') {
+      line[ndx - 1] = '\0';
+
+      if (strcmp(line, key) == 0) {
+        line[ndx - 1] = ' ';
+
+        while (line[ndx - 1] != '\n') {
+          read(fd, line + ndx, 1);
+
+          ndx++;
+        }
+
+        line[ndx - 1] = '\0';
+
+        _parser(line, keyLine, strlen(line), &offset);
+        _parser(line + offset, value, strlen(line), &offset);
+
+        flag = 1;
+      } else {
+        line[ndx - 1] = ' ';
+
+        while (line[ndx - 1] != '\n') {
+          read(fd, line + ndx, 1);
+
+          ndx++;
+        }
+      }
+
+      memset(line, 0, strlen(line));
+
+      ndx = 0;
+      offset = 0;
+    }
+  }
+
+  close(fd);
+
+  return flag;
 }
 
 char*
@@ -62,25 +134,22 @@ command_handler(char* user_input)
     check(words[1] != NULL, "Argument 1 cannot be null");
     check(words[2] != NULL, "Argument 2 cannot be null");
 
-    /* First checking if the key is already present in DB */
-    
+    /* TODO:First checking if the key is already present in DB */
 
     /* And then attempting to store key, value pair into database */
     Database_put(words[1], words[2]);
   }
 
   /* GET Command Handler */
-  // if (strcmp(cmd, "get") == 0) {
-  //   check(words[1] != NULL, "Argument 1 cannot be null");
+  if (strcmp(cmd, "get") == 0) {
+    check(words[1] != NULL, "Argument 1 cannot be null");
 
-  //   HashNode_t* node = Hashtable_get(words[1]);
-  //   if (node == NULL) {
-  //     item_not_available = 1;
-  //     goto error;
-  //   }
-
-  //   return node->value;
-  // }
+    char value[50];
+    if (Database_getval(words[1], value) != 1) {
+      item_not_available = 1;
+      goto error;
+    }
+  }
 
   /*All error handlers */
 error:
