@@ -43,6 +43,7 @@ $(SO_TARGET): $(OBJECTS)
 build:
 	@mkdir -p $(BUILD_DIR)
 	@mkdir -p $(TESTS_DIR)
+	@touch storage
 
 .PHONY: rebuild
 rebuild: clean all ## Clean and rebuild
