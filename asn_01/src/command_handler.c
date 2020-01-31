@@ -42,7 +42,7 @@ Database_getval(char key[], char* value)
     if (strncmp(key, words[0], len - 2) == 0) {
       debug("FOUND!!!: %s", words[1]);
       strcpy(value, words[1]);
-      
+
       fclose(fd);
       return 0;
     }
@@ -84,19 +84,23 @@ void
 Database_getall(char* value)
 {
   char ch;
+  char content[1024];
+
   FILE* fd = fopen("storage", "r");
-  ch = getc(fd);
 
-  int i = 0;
-  while (ch != EOF) {
-    printf("%c", ch);
+  do {
+    // Taking input single character at a time
+    char c = fgetc(fd);
 
-    ch = getc(fd);
-    debug("ch: %c", ch);
-    append(value, (char)ch);
-  }
-  
-  fclose(fd);
+    // Checking for end of file
+    if (feof(fd))
+      break;
+
+    printf("%c", c);
+  } while (1);
+
+  debug("CONTENT: %s", content);
+  strcpy(value, content);
 }
 
 char*
@@ -163,7 +167,7 @@ command_handler(char* user_input)
 
     Database_getall(all_items);
 
-    char* result = (char*)malloc(1000 * sizeof(char));
+    char* result = (char*)malloc(10000 * sizeof(char));
     check_mem(result);
 
     strcpy(result, value);
