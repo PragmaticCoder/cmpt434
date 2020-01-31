@@ -1,4 +1,5 @@
 #include <arpa/inet.h>
+#include <dbh.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,19 +21,13 @@ main(int argc, char* argv[])
   struct sockaddr_in serverSock;
   struct sockaddr_in tcpClientSock;
 
-  if (argc < 4) {
-    printf("Too few Argument");
-    return 1;
-  }
+  check(argc == 3, "Please provide three arguments.");
 
-  if ((clientFD = socket(PF_INET, SOCK_DGRAM, 0)) < 0) {
-    printf("Error in opening the Socket connection of UDP client\n");
-    exit(1);
-  }
-  if ((serverFD = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
-    printf("Error in opening the Socket connection of TCP Server\n");
-    exit(1);
-  }
+  check((clientFD = socket(PF_INET, SOCK_DGRAM, 0)) >= 0,
+        "Error opening UDP client socket connection");
+
+  check((serverFD = socket(PF_INET, SOCK_STREAM, 0)) >= 0,
+        "Error opening UDP server socket connection");
 
   memset(&clientSock, 0, sizeof(struct sockaddr_in));
 
@@ -46,31 +41,32 @@ main(int argc, char* argv[])
   serverSock.sin_addr.s_addr = htonl(INADDR_ANY);
   serverSock.sin_port = htons(atoi(argv[3]));
 
-  if (bind(serverFD,
-           (struct sockaddr*)&serverSock,
-           sizeof(struct sockaddr_in)) < 0) {
-    printf("Error in binding the Socket connection of TCP Server\n");
-    exit(1);
-  }
-  if (listen(serverFD, MAXPENDING) < 0) {
-    printf("Error in listing the Socket connection of TCP Server\n");
-    exit(1);
-  }
+  check((bind(serverFD,
+              (struct sockaddr*)&serverSock,
+              sizeof(struct sockaddr_in)) >= 0),
+        "Error in binding the Socket connection of TCP Server");
+
+  check(listen(serverFD, MAXPENDING) >= 0,
+        "Error in listing the Socket connection of TCP Server");
 
   while (1) {
 
-    if ((tcpClientFD =
-           accept(serverFD, (struct sockaddr*)&tcpClientSock, &fromSize)) < 0) {
-      printf("Error in Accepting the Socket connection of TCP Server\n");
-      exit(1);
-    }
-    printf("IP : %s Port %d\n\n",
-           inet_ntoa(tcpClientSock.sin_addr),
-           ntohs(tcpClientSock.sin_port));
+    check(((tcpClientFD = accept(
+              serverFD, (struct sockaddr*)&tcpClientSock, &fromSize)) >= 0),
+          "Error in Accepting the Socket connection of TCP Server");
+
+    log_info("IP : %s Port %d\n\n",
+             inet_ntoa(tcpClientSock.sin_addr),
+             ntohs(tcpClientSock.sin_port));
+
     HandleClient(tcpClientFD, clientFD);
   }
 
   close(clientFD);
+  return 0;
+
+error:
+  return (-1);
 }
 
 void
