@@ -1,3 +1,8 @@
+/**
+ * This MACRO Helper Function has been inherited from Zed's Books,
+ * Learn C the hard way with permission!
+ */
+
 #ifndef __dbg_h__
 #define __dbg_h__
 
