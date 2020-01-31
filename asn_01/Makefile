@@ -10,7 +10,7 @@ CFLAGS=-g -std=c99 -O2 -Wall -Wextra -Werror -Wno-unused-function\
 			-Wno-unused-variable -Wno-return-local-addr -Wno-sign-compare -Wno-pointer-sign\
 			-rdynamic -DNDEBUG -Du_char="unsigned char" -DNDEBUG $(INCLUDES) $(OPTFLAGS)
 
-LDFLAGS=-ldl -lpthread -lm $(OPTLIBS)
+LDFLAGS=-ldl -lm $(OPTLIBS)
 PREFIX?=/usr/local
 
 SOURCES=$(wildcard $(SRC_DIR)/**/*.c src/*.c)
