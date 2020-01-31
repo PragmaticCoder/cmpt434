@@ -89,6 +89,32 @@ test_command_handler_get_success()
 }
 
 char*
+test_command_get_all()
+{
+  lib_Command_Handler func_command_handler = dlsym(lib, "command_handler");
+  mu_assert(func_command_handler != NULL,
+            "Failed to find command_handler function.");
+
+  char input[50] = "getall";
+
+  char* response_msg;
+
+  response_msg = func_command_handler(input);
+  mu_assert(strcmp(response_msg, "Success") == 0, "Command Failure!");
+
+  strcpy(input, "put age 26");
+  response_msg = func_command_handler(input);
+  mu_assert(strcmp(response_msg, "Success") == 0, "Command Failure!");
+
+  strcpy(input, "put gender male");
+  response_msg = func_command_handler(input);
+  mu_assert(strcmp(response_msg, "Success") == 0, "Command Failure!");
+
+  return NULL;
+}
+
+
+char*
 test_dlclose()
 {
   int rc = dlclose(lib);

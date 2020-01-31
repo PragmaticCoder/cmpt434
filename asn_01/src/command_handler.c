@@ -61,6 +61,44 @@ Database_getval(char key[], char* value)
   return -1;
 }
 
+int
+Database_remove(char key[])
+{
+  char line[256];
+  FILE* fd = fopen("storage", "r");
+
+  while (fgets(line, sizeof(line), fd)) {
+
+    if (strlen(line) <= 2) /* will skip if empty line*/
+      continue;
+
+    char* words[] = { NULL, NULL, NULL };
+    split_into_words(line, words);
+    int len = strlen(words[1]);
+
+    if (strncmp(key, words[0], len - 2) == 0) {
+      debug("FOUND!!!: %s", words[1]);
+      /* TODO: Remove line here */
+
+      return 0;
+    }
+  }
+
+  return -1;
+}
+
+void
+Database_getall(char* value)
+{
+  char ch;
+  FILE* fd = fopen("storage", "r");
+  ch = getc(fd);
+  while (ch != EOF) {
+    printf("%c", ch);
+    ch = getc(fd);
+  }
+}
+
 char*
 command_handler(char* user_input)
 {
@@ -116,6 +154,22 @@ command_handler(char* user_input)
     debug("result: %s", result);
     debug("value: %s", value);
 
+    return result;
+  }
+
+  /* Get All */
+  char all_items[1000];
+  if (strcmp(cmd, "getall") == 0) {
+
+    Database_getall(all_items);
+
+    char* result = (char*)malloc(1000 * sizeof(char));
+    check_mem(result);
+
+    strcpy(result, value);
+
+    debug("result: %s", result);
+    debug("value: %s", value);
     return result;
   }
 
