@@ -1,9 +1,12 @@
 #undef NDEBUG
+
 #include "dbg.h"
+#include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "hashtable.h"
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 void
 split_into_words(char* str, char** words)
@@ -17,6 +20,19 @@ split_into_words(char* str, char** words)
     ptr = strtok(NULL, " ");
     words[++i] = ptr;
   }
+}
+
+void
+Database_put(char* key, char * value)
+{
+  FILE* fd = fopen("storage", "a");
+
+  fputs(key, fd);
+  fputs(" ", fd);
+  fputs(value, fd);
+  fputs("\n", fd);
+
+  fclose(fd);
 }
 
 char*
@@ -47,38 +63,24 @@ command_handler(char* user_input)
     check(words[2] != NULL, "Argument 2 cannot be null");
 
     /* First checking if the key is already present in DB */
-    HashNode_t* existing_node = Hashtable_get(words[1]);
+    
 
-    if (existing_node != NULL) {
-      already_present = 1;
-      goto error;
-    }
     /* And then attempting to store key, value pair into database */
-    HashNode_t* hashNode = Hashtable_put(words[1], words[2]);
-
-    if ((strcmp(hashNode->name, words[1]) != 0) ||
-        (strcmp(hashNode->value, words[2]) != 0)) {
-
-      log_err("KEY: %s", hashNode->name);
-      log_err("VALUE: %s", hashNode->value);
-
-      error_status = 1;
-      goto error;
-    }
+    Database_put(words[1], words[2]);
   }
 
   /* GET Command Handler */
-  if (strcmp(cmd, "get") == 0) {
-    check(words[1] != NULL, "Argument 1 cannot be null");
+  // if (strcmp(cmd, "get") == 0) {
+  //   check(words[1] != NULL, "Argument 1 cannot be null");
 
-    HashNode_t* node = Hashtable_get(words[1]);
-    if(node == NULL){
-      item_not_available = 1;
-      goto error;
-    }
+  //   HashNode_t* node = Hashtable_get(words[1]);
+  //   if (node == NULL) {
+  //     item_not_available = 1;
+  //     goto error;
+  //   }
 
-    return node->value;
-  }
+  //   return node->value;
+  // }
 
   /*All error handlers */
 error:

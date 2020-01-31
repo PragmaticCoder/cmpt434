@@ -90,7 +90,7 @@ all_tests()
   mu_run_test(test_dlopen);
   mu_run_test(test_split_into_words);
   mu_run_test(test_command_handler_put_success);
-  mu_run_test(test_command_handler_get_success);
+  // mu_run_test(test_command_handler_get_success);
   mu_run_test(test_dlclose);
 
   return NULL;
