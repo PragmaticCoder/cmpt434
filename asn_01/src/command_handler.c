@@ -93,9 +93,12 @@ Database_getall(char* value)
   char ch;
   FILE* fd = fopen("storage", "r");
   ch = getc(fd);
+  
+  int i = 0;
   while (ch != EOF) {
     printf("%c", ch);
     ch = getc(fd);
+    value[i++] = ch;
   }
 }
 

@@ -75,21 +75,24 @@ test_command_handler_get_success()
   char* response_msg;
 
   response_msg = func_command_handler(input);
-  mu_assert(strncmp(response_msg, "Alvi", 4) == 0, "Error getting value during testing!");
+  mu_assert(strncmp(response_msg, "Alvi", 4) == 0,
+            "Error getting value during testing!");
 
   strcpy(input, "get age");
   response_msg = func_command_handler(input);
-  mu_assert(strncmp(response_msg, "26", 2) == 0, "Error getting value during testing!");
+  mu_assert(strncmp(response_msg, "26", 2) == 0,
+            "Error getting value during testing!");
 
   strcpy(input, "get gender");
   response_msg = func_command_handler(input);
-  mu_assert(strncmp(response_msg, "male", 4) == 0, "Error getting value during testing!");
+  mu_assert(strncmp(response_msg, "male", 4) == 0,
+            "Error getting value during testing!");
 
   return NULL;
 }
 
 char*
-test_command_get_all()
+test_command_handler_get_all()
 {
   lib_Command_Handler func_command_handler = dlsym(lib, "command_handler");
   mu_assert(func_command_handler != NULL,
@@ -102,17 +105,8 @@ test_command_get_all()
   response_msg = func_command_handler(input);
   mu_assert(strcmp(response_msg, "Success") == 0, "Command Failure!");
 
-  strcpy(input, "put age 26");
-  response_msg = func_command_handler(input);
-  mu_assert(strcmp(response_msg, "Success") == 0, "Command Failure!");
-
-  strcpy(input, "put gender male");
-  response_msg = func_command_handler(input);
-  mu_assert(strcmp(response_msg, "Success") == 0, "Command Failure!");
-
   return NULL;
 }
-
 
 char*
 test_dlclose()
@@ -132,6 +126,7 @@ all_tests()
   mu_run_test(test_split_into_words);
   mu_run_test(test_command_handler_put_success);
   mu_run_test(test_command_handler_get_success);
+  mu_run_test(test_command_handler_get_all);
   mu_run_test(test_dlclose);
 
   return NULL;
