@@ -1,5 +1,6 @@
 #include <unistd.h>
 
+// Client side implementation of UDP client-server model
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdio.h>
@@ -9,9 +10,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define PORT 30000
+#define PORT 8080
 #define MAXLINE 1024
 
+// Driver code
 int
 main()
 {
@@ -20,7 +22,7 @@ main()
   char* hello = "getv ana";
   struct sockaddr_in servaddr;
 
-  /* Creating socket file descriptor */
+  // Creating socket file descriptor
   if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     perror("socket creation failed");
     exit(EXIT_FAILURE);
@@ -28,7 +30,7 @@ main()
 
   memset(&servaddr, 0, sizeof(servaddr));
 
-  /* Filling server information */
+  // Filling server information
   servaddr.sin_family = AF_INET;
   servaddr.sin_port = htons(PORT);
   servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
@@ -49,7 +51,7 @@ main()
                  MAXLINE,
                  MSG_WAITALL,
                  (struct sockaddr*)&servaddr,
-                 (uint32_t*)&len);
+                 &len);
     buffer[n] = '\0';
     printf("Server : %s\n", buffer);
   }

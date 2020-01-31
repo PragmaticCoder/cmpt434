@@ -5,7 +5,9 @@ COMPILER  = gcc
 FLAGS     = -Wall
 
 
-build: 
+all: 
 	$(COMPILER) $(LIBRARIES) $(FLAGS) udp_server.c -o $(APP_NAME) 
+	gcc udp_client.c -o udp_client
 
-exit:
+clean:
+	rm -rf udp_client udp_server

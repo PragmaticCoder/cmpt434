@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define PORT 30000
+#define PORT 8080
 #define MAXLINE 1024
 #define MAX 1024
 
@@ -292,7 +292,7 @@ main()
     } else if (strcmp(cmd, "rev") == 0u) {
       udp_server_parse(buffer + offset, key, n, &offset);
 
-      if ((pos = udp_find_line(key)) != (int) 0xFFFFFFFFu) {
+      if ((pos = udp_find_line(key)) != 0xFFFFFFFFu) {
         udp_server_remove(pos);
       }
     }
