@@ -53,6 +53,14 @@ test_command_handler_put_success()
   response_msg = func_command_handler(input);
   mu_assert(strcmp(response_msg, "Success") == 0, "Command Failure!");
 
+  strcpy(input, "put age 26");
+  response_msg = func_command_handler(input);
+  mu_assert(strcmp(response_msg, "Success") == 0, "Command Failure!");
+
+  strcpy(input, "put gender male");
+  response_msg = func_command_handler(input);
+  mu_assert(strcmp(response_msg, "Success") == 0, "Command Failure!");
+
   return NULL;
 }
 
@@ -64,7 +72,6 @@ test_command_handler_get_success()
             "Failed to find command_handler function.");
 
   char input[50] = "get name";
-
   char* response_msg;
 
   response_msg = func_command_handler(input);
