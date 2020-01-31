@@ -101,7 +101,6 @@ test_command_handler_get_all()
   char input[50] = "getall";
 
   char* response_msg;
-
   response_msg = func_command_handler(input);
   debug("Response Msg: %s", (char*)response_msg);
   // mu_assert(strcmp(response_msg, "Success") == 0, "Command Failure!");

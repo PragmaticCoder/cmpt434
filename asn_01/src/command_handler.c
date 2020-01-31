@@ -42,10 +42,13 @@ Database_getval(char key[], char* value)
     if (strncmp(key, words[0], len - 2) == 0) {
       debug("FOUND!!!: %s", words[1]);
       strcpy(value, words[1]);
+      
+      fclose(fd);
       return 0;
     }
   }
 
+  fclose(fd);
   return -1;
 }
 
@@ -68,10 +71,12 @@ Database_remove(char key[])
       debug("FOUND!!!: %s", words[1]);
       /* TODO: Remove line here */
 
+      fclose(fd);
       return 0;
     }
   }
 
+  fclose(fd);
   return -1;
 }
 
@@ -88,10 +93,10 @@ Database_getall(char* value)
 
     ch = getc(fd);
     debug("ch: %c", ch);
-    // strncat(value, &ch, 1);
-    append(value, ch);
-    // value[i++] = ch;
+    append(value, (char)ch);
   }
+  
+  fclose(fd);
 }
 
 char*
