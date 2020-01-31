@@ -29,7 +29,7 @@ PROGRAMS=$(patsubst %.c, %.o, $(PROGRAMS_SRC))
 TARGET=$(BUILD_DIR)/libasn_01.a
 SO_TARGET=$(patsubst %.a, %.so,$(TARGET))
 
-all: target
+all: target tests
 
 target: build $(TARGET) $(SO_TARGET) $(PROGRAMS)
 
