@@ -11,7 +11,50 @@
 struct sockaddr_in clientSock;
 
 void
-HandleClient(int client, int server);
+Handle_client(int client, int server)
+{
+  int recvLength;
+  int sentLength;
+  char buffer[100];
+  struct sockaddr_in fromSock;
+
+  while (1) {
+
+    check((recvLength = recv(client, buffer, sizeof(buffer) - 1, 0)) >= 0,
+          "Error in receiving the Character from TCP client.");
+
+    if (recvLength == 0) {
+      printf("client lost connection\n");
+      break;
+    }
+
+    buffer[recvLength] = 0;
+    printf("Received TCP Data to Server : %s\n", buffer);
+
+    if ((sentLength = send(server, buffer, recvLength, 0)) != recvLength) {
+      printf("Error in Sending data to TCP Server\n");
+      break;
+    }
+
+    if ((recvLength = recv(server, buffer, sizeof(buffer) - 1, 0)) < 0) {
+      printf("Error in receiving data from TCP server\n");
+      break;
+    }
+
+    buffer[recvLength] = 0;
+    printf("Received TCP Data from Server : %s\n", buffer);
+
+    strcat(buffer, " - from the Proxy");
+    recvLength = strlen(buffer);
+
+    if ((sentLength = send(client, buffer, recvLength, 0)) != recvLength) {
+      printf("Error in Sending data to TCP client\n");
+      break;
+    }
+  }
+error:
+  log_err("Error detected in Handler_client");
+}
 
 int
 main(int argc, char* argv[])
@@ -67,7 +110,7 @@ main(int argc, char* argv[])
              inet_ntoa(tcpClientSock.sin_addr),
              ntohs(tcpClientSock.sin_port));
 
-    HandleClient(tcpClientFD, clientFD);
+    Handle_client(tcpClientFD, clientFD);
     close(tcpClientFD);
   }
 
@@ -76,50 +119,4 @@ main(int argc, char* argv[])
 
 error:
   return (-1);
-}
-
-void
-HandleClient(int client, int server)
-{
-  int RecevicedLength;
-  int sentLength;
-  char buffer[100];
-  struct sockaddr_in fromSock;
-
-  while (1) {
-
-    if ((RecevicedLength = recv(client, buffer, sizeof(buffer) - 1, 0)) < 0) {
-      printf("Error in Receving the Character from TCP client\n");
-      break;
-    }
-
-    if (RecevicedLength == 0) {
-      printf("client lost connection\n");
-      break;
-    }
-    buffer[RecevicedLength] = 0;
-    printf("Received TCP Data to Server : %s\n", buffer);
-
-    if ((sentLength = send(server, buffer, RecevicedLength, 0)) !=
-        RecevicedLength) {
-      printf("Error in Sending data to TCP Server\n");
-      break;
-    }
-
-    if ((RecevicedLength = recv(server, buffer, sizeof(buffer) - 1, 0)) < 0) {
-      printf("Error in Receving data from TCP server\n");
-      break;
-    }
-    buffer[RecevicedLength] = 0;
-    printf("Received TCP Data from Server : %s\n", buffer);
-
-    strcat(buffer, " - from the Proxy");
-    RecevicedLength = strlen(buffer);
-
-    if ((sentLength = send(client, buffer, RecevicedLength, 0)) !=
-        RecevicedLength) {
-      printf("Error in Sending data to TCP client\n");
-      break;
-    }
-  }
 }
