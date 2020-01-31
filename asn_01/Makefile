@@ -1,3 +1,7 @@
+# NAME: ALVI AKBAR
+# STUDENT NO: 11118887
+# NSID: ALA273
+
 SRC_DIR=./src
 BUILD_DIR=./build
 TESTS_DIR=./tests
@@ -17,7 +21,7 @@ SOURCES=$(wildcard $(SRC_DIR)/**/*.c src/*.c)
 OBJECTS=$(patsubst %.c, %.o, $(SOURCES))
 
 TEST_SOURCES=$(wildcard $(TESTS_DIR)/*_tests.c)
-TESTS=$(patsubst %.c, %.o, $(TEST_SOURCES))
+TESTS=$(patsubst %.c, %, $(TEST_SOURCES))
 
 PROGRAMS_SRC=$(wildcard bin/*.c)
 PROGRAMS=$(patsubst %.c, %.o, $(PROGRAMS_SRC))
@@ -25,11 +29,11 @@ PROGRAMS=$(patsubst %.c, %.o, $(PROGRAMS_SRC))
 TARGET=$(BUILD_DIR)/libasn_01.a
 SO_TARGET=$(patsubst %.a, %.so,$(TARGET))
 
-all: target tests
+all: target
 
 target: build $(TARGET) $(SO_TARGET) $(PROGRAMS)
 
-$(TESTS_DIR)/%.tst:	$(TESTS_DIR)/%.c
+$(TESTS_DIR)/%:	$(TESTS_DIR)/%.c
 	$(CC) $(CFLAGS) $< -o $@ $(TARGET) $(LDFLAGS)
 
 $(TARGET): CFLAGS += -fPIC
@@ -92,6 +96,6 @@ release: clean  ## Generate release version
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
-	@echo "Contact author for help"
+	@echo "Contact author for help @ala273@mail.usask.ca"
 
 $(PROGRAMS): CFLAGS += $(TARGET)
