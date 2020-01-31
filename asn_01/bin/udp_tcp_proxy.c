@@ -22,7 +22,7 @@ Handle_client(int client, int server)
   while (1) {
 
     if ((recvLength = recv(client, buffer, sizeof(buffer) - 1, 0)) < 0) {
-      printf("Error in Receving the Character from TCP client\n");
+      printf("Error in Receiving the Character from TCP client\n");
       break;
     }
 
@@ -50,7 +50,7 @@ Handle_client(int client, int server)
                                     0,
                                     (struct sockaddr*)&fromSock,
                                     &fromSize)) < 0) {
-      printf("Error in Receving the Character from UDP server\n");
+      printf("Error in Receiving the Character from UDP server\n");
       break;
     }
 
