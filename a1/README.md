@@ -1,7 +1,7 @@
 # Instructions
 
 ```text
- Name: Alvi Akbar
+  Name: Alvi Akbar
   NSID: ala273
   Student No: 11118887
 ```
@@ -51,3 +51,8 @@ Incase automated testing suite is not running, please run `chmod +x runtests.sh`
   `./run.sh -r proxy_v3 <server ip> <port 1> <port 2>`
   **Terminal 4:**
   `./run.sh -r client_v3 <server ip> <port 3>`
+
+## Troubleshooting Steps
+
+If for any reason, project built fails and we need to build it manually, please make sure to run `export LD_LIBRARY_PATH=./build:$LD_LIBRARY_PATH`
+after making. This is needed to link the static library.

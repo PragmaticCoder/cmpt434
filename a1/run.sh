@@ -1,8 +1,12 @@
 #!/bin/bash
+
+# NAME: ALVI AKBAR
+# NSID: ALA273
+# STUDENT NO: 11118887
+
 # This script is used to automate debugging
 
 # Setting Default
-
 export LD_LIBRARY_PATH=./build:$LD_LIBRARY_PATH
 
 usage() {
