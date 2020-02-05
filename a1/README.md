@@ -13,23 +13,19 @@ If `run.sh` file is not executable, please run:
 ```
 
 # Question 1
-To launch part A server and client program,
-- Go to asn_01 directory
-- We have automated the build process so just try:
-  In one terminal:
-  ./sanity_test.sh -r server_v1 33000
-  In second terminal:
- ./sanity_test.sh -r client_v1 127.0.0.1  33000
 
-
-"
- and for arguments: its just "client" and "server"
+  **Terminal 1:**
+  `./run.sh -mr server_v1 33000`
+  **Terminal 2:**
+  `./run.sh -r client_v1 127.0.0.1  33000`
 
 # Question 2
+
 - To Launch Proxy server:
-  make all
-  In terminal 1:
-  ./bin/server <server-port>
+  `make all`
+
+  **In terminal 1**:
+  `./run.sh -r server-port`
 
   In terminal 2:
   ./bin/tcp_tcp_proxy 127.0.0.1 <server-port> <client-port>
