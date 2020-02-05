@@ -1,5 +1,10 @@
-
 # Instructions
+
+```text
+ Name: Alvi Akbar
+  NSID: ala273
+  Student No: 11118887
+```
 
 We use the run.sh script to run all commands:
 If `run.sh` file is not executable, please run:
@@ -7,14 +12,14 @@ If `run.sh` file is not executable, please run:
 
 Incase automated testing suite is not running, please run `chmod +x runtests.sh`
 
-```bash
+```text
  -m flag is used for making the project.
  -r flag is run operation
  -d gdb with layout next
  -v valgrind inspection
 ```
 
-# Question 1
+## Question 1
 
   **Terminal 1:**
   `./run.sh -mr server_v1 <server port>`
@@ -23,7 +28,7 @@ Incase automated testing suite is not running, please run `chmod +x runtests.sh`
 
   Type `add` `getvalue` and `getall` from client terminal as specified in assignment description.
 
-# Question 2
+## Question 2
 
 `make all`
   **Terminal 1:**
@@ -35,7 +40,7 @@ Incase automated testing suite is not running, please run `chmod +x runtests.sh`
 
   Type `add` `getvalue` and `getall` from client terminal as specified in assignment description.
 
-# Question 3
+## Question 3
 
 `make all`
   **Terminal 1:**
