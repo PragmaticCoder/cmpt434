@@ -2,9 +2,11 @@ SRC_DIR=./src
 BUILD_DIR=./build
 TESTS_DIR=./tests
 BIN_DIR	=./bin
-PART_1 = $(BIN_DIR)
-PART_2 = $(BIN_DIR)
-PART_3 = $(BIN_DIR)
+
+PART_1=$(BIN_DIR)
+PART_2=$(BIN_DIR)
+PART_3=$(BIN_DIR)
+
 INCLUDES=-I$(SRC_DIR)
 
 CC=gcc
