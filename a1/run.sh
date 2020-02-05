@@ -9,6 +9,8 @@
 # Setting Default
 export LD_LIBRARY_PATH=./build:$LD_LIBRARY_PATH
 
+chmod +x tests/runtests.sh
+
 usage() {
   echo "Usage ${0} [-r][-d][-v] <client|server>" >&2
   echo 'Debug with automated tools'
