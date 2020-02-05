@@ -23,7 +23,7 @@ TEST_SOURCES=$(wildcard $(TESTS_DIR)/*_tests.c)
 TESTS=$(patsubst %.c, %, $(TEST_SOURCES))
 
 
-PROGRAMS= $(PART_1)/server_v1 $(PART_1)/client_v1\
+PROGRAMS=$(PART_1)/server_v1 $(PART_1)/client_v1\
 	  $(PART_2)/server_v2 $(PART_2)/tcp_tcp_proxy $(PART_2)/client_v2\
 	  $(PART_3)/server_v3 $(PART_3)/udp_tcp_proxy $(PART_3)/client_v3
 
