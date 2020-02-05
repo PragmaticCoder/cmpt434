@@ -5,7 +5,7 @@ We use the run.sh script to run all commands:
 If `run.sh` file is not executable, please run:
 `chmod +x run.sh` first.
 
-```
+```bash
  -m flag is used for making the project.
  -r flag is run operation
  -d gdb with layout next
@@ -15,26 +15,25 @@ If `run.sh` file is not executable, please run:
 # Question 1
 
   **Terminal 1:**
-  `./run.sh -mr server_v1 33000`
+  `./run.sh -mr server_v1 <server port>`
   **Terminal 2:**
-  `./run.sh -r client_v1 127.0.0.1  33000`
+  `./run.sh -r client_v1 <server-ip>  <server port>`
+
+  Type `add` `getvalue` and `getall` from client terminal as specified in assignment description.
 
 # Question 2
 
-- To Launch Proxy server:
-  `make all`
+  **Terminal 1:**
+  `./run.sh -mr server_v2 <server port>`
+  **Terminal 2:**
+  `./run.sh -r tcp_tcp_proxy <server ip>  <server port> <client port>`
+  **Terminal 3:**
+  `./bin/client_v1 <server port>`
 
-  **In terminal 1**:
-  `./run.sh -r server-port`
-
-  In terminal 2:
-  ./bin/tcp_tcp_proxy 127.0.0.1 <server-port> <client-port>
-
-  In terminal 3:
-  ./bin/client_v1 <server-port>
-  and then start typing the tcpip comments from client terminal
+  Type `add` `getvalue` and `getall` from client terminal as specified in assignment description.
 
 # Question 3
+
 make all
   In terminal 1:
   ./bin/client_v1 30000
