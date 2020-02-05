@@ -36,7 +36,8 @@ service, in C.
   works as expected. I did try implementing getall, it partly works. Just ran
   into few errors dealing with segmentation faults while trying to implement
   get all. My lack of experience working with C's string library is party
-  responsible for it.
+  responsible for it. However, this has been taken care of in Question 2. And
+  we changed the database storage implementation using dictionary.
 
 
 - COMMAND PARSER DESIGN DECISION:
@@ -126,4 +127,4 @@ Likewise, there is an issue with bigger packet not being sent at the same time, 
 seeping into the following transmission.
 
 /* ------------------------------ RUN PROGRAM ------------------------------- */
-check out README instructions to run the program
+check out README instructions to run the program.
