@@ -74,9 +74,6 @@ $(TESTS): $(TEST_SOURCES)
 
 build:
 	@mkdir -p $(BUILD_DIR)
-	@mkdir -p $(BUILD_DIR)/Part_1
-	@mkdir -p $(BUILD_DIR)/Part_2
-	@mkdir -p $(BUILD_DIR)/Part_3
 	@mkdir -p $(TESTS_DIR)
 	@touch storage
 
