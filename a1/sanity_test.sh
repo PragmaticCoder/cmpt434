@@ -6,8 +6,6 @@ PROGRAM="client_v1"
 IP="0"
 PORT="33333"
 
-export LD_LIBRARY_PATH=./build:$LD_LIBRARY_PATH
-
 usage() {
   echo "Usage ${0} [-r][-d][-v] <client|server>" >&2
   echo 'Debug with automated tools'
