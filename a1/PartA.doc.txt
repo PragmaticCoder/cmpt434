@@ -1,3 +1,7 @@
+Name: Alvi Akbar
+NSID: ala273
+Student NO: 11118887
+
 /* -------------------------------------------------------------------------- */
 /*                                 QUESTION 1                                 */
 /* -------------------------------------------------------------------------- */
@@ -69,19 +73,7 @@ service, in C.
 /* ------------------------------ RUN PROGRAM ------------------------------- */
 
 To launch part A server and client program,
-- Go to asn_01 directory
-- We have automated the build process so just try:
-  In one terminal:
-  ./sanity_test.sh -mr server
-  In second terminal:
- ./sanity_test.sh -r client
-
- -m flag is used for making the project.
- -r flag is run operation
- -d gdb with layout next
- -v valgrind inspection
-"
- and for arguments: its just "client" and "server"
+check out README instructions.
  
 /* -------------------------------------------------------------------------- */
 /*                                 QUESTION 2                                 */
@@ -100,16 +92,7 @@ I decided to dictionary as storage. This contains my dictionary implementation.
 /* ------------------------------ RUN PROGRAM ------------------------------- */
 
 - To Launch Proxy server:
-  make all
-  In terminal 1:
-  ./bin/server <server-port>
-
-  In terminal 2:
-  ./bin/tcp_tcp_proxy 127.0.0.1 <server-port> <client-port>
-
-  In terminal 3:
-  ./bin/client_v1 <server-port>
-  and then start typing the tcpip comments from client terminal
+check out README instructions.
 
 /* -------------------------------------------------------------------------- */
 /*                                 QUESTION 3                                 */
@@ -143,16 +126,4 @@ Likewise, there is an issue with bigger packet not being sent at the same time, 
 seeping into the following transmission.
 
 /* ------------------------------ RUN PROGRAM ------------------------------- */
-
-  make all
-  In terminal 1:
-  ./bin/client_v1 30000
-
-  In terminal 2:
-  ./bin/server_v1 40000
-
-  In terminal 3:
-  ./bin/tcp_tcp_proxy 127.0.0.1 40000 30000
-
-  In terminal 4:
-  ./bin/udp_server 40000
+check out README instructions to run the program

@@ -1,3 +1,7 @@
+# Name: Alvi AKbar
+# NSID: ala273
+# Student No: 11118887
+
 SRC_DIR=./src
 BUILD_DIR=./build
 TESTS_DIR=./tests

@@ -1,3 +1,9 @@
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * Student Number: 11118887
+ */
+
 #include "commandLine.h"
 #include <arpa/inet.h>
 #include <dbg.h>
