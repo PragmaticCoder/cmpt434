@@ -14,11 +14,11 @@ usage() {
 }
 
 debug_gdb() {
-  echo 'Debugging with GDB'  
-  if [[ "${1}" = "server_v1" ]]; then    
-    gdb --args ./bin/$1 $2 
+  echo 'Debugging with GDB'
+  if [[ "${1}" = "server_v1" ]]; then
+    gdb --args ./bin/$1 $2
   elif [[ "${1}" = "client_v1" ]]; then
-    gdb --args ./bin/$1 $2 $3 
+    gdb --args ./bin/$1 $2 $3
   elif [[ "${1}" = "server_v2" ]]; then
     gdb --args ./bin/$1 $2
   elif [[ "${1}" = "client_v2" ]]; then
@@ -26,7 +26,7 @@ debug_gdb() {
   elif [[ "${1}" = "tcp_tcp_proxy" ]]; then
     gdb --args ./bin/$1 $2 $3 $4
   elif [[ "${1}" = "client_v3" ]]; then
-   gdb --args ./bin/$1 $2 $3
+    gdb --args ./bin/$1 $2 $3
   elif [[ "${1}" = "server_v3" ]]; then
     gdb --args ./bin/$1 $2
   elif [[ "${1}" = "udp_tcp_proxy" ]]; then
@@ -37,10 +37,10 @@ debug_gdb() {
 
 debug_valgrind() {
   echo 'Debugging with Valgrind'
-  if [[ "${1}" = "server_v1" ]]; then    
-    valgrind ./bin/$1 $2 
+  if [[ "${1}" = "server_v1" ]]; then
+    valgrind ./bin/$1 $2
   elif [[ "${1}" = "client_v1" ]]; then
-    valgrind ./bin/$1 $2 $3 
+    valgrind ./bin/$1 $2 $3
   elif [[ "${1}" = "server_v2" ]]; then
     valgrind ./bin/$1 $2
   elif [[ "${1}" = "client_v2" ]]; then
@@ -81,40 +81,39 @@ select_program() {
 
 echo 'Running Sanity Test'
 
-
-while getopts "mr:d:v:" OPTION; do 
+while getopts "mr:d:v:" OPTION; do
   case ${OPTION} in
   r)
     echo "selected - RUN MODE"
     select_program $3 $4 $5
     echo "running program: ${PROGRAM}"
-    
+
     if [[ "$PROGRAM" = "" ]]; then
-	echo "Cant able to find the execuetable please verify"
-    	exit 0
+      echo "Cant able to find the execuetable please verify"
+      exit 0
     else
-	./bin/${PROGRAM}
+      ./bin/${PROGRAM}
     fi
     ;;
   d)
     echo "GDB DEBUG MODE"
     select_program $3 $4 $5
     if [[ "$PROGRAM" = "" ]]; then
-	echo "Cant able to find the execuetable please verify"
-    	exit 0
+      echo "Cant able to find the execuetable please verify"
+      exit 0
     else
-	debug_gdb ${PROGRAM}
-    fi    
+      debug_gdb ${PROGRAM}
+    fi
     ;;
   v)
     echo "VALGRIND DEBUG MODE"
-    select_program $3 $4 $5    
+    select_program $3 $4 $5
     if [[ "$PROGRAM" = "" ]]; then
-	echo "Cant able to find the execuetable please verify"
-    	exit 0
+      echo "Cant able to find the execuetable please verify"
+      exit 0
     else
-	debug_valgrind ${PROGRAM}
-    fi    
+      debug_valgrind ${PROGRAM}
+    fi
     ;;
   m)
     echo "Rebuild using Make"
