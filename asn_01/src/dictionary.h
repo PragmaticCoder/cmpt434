@@ -1,23 +1,29 @@
 #ifndef __dictionary_h__
 #define __dictionary_h__
 
+#include "dbg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "dbg.h"
 
-typedef struct _dictionary {
-  char *key;
-  char *value;
-  struct _dictionary *next;
-  struct _dictionary *prev;
-}dictionary_t;
+typedef struct _dictionary
+{
+  char* key;
+  char* value;
+  struct _dictionary* next;
+  struct _dictionary* prev;
+} dictionary_t;
 
-int Dictionary_add(char *key, char *value);
-int Dictionary_getValue(char *key, char* value);
-int Dictionary_getAll(char *key, char* value);
-int Dictionary_remove(char* key);
+int
+Dictionary_add(char* key, char* value);
+int
+Dictionary_getValue(char* key, char* value);
+int
+Dictionary_getAll(char* key, char* value);
+int
+Dictionary_remove(char* key);
 
-int Command_interface(int argc, char *argv[], char *retBuffer);
+int
+Command_interface(int argc, char* argv[], char* retBuffer);
 
 #endif

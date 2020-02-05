@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int Command_interface(int argc, char *argv[], char *retBuffer);
+int
+Command_interface(int argc, char* argv[], char* retBuffer);
 
 #endif

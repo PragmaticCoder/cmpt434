@@ -42,7 +42,7 @@ Database_getval(char key[], char* value)
     if (strncmp(key, words[0], len - 2) == 0) {
       debug("FOUND!!!: %s", words[1]);
       strcpy(value, words[1]);
-      
+
       fclose(fd);
       return 0;
     }
@@ -95,7 +95,7 @@ Database_getall(char* value)
     debug("ch: %c", ch);
     append(value, (char)ch);
   }
-  
+
   fclose(fd);
 }
 
