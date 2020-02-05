@@ -1,0 +1,158 @@
+/* -------------------------------------------------------------------------- */
+/*                                 QUESTION 1                                 */
+/* -------------------------------------------------------------------------- */
+
+- In this part we implement TCP Server and a TCP Client for a simple look-up 
+service, in C. 
+
+- The service provides storage and retrieval of (key, value) pairs. 
+
+- Both keys and values are ascii strings with length at most 40 characters.
+
+- We assumption is such that each string includes only alphanumeric characters, 
+  without imbedded blanks or punctuation or other special characters. 
+
+- There can be at most one (key, value) pair stored in the system for any 
+  particular key.
+
+- Your client should take as command line arguments the host name and port number 
+  of the server (or proxy server – see below) that it should connect to, and read 
+  commands from standard input. 
+
+/* --------------------- SERVER ARCHITECTURE COMPONENTS --------------------- */
+
+- DATABASE DESIGN DECISION:
+
+  We chose a single store file to store the key value pairs. On a database put
+  operation, the file is opened from the command handler library and executes
+  the operations based on command provided.
+
+  - LIMITATIONS:
+  I wasn't able to implement all commands. Only the getvalue and put commands
+  works as expected. I did try implementing getall, it partly works. Just ran
+  into few errors dealing with segmentation faults while trying to implement
+  get all. My lack of experience working with C's string library is party
+  responsible for it.
+
+
+- COMMAND PARSER DESIGN DECISION:
+
+  The server receives the commands from the client over the TCP Socket as
+  standard input. Commands are single line and command description are
+  documented in TCP SERVER API DOCUMENTATION section.
+
+  All utils functions such as the parser libray functions is being fetch from .so
+  file as dynamic libray. On
+
+/* ---------------------- TCP SERVER API DOCUMENTATION ---------------------- */
+
+• Command:      Add item to database
+  Usage:        add key value
+  Description:  Add (key, value) pair, if no existing pair with same key value
+
+• Command:      Get Item from Database
+  Usage:        getvalue key
+  Description:  Return value from matching (key, value) pair, if any
+
+• Command:      Get all items
+  Usage:        getall
+  Description:  Return all (key, value) pairs
+
+• Command:      Remove item from database
+  Usage:        remove key
+  Description:  Remove matching (key, value) pair, if any
+
+• Command:      Quit Session
+  Usage:        quit
+  Description:  Terminate client
+
+/* ------------------------------ RUN PROGRAM ------------------------------- */
+
+To launch part A server and client program,
+- Go to asn_01 directory
+- We have automated the build process so just try:
+  In one terminal:
+  ./sanity_test.sh -mr server
+  In second terminal:
+ ./sanity_test.sh -r client
+
+ -m flag is used for making the project.
+ -r flag is run operation
+ -d gdb with layout next
+ -v valgrind inspection
+"
+ and for arguments: its just "client" and "server"
+ 
+/* -------------------------------------------------------------------------- */
+/*                                 QUESTION 2                                 */
+/* -------------------------------------------------------------------------- */
+
+I design and implement a TCP-based “proxy” server. My proxy takes host name and 
+port number for server from question 1, which it will need to connect with. 
+
+Proxy server has liking for the lower-case characters “c”, “m”, “p”, and “t”,
+and whenever these are encountered in a value returned by the (real) server, 
+they are duplicated.
+
+After running into a lot of issues with storage using I/O file read and write,
+I decided to dictionary as storage. This contains my dictionary implementation.
+
+/* ------------------------------ RUN PROGRAM ------------------------------- */
+
+- To Launch Proxy server:
+  make all
+  In terminal 1:
+  ./bin/server <server-port>
+
+  In terminal 2:
+  ./bin/tcp_tcp_proxy 127.0.0.1 <server-port> <client-port>
+
+  In terminal 3:
+  ./bin/client_v1 <server-port>
+  and then start typing the tcpip comments from client terminal
+
+/* -------------------------------------------------------------------------- */
+/*                                 QUESTION 3                                 */
+/* -------------------------------------------------------------------------- */
+The UDP intermediary will interface the UDP server and the TCP client together 
+by going about as a go-between step between the two. 
+
+The Proxy must be launch with the association with the server (hostname/intermediary). 
+After this association has been set up, the intermediary will at that point set up its 
+TCP half in request to associate with the client. 
+
+The client should then be requested utilizing the intermediary's host/port. The intermediary 
+will act is a fundamentally the same as way to the TCP intermediary. 
+
+It will get TCP packets from the client and send them to the server as UDP 
+packets. 
+
+
+On the off chance that the intermediary identifies that the client has mentioned a getall from
+the server.
+
+The intermediary will anticipate for all the getall packets and order then into a solitary 
+support so as to send a TCP transmission back to the client. 
+
+
+Note that if the packet delimiter isn't sent, the intermediary will stand by  and 
+the server won't realize that the intermediary is trapped. The client will in any 
+case sit tight for the server answer from the intermediary. 
+
+Likewise, there is an issue with bigger packet not being sent at the same time, and 
+seeping into the following transmission.
+
+/* ------------------------------ RUN PROGRAM ------------------------------- */
+
+  make all
+  In terminal 1:
+  ./bin/client_v1 30000
+
+  In terminal 2:
+  ./bin/server_v1 40000
+
+  In terminal 3:
+  ./bin/tcp_tcp_proxy 127.0.0.1 40000 30000
+
+  In terminal 4:
+  ./bin/udp_server 40000
