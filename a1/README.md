@@ -1,19 +1,27 @@
 
 # Instructions
 
+We use the run.sh script to run all commands:
+If `run.sh` file is not executable, please run:
+`chmod +x run.sh` first.
+
+```
+ -m flag is used for making the project.
+ -r flag is run operation
+ -d gdb with layout next
+ -v valgrind inspection
+```
+
 # Question 1
 To launch part A server and client program,
 - Go to asn_01 directory
 - We have automated the build process so just try:
   In one terminal:
-  ./sanity_test.sh -mr server
+  ./sanity_test.sh -r server_v1 33000
   In second terminal:
- ./sanity_test.sh -r client
+ ./sanity_test.sh -r client_v1 127.0.0.1  33000
 
- -m flag is used for making the project.
- -r flag is run operation
- -d gdb with layout next
- -v valgrind inspection
+
 "
  and for arguments: its just "client" and "server"
 
