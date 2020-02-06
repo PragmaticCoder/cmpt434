@@ -1,7 +1,5 @@
 /**
- * Name: Alvi Akbar
- * NSID: ala273
- * Student Number: 11118887
+ * Sample Testing Template
  */
 
 #include "minunit.h"

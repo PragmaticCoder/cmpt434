@@ -1,9 +1,3 @@
-/**
- * Name: Alvi Akbar
- * NSID: ala273
- * Student Number: 11118887
- */
-
 #undef NDEBUG
 #ifndef _minunit_h
 #define _minunit_h

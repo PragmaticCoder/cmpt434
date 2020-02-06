@@ -1,9 +1,3 @@
-/**
- * Name: Alvi Akbar
- * NSID: ala273
- * Student Number: 11118887
- */
-
 #include "dictionary.h"
 
 dictionary_t *head = NULL;

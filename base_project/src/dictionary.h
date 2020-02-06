@@ -1,8 +1,3 @@
-/**
- * Name: Alvi Akbar
- * NSID: ala273
- * Student Number: 11118887
- */
 #ifndef __dictionary_h__
 #define __dictionary_h__
 
