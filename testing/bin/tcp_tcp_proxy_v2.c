@@ -1,6 +1,8 @@
-// NAME: ALVI AKBAR
-// STUDENT NO: 11118887
-// NSID: ALA273
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * Student Number: 11118887
+ */
 
 #include <arpa/inet.h>
 #include <dbg.h>
@@ -15,6 +17,7 @@ struct sockaddr_in clientSock;
 
 void
 HandleClient(int client, int server);
+
 char*
 HandleDictionary(char* arg);
 
@@ -77,7 +80,7 @@ main(int argc, char* argv[])
   close(clientFD);
 
 error:
-  return (-1)
+  return (-1);
 }
 
 void

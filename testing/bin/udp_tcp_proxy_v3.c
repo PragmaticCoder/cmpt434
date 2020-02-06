@@ -1,9 +1,11 @@
-// NAME: ALVI AKBAR
-// STUDENT NO: 11118887
-// NSID: ALA273
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * Student Number: 11118887
+ */
 
 #include <arpa/inet.h>
-#include <dbh.h>
+#include <dbg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +27,7 @@ main(int argc, char* argv[])
   struct sockaddr_in serverSock;
   struct sockaddr_in tcpClientSock;
 
-  check(argc == 3, "Please provide three arguments.");
+  check(argc == 4, "Please provide three arguments.");
 
   check((clientFD = socket(PF_INET, SOCK_DGRAM, 0)) >= 0,
         "Error opening UDP client socket connection");

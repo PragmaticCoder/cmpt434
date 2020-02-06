@@ -1,6 +1,8 @@
-// NAME: ALVI AKBAR
-// STUDENT NO: 11118887
-// NSID: ALA273
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * Student Number: 11118887
+ */
 
 #include "commandLine.h"
 #include <arpa/inet.h>

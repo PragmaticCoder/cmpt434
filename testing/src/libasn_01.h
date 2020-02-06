@@ -1,3 +1,9 @@
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * Student Number: 11118887
+ */
+
 #ifndef __libasn_01_h__
 #define __libasn_01_h__
 

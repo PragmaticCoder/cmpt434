@@ -1,6 +1,8 @@
-// NAME: ALVI AKBAR
-// STUDENT NO: 11118887
-// NSID: ALA273
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * Student Number: 11118887
+ */
 
 #include <arpa/inet.h>
 #include <stdio.h>
@@ -17,12 +19,12 @@ main(int argc, char* argv[])
   struct sockaddr_in clientAddress;
 
   if (argc < 3) {
-    printf("Too few Argument");
+    printf("Too few Argument\n\r");
     exit(1);
   }
 
   if ((socketFD = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
-    printf("Failed to create Socket");
+    printf("Failed to create Socket\n\r");
     exit(1);
   }
 
@@ -35,7 +37,7 @@ main(int argc, char* argv[])
   if (connect(socketFD,
               (struct sockaddr*)&clientAddress,
               sizeof(struct sockaddr)) < 0) {
-    printf("Failed to connect to the given Address");
+    printf("Failed to connect to the given Address\n\r");
     exit(1);
   }
 
@@ -48,7 +50,7 @@ main(int argc, char* argv[])
       break;
     }
     if ((sentLength = send(socketFD, ptr, strlen(ptr), 0)) != strlen(ptr)) {
-      printf("sent lower number of send character");
+      printf("sent lower number of send character\n\r");
       exit(1);
     }
     printf("send Data : %s\nlength : %d\n", ptr, sentLength);

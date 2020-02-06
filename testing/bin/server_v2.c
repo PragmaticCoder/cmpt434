@@ -1,6 +1,9 @@
-// NAME: ALVI AKBAR
-// STUDENT NO: 11118887
-// NSID: ALA273
+
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * Student Number: 11118887
+ */
 
 #include "dictionary.h"
 #include <arpa/inet.h>
@@ -11,15 +14,15 @@
 #include <unistd.h>
 
 #define MAXPENDING 2
-#define arrayLength(x) (sizeof((x))/sizeof((x)[0])
+#define arrayLength(x) (sizeof((x)) / sizeof((x)[0]))
 char*
 HandleDictionary(char* arg)
 {
   char* ptr;
   char* argV[10];
   int i = 0;
-  for (char* token = strtok_r(arg, " \n\r", &ptr); token;
-       token = strtok_r(NULL, " \n\r", &ptr)) {
+  for (char* token = strtok(arg, " \n\r"); token;
+       token = strtok(NULL, " \n\r")) {
     argV[i++] = token;
     if (i >= (arrayLength(argV) - 1)) {
       break;

@@ -1,3 +1,9 @@
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * Student Number: 11118887
+ */
+
 #include "dbg.h"
 
 /* Utility Functions */

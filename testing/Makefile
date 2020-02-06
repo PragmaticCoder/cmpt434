@@ -1,15 +1,20 @@
-# NAME: ALVI AKBAR
-# STUDENT NO: 11118887
-# NSID: ALA273
+# Name: Alvi AKbar
+# NSID: ala273
+# Student No: 11118887
 
 SRC_DIR=./src
 BUILD_DIR=./build
 TESTS_DIR=./tests
+BIN_DIR	=./bin
+
+PART_1=$(BIN_DIR)
+PART_2=$(BIN_DIR)
+PART_3=$(BIN_DIR)
 
 INCLUDES=-I$(SRC_DIR)
 
 CC=gcc
-CFLAGS=-g -std=c99 -O2 -Wall -Wextra -Werror -Wno-unused-function\
+CFLAGS=-g -std=c99 -O2 	-Wall -Wextra -Werror -Wno-unused-function\
 			-Wno-unused-but-set-parameter -Wno-unused-parameter -Wno-address\
 			-Wno-unused-variable -Wno-return-local-addr -Wno-sign-compare -Wno-pointer-sign\
 			-rdynamic -DNDEBUG -Du_char="unsigned char" -DNDEBUG $(INCLUDES) $(OPTFLAGS)
@@ -23,8 +28,10 @@ OBJECTS=$(patsubst %.c, %.o, $(SOURCES))
 TEST_SOURCES=$(wildcard $(TESTS_DIR)/*_tests.c)
 TESTS=$(patsubst %.c, %, $(TEST_SOURCES))
 
-PROGRAMS_SRC=$(wildcard bin/*.c)
-PROGRAMS=$(patsubst %.c, %.o, $(PROGRAMS_SRC))
+
+PROGRAMS=$(PART_1)/server_v1 $(PART_1)/client_v1\
+	  $(PART_2)/server_v2 $(PART_2)/tcp_tcp_proxy $(PART_2)/client_v2\
+	  $(PART_3)/server_v3 $(PART_3)/udp_tcp_proxy $(PART_3)/client_v3
 
 TARGET=$(BUILD_DIR)/libasn_01.a
 SO_TARGET=$(patsubst %.a, %.so,$(TARGET))
@@ -32,6 +39,30 @@ SO_TARGET=$(patsubst %.a, %.so,$(TARGET))
 all: target tests
 
 target: build $(TARGET) $(SO_TARGET) $(PROGRAMS)
+
+$(PART_1)/server_v1:$(BIN_DIR)/server_v2.c 
+	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS) $(INCLUDES) -lasn_01 -L $(BUILD_DIR)
+
+$(PART_1)/client_v1:$(BIN_DIR)/client.c
+	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS) $(INCLUDES) -lasn_01 -L $(BUILD_DIR)
+
+$(PART_2)/server_v2:$(BIN_DIR)/server_v2.c 
+	$(CC) $(CFLAGS) $< -o $@ $(INCLUDES) -lasn_01 -L $(BUILD_DIR)
+
+$(PART_2)/tcp_tcp_proxy:$(BIN_DIR)/tcp_tcp_proxy_v2.c 
+	$(CC) $(CFLAGS) $< -o $@ $(INCLUDES) -lasn_01 -L $(BUILD_DIR)
+
+$(PART_2)/client_v2:$(BIN_DIR)/client.c
+	$(CC) $(CFLAGS) $< -o $@ $(INCLUDES) -lasn_01 -L $(BUILD_DIR)
+
+$(PART_3)/server_v3:$(BIN_DIR)/udp_server_v3.c 
+	$(CC) $(CFLAGS) $< -o $@ $(INCLUDES)  -lasn_01 -L $(BUILD_DIR)
+
+$(PART_3)/udp_tcp_proxy:$(BIN_DIR)/udp_tcp_proxy_v3.c 
+	$(CC) $(CFLAGS) $< -o $@ $(INCLUDES)  -lasn_01 -L $(BUILD_DIR)
+
+$(PART_3)/client_v3:$(BIN_DIR)/client.c 
+	$(CC) $(CFLAGS) $< -o $@ $(INCLUDES) -lasn_01 -L $(BUILD_DIR)
 
 $(TESTS_DIR)/%:	$(TESTS_DIR)/%.c
 	$(CC) $(CFLAGS) $< -o $@ $(TARGET) $(LDFLAGS)
@@ -43,9 +74,6 @@ $(TARGET): $(OBJECTS)
 
 $(SO_TARGET): $(OBJECTS)
 	$(CC) -shared $(LDFLAGS) -o $@ $(OBJECTS) 
-
-$(PROGRAMS): $(PROGRAMS_SRC)
-	$(CC) $(CFLAGS) $< -o $@ $(TARGET) $(LDFLAGS)
 
 $(TESTS): $(TEST_SOURCES)
 	$(CC) $(CFLAGS) $< -o $@ $(TARGET) $(LDFLAGS)
@@ -69,7 +97,7 @@ valgrind: ## Check Memory Leaks using Valgrind
 	VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
 
 .PHONY: clean
-clean: clean-build clean-debug ## Remove all file artifact
+clean: clean-build clean-debug  ## Remove all file artifact 
 
 .PHONY: clean-build
 clean-build: ## Remove build artifacts
@@ -96,6 +124,6 @@ release: clean  ## Generate release version
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
-	@echo "Contact author for help @ ala273@mail.usask.ca"
+	@echo "Contact author for help @ala273@mail.usask.ca"
 
 $(PROGRAMS): CFLAGS += $(TARGET)
