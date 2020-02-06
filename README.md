@@ -1,2 +1,1 @@
-# CMPT434
-Computer Network Coursework
+# Computer Network Coursework
