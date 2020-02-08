@@ -24,12 +24,11 @@ probability_calculate()
     total_count = 0;
   }
 
-  if (rand() > 16384) {
-    if (loss < probability) {
-      loss++;
-      return 0;
-    }
+  if (rand() > 16384 && loss < probability) {
+    loss++;
+    return 0;
   }
+
   return 1;
 }
 
@@ -41,6 +40,7 @@ user_input()
 
   while (((c = fgetc(stdin)) != '\n') && (c != EOF))
     ;
+
   if ((ch == 'Y') || (ch == 'y'))
     return 1;
 
@@ -67,12 +67,10 @@ main(int argc, char* argv[])
   struct sockaddr_in server;
   struct sockaddr_in client;
 
-  if ((socket_ID = socket(PF_INET, SOCK_DGRAM, 0)) < 0) {
+  if ((socket_ID = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
     log_err("Failed to open socket");
-  }
 
   struct sigaction handler;
-
   handler.sa_handler = &terminate_program;
 
   if (sigfillset(&handler.sa_mask) < 0)
@@ -104,16 +102,14 @@ main(int argc, char* argv[])
   while (1) {
 
     clientSize = sizeof(struct sockaddr);
-
     if ((receivedLength = recvfrom(socket_ID,
                                    buffer,
                                    (sizeof(buffer) / sizeof(buffer[0])) - 1,
                                    0,
                                    (struct sockaddr*)&client,
-                                   &clientSize)) <= 0) {
-
+                                   &clientSize)) <= 0)
       log_err("Failed to Receive message from the server");
-    }
+    
 
     last_frame_received = *(uint16_t*)buffer;
     uint16_t message_length = *(uint16_t*)&buffer[2];
@@ -137,8 +133,8 @@ main(int argc, char* argv[])
         printf("[Out of Order  ][%03d]  %s\n", last_frame_received, &buffer[4]);
     }
 
-	*(uint16_t*)buffer = expecting_frame;
-	
+    *(uint16_t*)buffer = expecting_frame;
+
     if ((sendto(socket_ID,
                 buffer,
                 sizeof(expecting_frame),
