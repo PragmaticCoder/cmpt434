@@ -4,7 +4,8 @@
     "*.h": "c",
     "typeinfo": "c",
     "*.tcc": "c",
-    "fstream": "c"
+    "fstream": "c",
+    "system_error": "c"
   },
   "clang-format.fallbackStyle": "Mozilla"
 }
