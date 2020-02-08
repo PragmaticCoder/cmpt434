@@ -79,6 +79,7 @@ main(int argc, char* argv[])
     log_err("Failed to set the signal mask");
 
   handler.sa_flags = 0;
+
   if (sigaction(SIGINT, &handler, 0) < 0)
     log_err("Failed to set the Signal Handler function of SIGINT");
 
@@ -120,7 +121,6 @@ main(int argc, char* argv[])
     buffer[4 + message_length] = '\0';
 
     if (expecting_frame == last_frame_received) {
-      // printf("Incoming Frame, Accept (Y/else No) : \n");
 
       /* user input */
       if (probability_calculate()) {
@@ -137,7 +137,8 @@ main(int argc, char* argv[])
         printf("[Out of Order  ][%03d]  %s\n", last_frame_received, &buffer[4]);
     }
 
-    *(uint16_t*)buffer = expecting_frame;
+	*(uint16_t*)buffer = expecting_frame;
+	
     if ((sendto(socket_ID,
                 buffer,
                 sizeof(expecting_frame),
