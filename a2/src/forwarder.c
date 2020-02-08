@@ -168,9 +168,8 @@ go_back_n_sliding(struct sockaddr_in* client, char* buffer, int window_size)
                  length,
                  0,
                  (struct sockaddr*)client,
-                 sizeof(struct sockaddr)) != length) {
+                 sizeof(struct sockaddr)) != length)
         log_err("Failed to send message to the server");
-      }
 
       last_frame_sent = local_frame->index;
       local_frame = local_frame->next;
