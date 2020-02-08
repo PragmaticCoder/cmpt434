@@ -134,7 +134,6 @@ main(int argc, char* argv[])
     }
 
     *(uint16_t*)buffer = expecting_frame;
-
     if ((sendto(socket_ID,
                 buffer,
                 sizeof(expecting_frame),
