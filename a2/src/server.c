@@ -22,10 +22,12 @@ int socket_ID;
 int probability_Calculate(){
 	static int loss = 0;
 	static int total_count = 0;
+
     if(total_count++ >= 10) {
 		loss = 0;
 		total_count = 0;
 	}
+
 	if(rand() > 28878){
 		if(loss < probability) {
 			loss++;
@@ -85,6 +87,7 @@ int main(int argc, char *argv[]){
 	
 	srand(time(NULL)); 										// seed the rand function
 	rand();
+	
 	memset(&server, 0, sizeof(struct sockaddr_in));
 	memset(&client, 0, sizeof(struct sockaddr_in));
 	
