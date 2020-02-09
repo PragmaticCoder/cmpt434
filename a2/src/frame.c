@@ -31,17 +31,23 @@ frame_t*
 Frame_add(const char* message)
 {
   static uint32_t index = 0;
+
   frame_t* frame = (frame_t*)malloc(sizeof(frame_t));
+
   frame->index = index++;
   frame->message = strdup(message);
   frame->next = NULL;
+
   if (tail != NULL) {
     tail->next = frame;
   }
+
   tail = frame;
+
   if (head == NULL) {
     head = frame;
   }
+
   return frame;
 }
 
@@ -54,6 +60,7 @@ Frame_delete(frame_t* frame)
   if (head == frame) {
     head = frame->next;
   }
+
   free(frame->message);
   free(frame);
 }
@@ -78,6 +85,7 @@ Frame_serialize(char* buffer, frame_t* frame)
 
   memcpy(buffer, (const void*)&frame->index, sizeof(frame->index));
   memcpy(&buffer[4], frame->message, length);
+  
   *(uint16_t*)&buffer[4 + length] =
     CRC16(buffer, length + 2 + sizeof(frame->index));
 
