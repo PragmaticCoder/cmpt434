@@ -1,24 +1,24 @@
 
 SRC_DIR		= src
 BUILD_DIR 	= build
-INCLUDES	= ./include 
+INCLUDES	= include
 
 CC 			= gcc
-CFLAGS 		= -g -O2 -Wall -Wextra -Wno-unused-function -rdynamic\
-			  -Wno-unused-but-set-parameter -Wno-unused-parameter -Wno-address\
-			  -Wno-unused-variable -Wno-return-local-addr -Wno-sign-compare -Wno-pointer-sign\
-			  -Du_char="unsigned char" -DNDEBUG 
+CFLAGS 		= -g -O2 -Wall -Wextra -Werror -Wno-unused-function\
+              -Wno-unused-but-set-parameter -Wno-unused-parameter -Wno-address\
+              -Wno-unused-variable -Wno-return-local-addr -Wno-sign-compare -Wno-pointer-sign -rdynamic\
+              -DNDEBUG
 
 all: build_dir $(BUILD_DIR)/client $(BUILD_DIR)/server $(BUILD_DIR)/forwarder
 	
-$(BUILD_DIR)/client: $(SRC_DIR)/client.c
-	$(CC) -o $@ $(SRC_DIR)/client.c -I $(INCLUDES)
+$(BUILD_DIR)/client: $(SRC_DIR)/client.c $(SRC_DIR)/frame.c  $(INCLUDES)/frame.h
+	$(CC) $(CFLAGS) -o $@ $(SRC_DIR)/client.c $(SRC_DIR)/frame.c -I $(INCLUDES)
 
-$(BUILD_DIR)/server: $(SRC_DIR)/server.c
-	$(CC) -o $@ $(SRC_DIR)/server.c -I $(INCLUDES)
+$(BUILD_DIR)/server: $(SRC_DIR)/server.c $(SRC_DIR)/frame.c  $(INCLUDES)/frame.h
+	$(CC) $(CFLAGS) -o $@ $(SRC_DIR)/server.c $(SRC_DIR)/frame.c -I $(INCLUDES)
 
-$(BUILD_DIR)/forwarder: $(SRC_DIR)/forwarder.c
-	$(CC) -o $@ $(SRC_DIR)/forwarder.c -I $(INCLUDES)
+$(BUILD_DIR)/forwarder: $(SRC_DIR)/forwarder.c $(SRC_DIR)/frame.c  $(INCLUDES)/frame.h
+	$(CC) $(CFLAGS) -o $@ $(SRC_DIR)/forwarder.c $(SRC_DIR)/frame.c -I $(INCLUDES)
 
 build_dir:
 	mkdir -p $(BUILD_DIR)

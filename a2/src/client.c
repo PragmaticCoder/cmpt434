@@ -1,311 +1,237 @@
-#include <arpa/inet.h>
-#include <client.h>
-#include <dbg.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <netdb.h>
-#include <signal.h>
-#include <stdint.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
+#include <fcntl.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
+#include <errno.h>
 #include <unistd.h>
+#include <netdb.h>
+#include <frame.h>
+#include <dbg.h>
 
-typedef struct _frame
-{
-  uint16_t index;
-  char* message;
-  struct _frame* next;
-} frame_t;
-
-frame_t* head = NULL;
-frame_t* tail = NULL;
-
-char*
-strdup(const char* str)
-{
-  int length = strlen(str);
-
-  char* copy = (char*)malloc(length + 1);
-  memcpy(copy, str, length);
-
-  copy[length] = '\0';
-
-  return copy;
-}
-
-frame_t*
-Frame_add(const char* message)
-{
-  static uint32_t index = 0;
-  frame_t* frame = (frame_t*)malloc(sizeof(frame_t));
-
-  frame->index = index++;
-  frame->message = strdup(message);
-  frame->next = NULL;
-
-  if (tail != NULL)
-    tail->next = frame;
-
-  tail = frame;
-
-  if (head == NULL)
-    head = frame;
-
-  return frame;
-}
-
-void
-Frame_delete(frame_t* frame)
-{
-  if (frame == NULL)
-    return;
-
-  if (head == frame)
-    head = frame->next;
-
-  free(frame->message);
-  free(frame);
-}
-
-int
-Frame_serialize(char* buffer, frame_t* frame)
-{
-  if (frame == NULL)
-    return 0;
-
-  uint16_t length = strlen(frame->message);
-  *(uint16_t*)&buffer[2] = length;
-
-  memcpy(buffer, (const void*)&frame->index, sizeof(frame->index));
-  memcpy(&buffer[4], frame->message, length);
-
-  return length + sizeof(frame->index) + 2; //+ 2;
-}
-
-frame_t* current_frame;
+frame_t *current_frame;
 int server;
+uint16_t N;
+struct sockaddr_in receiver;
 uint32_t timeout_in_Secs;
-
 volatile uint16_t last_frame_received = 0, last_frame_sent = 0;
-volatile int wait_for_reply = 0;
 
-void
-timeout(int mask)
-{
-  wait_for_reply = 0;
-  log_info("Timeout");
+/*
+* Signal Handler for SIGIO to read when IO device ready for read/write function	
+*/
+
+void data_Received(int mask){
+	
+	struct sockaddr_in client;
+	unsigned int clientSize = sizeof(struct sockaddr);
+	int receivedLength;	
+	char buffer[1024];
+	frame_t *local_frame;
+	// loop till all the received UDP packets are copied in storage buffer
+	do{
+		if((receivedLength = recvfrom(server, buffer, sizeof(buffer), 0, (struct sockaddr *)&client, &clientSize)) < 0){
+			if((errno == EWOULDBLOCK) || (errno = EAGAIN)){ // indicates there is no bytes in the internal buffer
+				break;
+			}
+			log_err("Failed to Receive message from the server");
+		}
+		
+
+		local_frame = current_frame;
+		uint16_t Request_Number = *(uint16_t *)buffer;		// get the request number of the last received index number
+		
+		debug("Last Frame Ackd : %d", Request_Number - 1);	// received index always point to next frame in the queue
+		if(Request_Number == (last_frame_received + 1)){	// compare the received index number with last sent index number
+			current_frame = current_frame->next;			// point to next frame in the queue
+			Frame_delete(local_frame);						// free the memory allocated to this frame
+			last_frame_received++;							// increment the last acknowledged frame index
+			if(current_frame == NULL){						// if this is the frame in the queue reset the head and tail of the queue
+				set_Head(NULL);
+				set_Tail(NULL);
+			}
+		}
+
+	}while(receivedLength != 0);
+	alarm(timeout_in_Secs);									// restart the timeout alarm
+	if(last_frame_received == (last_frame_sent + 1)){		// if the last received and last sent frame are in sync
+		alarm(0);											// reset the timer
+		raise(SIGALRM);		
+	}
 }
 
-void
-data_Received(int mask)
-{
-  frame_t* local_frame;
+/*
+* function to send the data to UDP server
+*/
 
-  int recv_len;
-  char buffer[1024];
-
-  struct sockaddr_in client;
-  unsigned int client_size = sizeof(struct sockaddr);
-
-  do {
-    if ((recv_len = recvfrom(server,
-                             buffer,
-                             sizeof(buffer),
-                             0,
-                             (struct sockaddr*)&client,
-                             &client_size)) < 0) {
-
-      if ((errno == EWOULDBLOCK) || (errno = EAGAIN))
-        break;
-
-      log_err("Failed to Receive message from the server");
-    }
-
-    local_frame = current_frame;
-    uint16_t request_number = *(uint16_t*)buffer;
-
-    debug("Last Frame Ackd : %d", request_number - 1);
-
-    if (request_number == (last_frame_received + 1)) {
-
-      current_frame = current_frame->next;
-      Frame_delete(local_frame);
-
-      last_frame_received++;
-
-      if (current_frame == NULL) {
-        head = NULL;
-        tail = NULL;
-      }
-    }
-
-  } while (recv_len != 0);
-
-  alarm(timeout_in_Secs);
-
-  if (last_frame_received == (last_frame_sent + 1)) {
-    alarm(0);
-    wait_for_reply = 0;
-  }
+void 
+go_back_n_sliding(){
+	
+	int i;		
+    frame_t *local_frame = current_frame;
+	char buffer[1024];
+	sigset_t set, oset;
+    sigemptyset( &set );
+    sigaddset( &set, SIGIO );								// mask for SIGIO to disable the interrupt while in the middle
+															// of sending the frame window
+	sigprocmask( SIG_BLOCK, &set, &oset );
+	for(i = 0; (i < N) && (local_frame != NULL); i++){		// loop till the window size or last frame
+		int length = Frame_serialize(buffer, local_frame);	// convert the frame to linear buffer for sending via UDP
+		if(length != 0) {
+			if(sendto(	server, buffer, length, 0, (struct sockaddr *)&receiver,
+						sizeof(struct sockaddr)) !=  length) {
+				log_err("Failed to send message to the server");
+			}
+			last_frame_sent = local_frame->index;			
+			local_frame = local_frame->next;
+			debug ("Last Frame sent : %d", last_frame_sent);
+		}
+	}	
+	alarm(timeout_in_Secs);									// start the timeout alarm
+	sigprocmask( SIG_UNBLOCK, &set, &oset );				// unmask the SIGIO interrupt
 }
 
-void
-go_back_n_sliding(struct sockaddr_in* client, char* buffer, int window_size)
-{
-  int i;
-  sigset_t set, oset;
-  frame_t* local_frame = current_frame;
-
-  sigemptyset(&set);
-  sigaddset(&set, SIGIO);
-  sigprocmask(SIG_BLOCK, &set, &oset);
-
-  for (i = 0; (i < window_size) && (local_frame != NULL); i++) {
-    int length = Frame_serialize(buffer, local_frame);
-
-    if (length != 0) {
-
-      if (sendto(server,
-                 buffer,
-                 length,
-                 0,
-                 (struct sockaddr*)client,
-                 sizeof(struct sockaddr)) != length) {
-        log_err("Failed to send message to the server");
-      }
-
-      last_frame_sent = local_frame->index;
-      local_frame = local_frame->next;
-
-      debug("Last Frame sent : %d", last_frame_sent);
-    }
-  }
-
-  wait_for_reply = 1;
-  alarm(timeout_in_Secs);
-  sigprocmask(SIG_UNBLOCK, &set, &oset);
+/*
+* Signal Handler for the timeout alarm
+*/
+void timeout(int mask){
+	go_back_n_sliding();									// unblocks start the write function					
+	debug("Timeout");			
 }
 
-void
-terminate_program(int mask)
-{
-  while (head != NULL)
-    Frame_delete(head);
-
-  close(server);
-  debug("Program Exited");
-  exit(0);
+/*
+*	Signal Handler to terminate the program
+*/
+void terminate_program(int mask){
+	Frame_delete_all();						// delete all the frame in the queue
+	close(server);							// close the socket
+	debug("Program Exited");
+	exit(0);								// exit the program
 }
 
-int
-main(int argc, char* argv[])
-{
-  check(
-    (argc >= 5),
-    "Usage ./client <Hostname/IP Address> <Port> <Window Size> <Timeout(S)>");
+int main(int argc, char* argv[]) {
+	
+	check((argc >= 5),"Usage ./client <Hostname/IP Address> <Port> <Window Size> <Timeout(S)>");
+	
+	
+	uint32_t ip;
+	struct hostent *hostIP;
+	uint16_t port = atoi(argv[2]);
+	
+	debug("Resolving IP Addres ...");
+	if((ip = inet_addr(argv[1])) == (uint32_t)-1){			// if IP Address
+	 if((hostIP = gethostbyname(argv[1])) != NULL){			// if HostName
+		ip = *(uint32_t *)(hostIP->h_addr_list[0]);
+	 }
+	 else {
+		 log_err("Unable to resolve the IP address");
+	 }
+	}
+	
+	struct in_addr addr = {.s_addr = ip};
+	debug("IP Address resolved : %s", inet_ntoa(addr));		
+	debug("Port : %d", port);
 
-  uint32_t ip;
-  struct hostent* hostIP;
-  uint16_t port = atoi(argv[2]);
+	N = atoi(argv[3]);										// Window Size
+	timeout_in_Secs = atoi(argv[4]);						// timeout
+	
+	if((server = socket(PF_INET, SOCK_DGRAM, 0)) < 0) {		// open the socket
+		log_err("Failed to open socket");
+	}
+	
+	memset(&receiver, 0, sizeof(struct sockaddr));
+	receiver.sin_family = AF_INET;
+	receiver.sin_addr.s_addr = ip;
+	receiver.sin_port = htons(port);						// fill the socket structure for the server to connect
+	
+	struct sigaction handler;
+	
+	handler.sa_handler = &terminate_program;				// Signal handler for SIGINT signal used to clear memory and close sockets
+	if(sigfillset(&handler.sa_mask) < 0) {
+		log_err("Failed to set the signal mask");
+	}
+	handler.sa_flags = 0;
+	
+	if(sigaction(SIGINT, &handler, 0) < 0){
+		log_err("Failed to set the Signal Handler function of SIGINT");
+	}
+	
+	handler.sa_handler = &data_Received;					// Signal Handler for SIGIO signal used for nonBlocking UDP socket
+	if(sigfillset(&handler.sa_mask) < 0) {
+		log_err("Failed to set the signal mask");
+	}
+	handler.sa_flags = SA_RESTART;
 
-  debug("Resolving IP Addres ...");
-  if ((ip = inet_addr(argv[1])) == (uint32_t)-1)
+	if(sigaction(SIGIO, &handler, 0) < 0){
+		log_err("Failed to set the Signal Handler function of SIGIO");
+	}
+	
+	if(fcntl(server, F_SETOWN, getpid()) < 0){
+		log_err("Failed to set the Owner of the Socket");
+	}
 
-    if ((hostIP = gethostbyname(argv[1])) != NULL)
-      ip = *(uint32_t*)(hostIP->h_addr_list[0]);
-    else
-      log_err("Unable to resolve the IP address");
+	if(fcntl(server, F_SETFL, O_NONBLOCK | FASYNC ) < 0){
+		log_err("Failed to set the Socket in Async Mode");
+	}
+	
+	handler.sa_handler = &timeout;							// signal handler for SIGALRM signal used for timeout purpose
+	if(sigfillset(&handler.sa_mask) < 0) {
+		log_err("Failed to set the signal mask");
+	}
+	handler.sa_flags = SA_RESTART;
+	
+	if(sigaction(SIGALRM, &handler, 0) < 0){
+		log_err("Failed to set the Signal Handler function of SIGALRM");
+	}
+	alarm(timeout_in_Secs);
+	
+	char 	ch;
+	char	buffer[1024];
+	int     num = 0;
+	int		size;
+	int     inputFD = fileno(stdin);
 
-  struct in_addr addr = { .s_addr = ip };
+	sprintf(buffer, "[000] ");
+	if(write(fileno(stdout), buffer, strlen(buffer)) != strlen(buffer)){
+		log_err("Failed to write to the output stream");
+	}
 
-  debug("IP Address resolved : %s", inet_ntoa(addr));
-  debug("Port : %d", port);
+	while(1){
+		
+		size = read(inputFD, &ch, 1);		// read single character from the STDIN buffer
+		if(size > 0){
+			if(ch != '\n') {				// copy the value into the buffer till newline character is pressed
+				buffer[num++] = ch;
+			}
+			else {	
+				buffer[num] = '\0';			// null terminate the buffer
+				num = 0;					// reset the index
+				frame_t *frame = Frame_add(buffer);	// add to the buffer
+				sprintf(buffer, "[%03d] ", frame->index + 1);	// sequence string
+				if(write(fileno(stdout), buffer, strlen(buffer)) != strlen(buffer)){
+					log_err("Failed to write to the output stream");
+				}
+				if(current_frame == NULL){
+					current_frame = get_Head();	// get the lastest additon in the queue
+				}
+			}
+		}
+		else if(size < 0){
+			if((errno != EWOULDBLOCK) && (errno != EAGAIN)){
+				log_err("Failed to read from the user");
+			} 
+		}
+		frame_t *head = get_Head(), *tail = get_Tail();
+		if((head != NULL) && (tail != NULL) && ((tail->index - head->index) < N)){
+			raise(SIGALRM);
+		}
+	}
 
-  uint16_t N = atoi(argv[3]);
-  timeout_in_Secs = atoi(argv[4]);
-
-  struct sockaddr_in receiver;
-
-  if ((server = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
-    log_err("Failed to open socket");
-
-  memset(&receiver, 0, sizeof(struct sockaddr));
-
-  receiver.sin_family = AF_INET;
-  receiver.sin_addr.s_addr = ip;
-  receiver.sin_port = htons(port);
-
-  struct sigaction handler;
-  handler.sa_handler = &terminate_program;
-
-  if (sigfillset(&handler.sa_mask) < 0)
-    log_err("Failed to set the signal mask");
-
-  handler.sa_flags = 0;
-
-  if (sigaction(SIGINT, &handler, 0) < 0)
-    log_err("Failed to set the Signal Handler function of SIGINT");
-
-  handler.sa_handler = &data_Received;
-
-  if (sigfillset(&handler.sa_mask) < 0)
-    log_err("Failed to set the signal mask");
-
-  handler.sa_flags = SA_RESTART;
-
-  if (sigaction(SIGIO, &handler, 0) < 0)
-    log_err("Failed to set the Signal Handler function of SIGIO");
-
-  if (fcntl(server, F_SETOWN, getpid()) < 0)
-    log_err("Failed to set the Owner of the Socket");
-
-  if (fcntl(server, F_SETFL, O_NONBLOCK | FASYNC) < 0)
-    log_err("Failed to set the Socket in Async Mode");
-
-  handler.sa_handler = &timeout;
-  if (sigfillset(&handler.sa_mask) < 0)
-    log_err("Failed to set the signal mask");
-
-  handler.sa_flags = SA_RESTART;
-
-  if (sigaction(SIGALRM, &handler, 0) < 0)
-    log_err("Failed to set the Signal Handler function of SIGALRM");
-
-  alarm(0);
-
-  char* ptr;
-  char buffer[1024];
-  int num;
-  size_t size;
-
-  while (1) {
-    size = 0;
-    ptr = NULL;
-
-    if (((num = getline(&ptr, &size, stdin)) != -1)) {
-
-      memcpy(buffer, ptr, num);
-      *(strchr(buffer, '\n')) = '\0';
-      debug("User Entered : %s", buffer);
-
-      if (buffer[0] != 0)
-        Frame_add(buffer);
-
-      free(ptr);
-    }
-
-    if (head != NULL)
-      current_frame = head;
-
-    if ((current_frame != NULL) && !wait_for_reply)
-      go_back_n_sliding(&receiver, buffer, N);
-  }
-
-error : {
-  terminate_program(0);
-  while (1)
-    ;
-}
+	/* Error condition exit the program */
+	error: {
+		terminate_program(0);
+		while(1);
+	}
 }
