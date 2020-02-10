@@ -38,25 +38,26 @@ data_Received(int mask)
 
   frame_t* local_frame;
   struct sockaddr_in client;
-  unsigned int clientSize = sizeof(struct sockaddr);
+  unsigned int client_size = sizeof(struct sockaddr);
 
   int receivedLength;
   char buffer[1024];
+
   /* loop till all the received UDP packets are copied in storage buffer */
   do {
-    if ((receivedLength = recvfrom(server,
-                                   buffer,
-                                   sizeof(buffer),
-                                   0,
-                                   (struct sockaddr*)&client,
-                                   &clientSize)) < 0) {
+    receivedLength = recvfrom(server,
+                              buffer,
+                              sizeof(buffer),
+                              0,
+                              (struct sockaddr*)&client,
+                              &client_size);
 
-      /* when there is no bytes in the internal buffer */
-      if ((errno == EWOULDBLOCK) || (errno = EAGAIN))
-        break;
+    /* when there is no bytes in the internal buffer */
+    if ((receivedLength < 0) && ((errno == EWOULDBLOCK) || (errno = EAGAIN)))
+      break;
 
+    if (receivedLength < 0)
       log_err("Failed to Receive message from the server");
-    }
 
     local_frame = current_frame;
     uint16_t Request_Number =
