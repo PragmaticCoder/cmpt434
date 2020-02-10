@@ -42,7 +42,7 @@ data_Received(int mask)
   int receivedLength;
   char buffer[1024];
 
-  /* loop till all the received UDP packets are copied in storage buffer */
+  /* Until all the received UDP packets are copied in storage buffer */
   do {
     receivedLength = recvfrom(server,
                               buffer,
@@ -68,19 +68,21 @@ data_Received(int mask)
 
     /* compare the received index number with last sent index number */
     if (request_number == (last_frame_received + 1)) {
-
-      current_frame =
-        current_frame->next;     /* point to next frame in the queue */
-      Frame_delete(local_frame); /* free the memory allocated to this frame */
-
-      last_frame_received++; /* increment the last acknowledged frame index */
-
-      /* when frame in the queue reset */
-      if (current_frame == NULL) {
-        Set_head(NULL);
-        Set_tail(NULL);
-      }
+      /* point to next frame in the queue */
+      /* free the memory allocated to this frame */
+      /* increment the last acknowledged frame index */
+      current_frame = current_frame->next;
+      Frame_delete(local_frame);
+      last_frame_received++;
     }
+
+    /* when frame in the queue reset */
+    if ((current_frame == NULL) &&
+        (request_number == (last_frame_received + 1))) {
+      Set_head(NULL);
+      Set_tail(NULL);
+    }
+
   } while (receivedLength != 0);
 
   alarm(timeout_in_seconds); /* restart the timeout alarm */
