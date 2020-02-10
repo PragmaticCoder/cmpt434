@@ -1,6 +1,13 @@
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * 11118887
+ */
+
 #include <frame.h>
 
-frame_t *head = NULL, *tail = NULL;
+frame_t* head = NULL;
+frame_t* tail = NULL;
 
 uint16_t
 CRC16(char* buffer, int length)
@@ -22,8 +29,10 @@ strdup(const char* str)
 {
   int length = strlen(str);
   char* copy = (char*)malloc(length + 1);
+
   memcpy(copy, str, length);
   copy[length] = '\0';
+
   return copy;
 }
 
@@ -38,15 +47,13 @@ Frame_add(const char* message)
   frame->message = strdup(message);
   frame->next = NULL;
 
-  if (tail != NULL) {
+  if (tail != NULL)
     tail->next = frame;
-  }
 
   tail = frame;
 
-  if (head == NULL) {
+  if (head == NULL)
     head = frame;
-  }
 
   return frame;
 }
@@ -57,9 +64,8 @@ Frame_delete(frame_t* frame)
   if (frame == NULL)
     return;
 
-  if (head == frame) {
+  if (head == frame)
     head = frame->next;
-  }
 
   free(frame->message);
   free(frame);
@@ -68,24 +74,22 @@ Frame_delete(frame_t* frame)
 void
 Frame_delete_all()
 {
-  while (head != NULL) {
+  while (head != NULL)
     Frame_delete(head);
-  }
 }
 
 int
 Frame_serialize(char* buffer, frame_t* frame)
 {
-  if (frame == NULL) {
+  if (frame == NULL)
     return 0;
-  }
 
   uint16_t length = strlen(frame->message);
   *(uint16_t*)&buffer[2] = length;
 
   memcpy(buffer, (const void*)&frame->index, sizeof(frame->index));
   memcpy(&buffer[4], frame->message, length);
-  
+
   *(uint16_t*)&buffer[4 + length] =
     CRC16(buffer, length + 2 + sizeof(frame->index));
 
@@ -93,25 +97,25 @@ Frame_serialize(char* buffer, frame_t* frame)
 }
 
 frame_t*
-get_Head()
+Get_head()
 {
   return head;
 }
 
 frame_t*
-get_Tail()
+Get_tail()
 {
   return head;
 }
 
 void
-set_Head(frame_t* frame)
+Set_head(frame_t* frame)
 {
   head = frame;
 }
 
 void
-set_Tail(frame_t* frame)
+Set_tail(frame_t* frame)
 {
   tail = frame;
 }

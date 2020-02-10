@@ -1,3 +1,9 @@
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * 11118887
+ */
+
 #include <arpa/inet.h>
 #include <dbg.h>
 #include <errno.h>
@@ -75,8 +81,8 @@ data_Received(int mask)
       last_frame_received++;     // increment the last acknowledged frame index
       if (current_frame == NULL) { // if this is the frame in the queue reset
                                    // the head and tail of the queue
-        set_Head(NULL);
-        set_Tail(NULL);
+        Set_head(NULL);
+        Set_tail(NULL);
       }
     }
 
@@ -366,8 +372,8 @@ main(int argc, char* argv[])
       }
     }
 
-    if (get_Head() != NULL) {
-      current_frame = get_Head(); // get the latest addition in the queue
+    if (Get_head() != NULL) {
+      current_frame = Get_head(); // get the latest addition in the queue
     }
 
     if ((current_frame != NULL) &&

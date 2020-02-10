@@ -1,3 +1,9 @@
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * 11118887
+ */
+
 #include <arpa/inet.h>
 #include <dbg.h>
 #include <errno.h>
@@ -15,6 +21,7 @@
 int server;
 frame_t* current_frame;
 uint16_t N;
+
 struct sockaddr_in receiver;
 uint32_t timeout_in_seconds;
 
@@ -29,12 +36,13 @@ void
 data_Received(int mask)
 {
 
+  frame_t* local_frame;
   struct sockaddr_in client;
   unsigned int clientSize = sizeof(struct sockaddr);
+
   int receivedLength;
   char buffer[1024];
-  frame_t* local_frame;
-  // loop till all the received UDP packets are copied in storage buffer
+  /* loop till all the received UDP packets are copied in storage buffer */
   do {
     if ((receivedLength = recvfrom(server,
                                    buffer,
@@ -42,9 +50,9 @@ data_Received(int mask)
                                    0,
                                    (struct sockaddr*)&client,
                                    &clientSize)) < 0) {
-      if ((errno == EWOULDBLOCK) ||
-          (errno =
-             EAGAIN)) // indicates there is no bytes in the internal buffer
+
+      /* when there is no bytes in the internal buffer */
+      if ((errno == EWOULDBLOCK) || (errno = EAGAIN))
         break;
 
       log_err("Failed to Receive message from the server");
@@ -66,16 +74,19 @@ data_Received(int mask)
       last_frame_received++;     // increment the last acknowledged frame index
       if (current_frame == NULL) { // if this is the frame in the queue reset
                                    // the head and tail of the queue
-        set_Head(NULL);
-        set_Tail(NULL);
+        Set_head(NULL);
+        Set_tail(NULL);
       }
     }
+  }
 
-  } while (receivedLength != 0);
+  while (receivedLength != 0);
   alarm(timeout_in_seconds); // restart the timeout alarm
+
   if (last_frame_received ==
       (last_frame_sent +
-       1)) {  // if the last received and last sent frame are in sync
+       1)) { // if the last received and last sent frame are in sync
+
     alarm(0); // reset the timer
     raise(SIGALRM);
   }
@@ -104,6 +115,7 @@ go_back_n_sliding()
     int length = Frame_serialize(
       buffer,
       local_frame); // convert the frame to linear buffer for sending via UDP
+
     if (length != 0) {
       if (sendto(server,
                  buffer,
@@ -252,20 +264,18 @@ main(int argc, char* argv[])
           log_err("Failed to write to the output stream");
 
         if (current_frame == NULL)
-          current_frame = get_Head(); // get the lastest additon in the queue
+          current_frame = Get_head(); // get the lastest additon in the queue
       }
-    } else if ((size < 0v) && (errno != EWOULDBLOCK) && (errno != EAGAIN))
+    } else if ((size < 0) && (errno != EWOULDBLOCK) && (errno != EAGAIN))
       log_err("Failed to read from the user");
   }
 
-  frame_t *head = get_Head(), *tail = get_Tail();
+  frame_t *head = Get_head(), *tail = Get_tail();
   if ((head != NULL) && (tail != NULL) && ((tail->index - head->index) < N))
     raise(SIGALRM);
-}
 
 /* Error condition exit the program */
-error:
-{
+error : {
   terminate_program(0);
   while (1)
     ;

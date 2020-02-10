@@ -1,3 +1,9 @@
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * 11118887
+ */
+
 #ifndef __frame_h__
 #define __frame_h__
 
@@ -29,16 +35,16 @@ void
 Frame_delete_all();
 
 frame_t*
-get_Head();
+Get_head();
 
 frame_t*
-get_Tail();
+Get_tail();
 
 void
-set_Head(frame_t* frame);
+Set_head(frame_t* frame);
 
 void
-set_Tail(frame_t* frame);
+Set_tail(frame_t* frame);
 
 uint16_t
 CRC16(char* buffer, int length);
