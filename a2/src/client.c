@@ -16,7 +16,7 @@ int server;
 frame_t* current_frame;
 uint16_t N;
 struct sockaddr_in receiver;
-uint32_t timeout_in_Secs;
+uint32_t timeout_in_seconds;
 
 volatile uint16_t last_frame_received = 0;
 volatile uint16_t last_frame_sent = 0;
@@ -44,9 +44,9 @@ data_Received(int mask)
                                    &clientSize)) < 0) {
       if ((errno == EWOULDBLOCK) ||
           (errno =
-             EAGAIN)) { // indicates there is no bytes in the internal buffer
+             EAGAIN)) // indicates there is no bytes in the internal buffer
         break;
-      }
+
       log_err("Failed to Receive message from the server");
     }
 
@@ -72,7 +72,7 @@ data_Received(int mask)
     }
 
   } while (receivedLength != 0);
-  alarm(timeout_in_Secs); // restart the timeout alarm
+  alarm(timeout_in_seconds); // restart the timeout alarm
   if (last_frame_received ==
       (last_frame_sent +
        1)) {  // if the last received and last sent frame are in sync
@@ -93,10 +93,12 @@ go_back_n_sliding()
   frame_t* local_frame = current_frame;
   char buffer[1024];
   sigset_t set, oset;
+
   sigemptyset(&set);
   sigaddset(&set, SIGIO); // mask for SIGIO to disable the interrupt while in
                           // the middle of sending the frame window
   sigprocmask(SIG_BLOCK, &set, &oset);
+
   for (i = 0; (i < N) && (local_frame != NULL);
        i++) { // loop till the window size or last frame
     int length = Frame_serialize(
@@ -116,7 +118,7 @@ go_back_n_sliding()
       debug("Last Frame sent : %d", last_frame_sent);
     }
   }
-  alarm(timeout_in_Secs);                // start the timeout alarm
+  alarm(timeout_in_seconds);             // start the timeout alarm
   sigprocmask(SIG_UNBLOCK, &set, &oset); // unmask the SIGIO interrupt
 }
 
@@ -155,6 +157,7 @@ main(int argc, char* argv[])
   uint16_t port = atoi(argv[2]);
 
   debug("Resolving IP Addres ...");
+
   if ((ip = inet_addr(argv[1])) == (uint32_t)-1) {   // if IP Address
     if ((hostIP = gethostbyname(argv[1])) != NULL) { // if HostName
       ip = *(uint32_t*)(hostIP->h_addr_list[0]);
@@ -167,8 +170,8 @@ main(int argc, char* argv[])
   debug("IP Address resolved : %s", inet_ntoa(addr));
   debug("Port : %d", port);
 
-  N = atoi(argv[3]);               // Window Size
-  timeout_in_Secs = atoi(argv[4]); // timeout
+  N = atoi(argv[3]);                  // Window Size
+  timeout_in_seconds = atoi(argv[4]); // timeout
 
   if ((server = socket(PF_INET, SOCK_DGRAM, 0)) < 0) { // open the socket
     log_err("Failed to open socket");
@@ -196,34 +199,31 @@ main(int argc, char* argv[])
 
   handler.sa_handler = &data_Received; // Signal Handler for SIGIO signal used
                                        // for nonBlocking UDP socket
-  if (sigfillset(&handler.sa_mask) < 0) {
+  if (sigfillset(&handler.sa_mask) < 0)
     log_err("Failed to set the signal mask");
-  }
+
   handler.sa_flags = SA_RESTART;
 
-  if (sigaction(SIGIO, &handler, 0) < 0) {
+  if (sigaction(SIGIO, &handler, 0) < 0)
     log_err("Failed to set the Signal Handler function of SIGIO");
-  }
 
-  if (fcntl(server, F_SETOWN, getpid()) < 0) {
+  if (fcntl(server, F_SETOWN, getpid()) < 0)
     log_err("Failed to set the Owner of the Socket");
-  }
 
-  if (fcntl(server, F_SETFL, O_NONBLOCK | FASYNC) < 0) {
+  if (fcntl(server, F_SETFL, O_NONBLOCK | FASYNC) < 0)
     log_err("Failed to set the Socket in Async Mode");
-  }
 
   handler.sa_handler =
     &timeout; // signal handler for SIGALRM signal used for timeout purpose
-  if (sigfillset(&handler.sa_mask) < 0) {
+  if (sigfillset(&handler.sa_mask) < 0)
     log_err("Failed to set the signal mask");
-  }
+
   handler.sa_flags = SA_RESTART;
 
-  if (sigaction(SIGALRM, &handler, 0) < 0) {
+  if (sigaction(SIGALRM, &handler, 0) < 0)
     log_err("Failed to set the Signal Handler function of SIGALRM");
-  }
-  alarm(timeout_in_Secs);
+
+  alarm(timeout_in_seconds);
 
   char ch;
   char buffer[1024];
@@ -232,9 +232,8 @@ main(int argc, char* argv[])
   int inputFD = fileno(stdin);
 
   sprintf(buffer, "[000] ");
-  if (write(fileno(stdout), buffer, strlen(buffer)) != strlen(buffer)) {
+  if (write(fileno(stdout), buffer, strlen(buffer)) != strlen(buffer))
     log_err("Failed to write to the output stream");
-  }
 
   while (1) {
 
@@ -248,26 +247,25 @@ main(int argc, char* argv[])
         num = 0;                            // reset the index
         frame_t* frame = Frame_add(buffer); // add to the buffer
         sprintf(buffer, "[%03d] ", frame->index + 1); // sequence string
-        if (write(fileno(stdout), buffer, strlen(buffer)) != strlen(buffer)) {
+
+        if (write(fileno(stdout), buffer, strlen(buffer)) != strlen(buffer))
           log_err("Failed to write to the output stream");
-        }
-        if (current_frame == NULL) {
+
+        if (current_frame == NULL)
           current_frame = get_Head(); // get the lastest additon in the queue
-        }
       }
-    } else if (size < 0) {
-      if ((errno != EWOULDBLOCK) && (errno != EAGAIN)) {
-        log_err("Failed to read from the user");
-      }
-    }
-    frame_t *head = get_Head(), *tail = get_Tail();
-    if ((head != NULL) && (tail != NULL) && ((tail->index - head->index) < N)) {
-      raise(SIGALRM);
-    }
+    } else if ((size < 0v) && (errno != EWOULDBLOCK) && (errno != EAGAIN))
+      log_err("Failed to read from the user");
   }
 
+  frame_t *head = get_Head(), *tail = get_Tail();
+  if ((head != NULL) && (tail != NULL) && ((tail->index - head->index) < N))
+    raise(SIGALRM);
+}
+
 /* Error condition exit the program */
-error : {
+error:
+{
   terminate_program(0);
   while (1)
     ;
