@@ -31,7 +31,6 @@ volatile uint16_t last_frame_sent = 0;
 /*
  * Signal Handler for SIGIO to read when IO device ready for read/write function
  */
-
 void
 data_Received(int mask)
 {
@@ -60,35 +59,35 @@ data_Received(int mask)
       log_err("Failed to Receive message from the server");
 
     local_frame = current_frame;
-    uint16_t Request_Number =
-      *(uint16_t*)
-        buffer; // get the request number of the last received index number
 
-    debug("Last Frame Ackd : %d",
-          Request_Number -
-            1); // received index always point to next frame in the queue
-    if (Request_Number ==
-        (last_frame_received +
-         1)) { // compare the received index number with last sent index number
-      current_frame = current_frame->next; // point to next frame in the queue
-      Frame_delete(local_frame); // free the memory allocated to this frame
-      last_frame_received++;     // increment the last acknowledged frame index
-      if (current_frame == NULL) { // if this is the frame in the queue reset
-                                   // the head and tail of the queue
+    /* get the request number of the last received index number */
+    uint16_t request_number = *(uint16_t*)buffer;
+
+    /* received index always point to next frame in the queue */
+    debug("Last Frame Ackd : %d", request_number - 1);
+
+    /* compare the received index number with last sent index number */
+    if (request_number == (last_frame_received + 1)) {
+
+      current_frame =
+        current_frame->next;     /* point to next frame in the queue */
+      Frame_delete(local_frame); /* free the memory allocated to this frame */
+
+      last_frame_received++; /* increment the last acknowledged frame index */
+
+      /* when frame in the queue reset */
+      if (current_frame == NULL) {
         Set_head(NULL);
         Set_tail(NULL);
       }
     }
-  }
+  } while (receivedLength != 0);
 
-  while (receivedLength != 0);
-  alarm(timeout_in_seconds); // restart the timeout alarm
+  alarm(timeout_in_seconds); /* restart the timeout alarm */
 
-  if (last_frame_received ==
-      (last_frame_sent +
-       1)) { // if the last received and last sent frame are in sync
-
-    alarm(0); // reset the timer
+  /* if the last received and last sent frame are in sync */
+  if (last_frame_received == (last_frame_sent + 1)) {
+    alarm(0); /* reset the timer */
     raise(SIGALRM);
   }
 }
