@@ -32,7 +32,7 @@ endif
 
 # The Target Build
 PROGRAMS=$(BIN_DIR)/client $(BIN_DIR)/server $(BIN_DIR)/forwarder
-all: build $(TARGET) tests $(PROGRAMS)
+all: build $(TARGET) $(PROGRAMS) tests
 
 
 $(BIN_DIR)/client: $(BIN_DIR)/client.c $(SRC_DIR)/frame.c  $(INCLUDE_DIR)/frame.h	
