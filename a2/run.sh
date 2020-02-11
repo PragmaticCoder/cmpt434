@@ -18,11 +18,11 @@ usage() {
 debug_gdb() {
   echo 'Debugging with GDB'
   if [[ "${1}" = "server" ]]; then
-    gdb --args ./build/$1 $2 $3
+    gdb --args ./bin/$1 $2 $3
   elif [[ "${1}" = "client" ]]; then
-    gdb --args ./build/$1 $2 $3 $4 $5
+    gdb --args ./bin/$1 $2 $3 $4 $5
   elif [[ "${1}" = "forwarder" ]]; then
-    gdb --args ./build/$1 $2 $3 $4 $5 $6 $7
+    gdb --args ./bin/$1 $2 $3 $4 $5 $6 $7
   fi
   exit 0
 }
@@ -30,11 +30,11 @@ debug_gdb() {
 debug_valgrind() {
   echo 'Debugging with Valgrind'
   if [[ "${1}" = "server" ]]; then
-    valgrind ./build/$1 $2 $3
+    valgrind ./bin/$1 $2 $3
   elif [[ "${1}" = "client" ]]; then
-    valgrind ./build/$1 $2 $3 $4 $5
+    valgrind ./bin/$1 $2 $3 $4 $5
   elif [[ "${1}" = "forwarder" ]]; then
-    valgrind ./build/$1 $2 $3 $4 $5 $6 $7
+    valgrind ./bin/$1 $2 $3 $4 $5 $6 $7
   fi
 
   exit 0
@@ -62,7 +62,7 @@ while getopts "mr:d:v:" OPTION; do
       echo "Cant able to find the execuetable please verify"
       exit 0
     else
-      ./build/${PROGRAM}
+      ./bin/${PROGRAM}
     fi
     ;;
   d)
