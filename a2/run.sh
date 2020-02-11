@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Name: Alvi AKbar
+# NSID: ala273
+# Student No: 11118887
+
 # This script is used to automate debugging
 # Setting Default
 
