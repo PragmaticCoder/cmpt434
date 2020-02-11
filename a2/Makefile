@@ -32,6 +32,7 @@ endif
 
 # The Target Build
 PROGRAMS=$(BIN_DIR)/client $(BIN_DIR)/server $(BIN_DIR)/forwarder
+
 all: build $(TARGET) $(PROGRAMS) tests
 
 
