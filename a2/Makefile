@@ -31,7 +31,21 @@ ifeq ($(OS),Ubuntu)
 endif
 
 # The Target Build
-all: $(TARGET) tests
+PROGRAMS=$(BIN_DIR)/client $(BIN_DIR)/server $(BIN_DIR)/forwarder
+all: build $(TARGET) tests $(PROGRAMS)
+
+
+$(BIN_DIR)/client: $(BIN_DIR)/client.c $(SRC_DIR)/frame.c  $(INCLUDE_DIR)/frame.h	
+	$(CC) $(CFLAGS) -o $@ $(BIN_DIR)/client.c $(SRC_DIR)/frame.c -I $(INCLUDE_DIR)	
+
+
+$(BIN_DIR)/server: $(BIN_DIR)/server.c $(SRC_DIR)/frame.c  $(INCLUDE_DIR)/frame.h
+	$(CC) $(CFLAGS) -o $@ $(BIN_DIR)/server.c $(SRC_DIR)/frame.c -I $(INCLUDE_DIR)	
+
+
+$(BIN_DIR)/forwarder: $(BIN_DIR)/forwarder.c $(SRC_DIR)/frame.c  $(INCLUDE_DIR)/frame.h
+	$(CC) $(CFLAGS) -o $@ $(BIN_DIR)/forwarder.c $(SRC_DIR)/frame.c -I $(INCLUDE_DIR)
+
 
 .PHONY: rebuild
 rebuild: clean all ## Clean and rebuild

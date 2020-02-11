@@ -13,11 +13,10 @@ test_dummy()
   return NULL;
 }
 
-
 char *test_print_a_message()
 {
     int rc = print_a_message("Printing Tests");
-    mu_assert(rc != 0, "Failed to execute print_a_message.");
+    mu_assert(rc == 0, "Failed to execute print_a_message.");
     return NULL;
 }
 
@@ -26,6 +25,7 @@ all_tests()
 {
   mu_suite_start();
 
+  mu_run_test(test_dummy);
   mu_run_test(test_print_a_message);
 
   return NULL;
