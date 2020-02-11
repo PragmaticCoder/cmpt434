@@ -67,10 +67,10 @@ data_Received(int mask)
     debug("Last Frame Ackd : %d", request_number - 1);
 
     /* compare the received index number with last sent index number */
+    /* point to next frame in the queue */
+    /* free the memory allocated to this frame */
+    /* increment the last acknowledged frame index */
     if (request_number == (last_frame_received + 1)) {
-      /* point to next frame in the queue */
-      /* free the memory allocated to this frame */
-      /* increment the last acknowledged frame index */
       current_frame = current_frame->next;
       Frame_delete(local_frame);
       last_frame_received++;
@@ -101,48 +101,53 @@ data_Received(int mask)
 void
 go_back_n_sliding()
 {
-
   int i;
-  frame_t* local_frame = current_frame;
   char buffer[1024];
   sigset_t set, oset;
+  frame_t* local_frame = current_frame;
 
   sigemptyset(&set);
-  sigaddset(&set, SIGIO); // mask for SIGIO to disable the interrupt while in
-                          // the middle of sending the frame window
+  sigaddset(&set, SIGIO); /* mask for SIGIO to disable the interrupt while in
+                            the middle of sending the frame window */
   sigprocmask(SIG_BLOCK, &set, &oset);
 
-  for (i = 0; (i < N) && (local_frame != NULL);
-       i++) { // loop till the window size or last frame
-    int length = Frame_serialize(
-      buffer,
-      local_frame); // convert the frame to linear buffer for sending via UDP
+  /* loop till the window size or last frame */
+  /* convert the frame to linear buffer for sending via UDP */
+  for (i = 0; (i < N) && (local_frame != NULL); i++) {
 
-    if (length != 0) {
-      if (sendto(server,
-                 buffer,
-                 length,
-                 0,
-                 (struct sockaddr*)&receiver,
-                 sizeof(struct sockaddr)) != length) {
-        log_err("Failed to send message to the server");
-      }
-      last_frame_sent = local_frame->index;
-      local_frame = local_frame->next;
-      debug("Last Frame sent : %d", last_frame_sent);
-    }
+    int sent = 0;
+    int length = Frame_serialize(buffer, local_frame);
+
+    if (length == 0)
+      continue;
+
+    sent = sendto(server,
+                  buffer,
+                  length,
+                  0,
+                  (struct sockaddr*)&receiver,
+                  sizeof(struct sockaddr));
+
+    if (sent != length)
+      log_err("Failed to send message to the server");
+
+    last_frame_sent = local_frame->index;
+    local_frame = local_frame->next;
+
+    debug("Last Frame sent : %d", last_frame_sent);
   }
-  alarm(timeout_in_seconds);             // start the timeout alarm
-  sigprocmask(SIG_UNBLOCK, &set, &oset); // unmask the SIGIO interrupt
+
+  alarm(timeout_in_seconds);             /* start the timeout alarm */
+  sigprocmask(SIG_UNBLOCK, &set, &oset); /* unmask the SIGIO interrupt */
 }
 
 /*
- * Signal Handler for the timeout alarm
+ * Signal Handler for timeout alarm
  */
 void
 timeout(int mask)
 {
-  go_back_n_sliding(); // unblocks start the write function
+  go_back_n_sliding();
   debug("Timeout");
 }
 
@@ -152,10 +157,10 @@ timeout(int mask)
 void
 terminate_program(int mask)
 {
-  Frame_delete_all(); // delete all the frame in the queue
-  close(server);      // close the socket
+  Frame_delete_all();
+  close(server);
   debug("Program Exited");
-  exit(0); // exit the program
+  exit(0);
 }
 
 int
@@ -273,10 +278,10 @@ main(int argc, char* argv[])
   }
 
   frame_t *head = Get_head(), *tail = Get_tail();
+
   if ((head != NULL) && (tail != NULL) && ((tail->index - head->index) < N))
     raise(SIGALRM);
 
-/* Error condition exit the program */
 error : {
   terminate_program(0);
   while (1)
