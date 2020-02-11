@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # This script is used to automate debugging
-
 # Setting Default
 
 usage() {

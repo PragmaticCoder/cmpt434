@@ -1,36 +1,52 @@
-
 SRC_DIR		= src
-BUILD_DIR 	= build
-INCLUDES	= include
+BIN_DIR 	= bin
+BUILD_DIR	= build
+TESTS_DIR	= tests
+INCLUDE_DIR	= include
 
 CC 			= gcc
-CFLAGS 		= -g -O2 -Wall -Wextra -Werror -Wno-unused-function\
+CFLAGS=-g -O2 -Wall -Wextra -Isrc -rdynamic -DNDEBUG $(OPTFLAGS) -I $(INCLUDE_DIR)\
+			  -Wextra -Werror -Wno-unused-function -Wno-implicit-function-declaration\
               -Wno-unused-but-set-parameter -Wno-unused-parameter -Wno-address\
-              -Wno-unused-variable -Wno-return-local-addr -Wno-sign-compare -Wno-pointer-sign -rdynamic\
-              -DNDEBUG
+              -Wno-unused-variable -Wno-return-local-addr -Wno-sign-compare -Wno-pointer-sign
 
-all: build_dir $(BUILD_DIR)/client $(BUILD_DIR)/server $(BUILD_DIR)/forwarder
-	
-$(BUILD_DIR)/client: $(SRC_DIR)/client.c $(SRC_DIR)/frame.c  $(INCLUDES)/frame.h
-	$(CC) $(CFLAGS) -o $@ $(SRC_DIR)/client.c $(SRC_DIR)/frame.c -I $(INCLUDES)
+LDFLAGS		= $(OPTLIBS)
+PREFIX		?= /usr/local
 
-$(BUILD_DIR)/server: $(SRC_DIR)/server.c $(SRC_DIR)/frame.c  $(INCLUDES)/frame.h
-	$(CC) $(CFLAGS) -o $@ $(SRC_DIR)/server.c $(SRC_DIR)/frame.c -I $(INCLUDES)
+SOURCES=$(wildcard src/**/*.c src/*.c)
+OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
 
-$(BUILD_DIR)/forwarder: $(SRC_DIR)/forwarder.c $(SRC_DIR)/frame.c  $(INCLUDES)/frame.h
-	$(CC) $(CFLAGS) -o $@ $(SRC_DIR)/forwarder.c $(SRC_DIR)/frame.c -I $(INCLUDES)
+TEST_SRC=$(wildcard tests/*_tests.c)
+TESTS=$(patsubst %.c,%,$(TEST_SRC))
 
-build_dir:
-	mkdir -p $(BUILD_DIR)
-	
+TARGET=build/libans_02.a
+
+OS=$(shell lsb_release -si)
+ifeq ($(OS),Ubuntu)
+	LDLIBS=-lasn_02 -lbsd -L./build -lm
+endif
+
+# The Target Build
+all: $(TARGET) tests
+
 .PHONY: rebuild
 rebuild: clean all ## Clean and rebuild
 	@echo "+ $@"
 
+$(TARGET): CFLAGS += -fPIC
+$(TARGET): build $(OBJECTS)
+	@ar rcs $@ $(OBJECTS)
+	@ranlib $@
+
+build:
+	@mkdir -p build
+	@mkdir -p bin
+
+
 .PHONY: tests
-tests: CFLAGS += $(TARGET)
-tests: $(TESTS) ## Run Unit Tests Suite
-	sh $(TESTS_DIR)/runtests.sh
+tests: LDLIBS += $(TARGET)
+tests: $(TESTS)  ## Run Unit Tests Suite
+	sh ./tests/runtests.sh
 
 .PHONY: valgrind
 valgrind: ## Check Memory Leaks using Valgrind
@@ -60,12 +76,20 @@ clean-debug: ## Remove debug artifacts
 .PHONY: release
 release: clean  ## Generate release version
 	@echo "+ $@"
-	@tar -cvzf base_project.tar.gz *
+	@tar -cvzf ala273_asn_02.tar.gz *
+
+# The Install
+install: all ## Setting up dynamic library
+	install -d $(DESTDIR)/$(PREFIX)/lib/
+	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
+
+# The Checker
+.PHONY: check
+check: ## Checks for dangerous function
+	@echo Files with potentially dangerous functions.
+	@egrep '[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)|stpn?cpy|a?sn?printf|byte_)' $(SOURCES) || true
 
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
 	@echo "Contact author for help: ala273@mail.usask.ca"
-
-$(PROGRAMS): CFLAGS += $(TARGET)
-		
