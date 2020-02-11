@@ -1,3 +1,7 @@
+# Name: Alvi AKbar
+# NSID: ala273
+# Student No: 11118887
+
 SRC_DIR		= src
 BIN_DIR 	= bin
 BUILD_DIR	= build
@@ -42,7 +46,6 @@ build:
 	@mkdir -p build
 	@mkdir -p bin
 
-
 .PHONY: tests
 tests: LDLIBS += $(TARGET)
 tests: $(TESTS)  ## Run Unit Tests Suite
@@ -54,7 +57,7 @@ valgrind: ## Check Memory Leaks using Valgrind
 
 .PHONY: clean
 clean: clean-build clean-debug  ## Remove all file artifact 
-	-$(RM) -fr $(BUILD_DIR)
+	-$(RM) -rf $(BUILD_DIR)
 
 .PHONY: clean-build
 clean-build: ## Remove build artifacts
@@ -78,10 +81,11 @@ release: clean  ## Generate release version
 	@echo "+ $@"
 	@tar -cvzf ala273_asn_02.tar.gz *
 
-# The Install
-install: all ## Setting up dynamic library
-	install -d $(DESTDIR)/$(PREFIX)/lib/
-	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
+.PHONY: install
+install: all ## library installation
+	@echo "+ $@"
+	@install -d $(DESTDIR)/$(PREFIX)/lib/
+	@install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
 
 # The Checker
 .PHONY: check
