@@ -5,7 +5,7 @@
  */
 
 #include "minunit.h"
-#include <libasn_02.h>
+#include "libasn_02.h"
 
 char*
 test_dummy()
