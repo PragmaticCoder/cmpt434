@@ -34,6 +34,19 @@ test_frame_add_correct_sequence()
 }
 
 char *
+test_get_head()
+{
+  frame_t *frame;
+  frame = Get_head();
+
+  mu_assert(frame != NULL, "No frame available on head.");
+  mu_assert(strncmp(frame->message, "100", 3) == 0, "Wrong frame message returned.");
+  mu_assert(frame->index == 0, "Incorrect frame index.");
+
+  return NULL;
+}
+
+char *
 test_get_tail()
 {
   frame_t *frame;
@@ -54,6 +67,7 @@ all_tests()
   mu_run_test(test_first_frame_add_success);
   mu_run_test(test_frame_add_correct_sequence);
 
+  mu_run_test(test_get_head);
   mu_run_test(test_get_tail);
 
   return NULL;
