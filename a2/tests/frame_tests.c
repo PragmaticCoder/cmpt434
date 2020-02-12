@@ -53,11 +53,46 @@ test_get_tail()
   frame = Get_tail();
 
   mu_assert(frame != NULL, "No frame available on tail.");
-  mu_assert(strncmp(frame->message, "100", 3) == 0, "Wrong frame message returned.");
-  mu_assert(frame->index == 0, "Incorrect frame index.");
+  mu_assert(strncmp(frame->message, "101", 3) == 0, "Wrong frame message returned.");
+  mu_assert(frame->index == 1, "Incorrect frame index.");
 
   return NULL;
 }
+
+char *
+test_set_head()
+{
+  frame_t *expected_frame = (frame_t *)malloc(sizeof(frame_t));
+  expected_frame->index = 0;
+  expected_frame->message = "0000";
+
+  Set_head(expected_frame);
+
+  frame_t *frame = Get_head();
+
+  mu_assert(strncmp(frame->message, expected_frame->message, 4) == 0, "Message mismatch.");
+  mu_assert(frame->index == expected_frame->index, "Index mismatch.");
+
+  return NULL;
+}
+
+char *
+test_set_tail()
+{
+  frame_t *expected_frame = (frame_t *)malloc(sizeof(frame_t));
+  expected_frame->index = 10;
+  expected_frame->message = "5000";
+
+  Set_tail(expected_frame);
+
+  frame_t *frame = Get_tail();
+
+  mu_assert(strncmp(frame->message, expected_frame->message, 4) == 0, "Message mismatch.");
+  mu_assert(frame->index == expected_frame->index, "Index mismatch.");
+
+  return NULL;
+}
+
 
 char *
 all_tests()
@@ -69,6 +104,9 @@ all_tests()
 
   mu_run_test(test_get_head);
   mu_run_test(test_get_tail);
+
+  mu_run_test(test_set_head);
+  mu_run_test(test_set_tail);
 
   return NULL;
 }

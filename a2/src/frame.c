@@ -105,7 +105,7 @@ Get_head()
 frame_t*
 Get_tail()
 {
-  return head;
+  return tail;
 }
 
 void
