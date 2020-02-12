@@ -6,16 +6,17 @@
 
 #include <frame.h>
 
-frame_t* head = NULL;
-frame_t* tail = NULL;
+frame_t *head = NULL;
+frame_t *tail = NULL;
 
 uint16_t
-CRC16(char* buffer, int length)
+CRC16(char *buffer, int length)
 {
   uint8_t x;
   uint16_t crc = 0xFFFF;
 
-  while (length--) {
+  while (length--)
+  {
     x = crc >> 8 ^ *buffer++;
     x ^= x >> 4;
     crc = (crc << 8) ^ ((unsigned short)(x << 12)) ^
@@ -24,11 +25,11 @@ CRC16(char* buffer, int length)
   return crc;
 }
 
-char*
-strdup(const char* str)
+char *
+strdup(const char *str)
 {
   int length = strlen(str);
-  char* copy = (char*)malloc(length + 1);
+  char *copy = (char *)malloc(length + 1);
 
   memcpy(copy, str, length);
   copy[length] = '\0';
@@ -36,12 +37,12 @@ strdup(const char* str)
   return copy;
 }
 
-frame_t*
-Frame_add(const char* message)
+frame_t *
+Frame_add(const char *message)
 {
   static uint32_t index = 0;
 
-  frame_t* frame = (frame_t*)malloc(sizeof(frame_t));
+  frame_t *frame = (frame_t *)malloc(sizeof(frame_t));
 
   frame->index = index++;
   frame->message = strdup(message);
@@ -58,8 +59,7 @@ Frame_add(const char* message)
   return frame;
 }
 
-void
-Frame_delete(frame_t* frame)
+void Frame_delete(frame_t *frame)
 {
   if (frame == NULL)
     return;
@@ -71,51 +71,47 @@ Frame_delete(frame_t* frame)
   free(frame);
 }
 
-void
-Frame_delete_all()
+void Frame_delete_all()
 {
   while (head != NULL)
     Frame_delete(head);
 }
 
-int
-Frame_serialize(char* buffer, frame_t* frame)
+int Frame_serialize(char *buffer, frame_t *frame)
 {
   if (frame == NULL)
     return 0;
 
   uint16_t length = strlen(frame->message);
-  *(uint16_t*)&buffer[2] = length;
+  *(uint16_t *)&buffer[2] = length;
 
-  memcpy(buffer, (const void*)&frame->index, sizeof(frame->index));
+  memcpy(buffer, (const void *)&frame->index, sizeof(frame->index));
   memcpy(&buffer[4], frame->message, length);
 
-  *(uint16_t*)&buffer[4 + length] =
-    CRC16(buffer, length + 2 + sizeof(frame->index));
+  *(uint16_t *)&buffer[4 + length] =
+      CRC16(buffer, length + 2 + sizeof(frame->index));
 
   return length + sizeof(frame->index) + 2 + 2;
 }
 
-frame_t*
+frame_t *
 Get_head()
 {
   return head;
 }
 
-frame_t*
+frame_t *
 Get_tail()
 {
   return tail;
 }
 
-void
-Set_head(frame_t* frame)
+void Set_head(frame_t *frame)
 {
   head = frame;
 }
 
-void
-Set_tail(frame_t* frame)
+void Set_tail(frame_t *frame)
 {
   tail = frame;
 }

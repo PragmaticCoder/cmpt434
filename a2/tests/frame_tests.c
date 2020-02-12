@@ -60,6 +60,19 @@ test_get_tail()
 }
 
 char *
+test_delete_all()
+{
+  Frame_delete_all();
+  frame_t *head = Get_head();
+  frame_t *tail = Get_tail();
+
+  mu_assert(head == NULL, "Head not null");
+  mu_assert(head == NULL, "Tail not null");
+
+  return NULL;
+}
+
+char *
 test_set_head()
 {
   frame_t *expected_frame = (frame_t *)malloc(sizeof(frame_t));
@@ -93,7 +106,6 @@ test_set_tail()
   return NULL;
 }
 
-
 char *
 all_tests()
 {
@@ -104,6 +116,8 @@ all_tests()
 
   mu_run_test(test_get_head);
   mu_run_test(test_get_tail);
+
+  mu_run_test(test_delete_all);
 
   mu_run_test(test_set_head);
   mu_run_test(test_set_tail);
