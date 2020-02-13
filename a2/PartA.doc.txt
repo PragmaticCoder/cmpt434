@@ -2,3 +2,109 @@ Name: Alvi Akbar
 NSID: ala273
 Student No: 11118887
 
+
+/* -------------------------------------------------------------------------- */
+/*                                   CLIENT                                   */
+/* -------------------------------------------------------------------------- */
+
+- The CLIENT first checks for correct arguments. 
+  Usage ./client <Hostname/IP Address> <Port> <Window Size> <Timeout(S)>"
+
+-  The timeout input argument need to be in seconds. If the polling characteristic 
+   times out, the client will check if there are any outgoing messages without acks, 
+   and resend them all.
+
+- It then reads input from the STDIN buffer and copy the value into the buffer till
+  it detects newline character.
+
+- Null character terminates the buffer, reset the index, add to the buffer and
+  sequence string
+
+- Each line of text should have a header added to it that includes a message sequence
+  number and added to a queue of messages. 
+
+- If the number of messages that have been sent to the server and that are still 
+  unacknowledged is less than the maximum sending window size, the message should also 
+  be immediately sent to the server.
+
+- A custom frame library has been implemented using linked list, which keeps track of
+ frame number. Our automated testing suite verifies the correctness of frame library
+ implementation.
+
+/* -------------------------------------------------------------------------- */
+/*                                  SERVER                                    */
+/* -------------------------------------------------------------------------- */
+
+- The server first checks for the proper arguments.
+
+- It'll then bind to the port provided by input arguments, and sets up the file 
+  descriptor for UDP communication. 
+
+- If the connection fails, the server will exit. 
+
+- The server then waits for a message.
+
+- Each message should be is to the server in a separate UDP segment, 
+  according to the rules of go-back-n sliding window.
+
+- When your server gets a message from the client, if it is the next 
+  in-order message.
+
+- Server print it to our command line, together with its sequence number, 
+  to stdout. 
+
+- A probability function is used to simulate error injection.
+
+- The server then prompts for and read a line of text from stdin.
+
+- If a line of text beginning with “Y” is input, your server should consider 
+  the message to have been correctly received; otherwise, your server should 
+  consider the message to have been corrupted. 
+ 
+- Server return an acknowledgement to the client (using UDP). 
+
+- When the server gets a message from the client, and it is neither 
+  the next in-order message nor a retransmission of the last correctly 
+  received in-order message, the message should be printed to stdout 
+  together with its sequence number, and an appropriate label indicating 
+  that the message was out-of-order. 
+
+- The server then does another receive call.
+
+- When your server gets a message from the client, and it is a retransmission 
+  of the last correctly received in-order message, the message is printed to 
+  stdout together with its sequence number, and a label indicating it was 
+  a retransmission.
+
+/* -------------------------------------------------------------------------- */
+/*                                  FORWARDER                                 */
+/* -------------------------------------------------------------------------- */
+
+- Here, we implemented a forwarder that works with our client and server from 
+  question 1. 
+
+- The forwarder takes as command line arguments the port number it used for 
+  receiving messages, the IP address of who the forwarder is forwarding to, i.e. the 
+  “forwardee”, the port number that the forwardee will be using to receive messages, 
+  the maximum sending window size that the forwarder will use for its outgoing transmissions, 
+  and the timeout value (in seconds) that  is used to trigger re-transmissions.
+ 
+- The forwarder reads messages sent to it from either the client of question 1, or from 
+  another forwarder process.
+
+- Each new message should be processed in the same manner as the server of question 1 processes 
+  messages (e.g. same prints to stdout, same prompts for input from stdin). 
+
+- If the message is the next in-order message and it has been considered to have been successfully 
+  received (based on “Y” input from stdin), the message should be added to a queue of messages to be 
+  forwarded on. 
+
+- For simplicity, we assume that through some connection establishment protocol. The forwarder and 
+  forwardee have agreed on the initial sequence number value that the forwarder will use (0).
+
+- If the number of messages that have been sent to the forwardee and that are still unacknowledged is 
+  less than the forwarder’s maximum sending window size, the message should also be immediately 
+  sent to the forwardee.
+
+- Each message should be sent to the forwardee in a separate UDP segment, according to the rules of go-back-n 
+  sliding window. Messages should be removed from the forwarder’s queue once their receipt is acknowledged.
