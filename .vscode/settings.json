@@ -7,5 +7,6 @@
     "fstream": "c",
     "system_error": "c"
   },
-  "clang-format.fallbackStyle": "Mozilla"
+  "clang-format.fallbackStyle": "Mozilla",
+  "python.pythonPath": "/usr/local/bin/python3"
 }

@@ -121,6 +121,7 @@ main(int argc, char* argv[])
   while (1) {
 
     for (int i = 0; i < argc - 3; i++) {
+
       if (links[i].flag == CLOSED) {
 
         links[i].fd = socket(PF_INET, SOCK_STREAM, 0);
@@ -145,11 +146,13 @@ main(int argc, char* argv[])
           continue;
         }
 
-        printf("Connected\n");
-        links[i].flag = OPENED; /* mark this descriptor as opened */
+        log_info("Connected");
 
+        /* mark this descriptor as opened */
+        links[i].flag = OPENED;
+
+        /* add the descriptor for polling */
         if (clientNum < MAX_CLIENT) {
-          /* add the descriptor for polling */
           listFD[clientNum].fd = links[i].fd;
           listFD[clientNum].events = POLLIN;
           clientNum++;
@@ -176,8 +179,8 @@ main(int argc, char* argv[])
           continue;
 
         /* serialize the router table for sending over TCP link */
-
         int length = form_packet(buffer);
+
         if (send(listFD[i].fd, buffer, length, 0) != length) {
           debug("Failed to send to the Server");
         }
