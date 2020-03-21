@@ -216,10 +216,11 @@ main(int argc, char* argv[])
           "Error in Polling the file descriptor\n");
 
     if (rc == 0)
-      debug("Timeout");
+      debug("Connection: Timeout");
     else {
-      if ((listFD[0].revents & POLLIN) ==
-          POLLIN) { /* check if there is any incoming request in server port */
+      if ((listFD[0].revents & POLLIN) == POLLIN) {
+        
+        /* check if there is any incoming request in server port */
         clientStructSize = sizeof(struct sockaddr_in);
         check(((clientFD = accept(listFD[0].fd,
                                   (struct sockaddr*)&client,
