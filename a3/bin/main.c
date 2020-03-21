@@ -30,16 +30,18 @@ struct pollfd listFD[MAX_CLIENT];
 struct connections links[MAX_CLIENT];
 
 /* Function Prototypes */
-int
-close_connections(int fd);
 
 void
 closeFD();
+
+int
+close_connections(int fd);
 
 /*
  *   Function Called at the end of the program execution to clear any resources
  * allocated while execution no input parameter , no return arguments
  */
+
 void
 closeFD()
 {
@@ -53,6 +55,30 @@ closeFD()
   }
 
   remove_table(); /* remove route table */
+}
+
+/*
+ *   Function used to close the file descriptor and mark the port as CLOSED if
+ * it is a command line argument and updates the table input parament - file
+ * descriptor to be closed, return -1
+ */
+int
+close_connections(int fd)
+{
+  close(fd);
+
+  /* find the port  in the list and mark it as closed */
+  for (int j = 0; j < MAX_CLIENT; j++) {
+    if (links[j].fd == fd) {
+      links[j].flag = CLOSED;
+      break;
+    }
+  }
+
+  route_disconnected(fd); /* update the router table */
+  debug("Connection Closed");
+
+  return -1;
 }
 
 int
@@ -72,16 +98,16 @@ main(int argc, char* argv[])
     links[i - 3].flag = CLOSED;
   }
 
+  int clientFD;
   int serverFD;
-  struct sockaddr_in server;
-  struct sockaddr_in client;
 
-  struct timespec last_time;
+  struct sockaddr_in client;
+  struct sockaddr_in server;
 
   unsigned char buffer[1024];
+  struct timespec last_time;
 
   unsigned int clientStructSize = sizeof(struct sockaddr_in);
-  int clientFD;
 
   check(((serverFD = socket(PF_INET, SOCK_STREAM, 0)) >= 0),
         "Failed to Allocate the socket file descriptor for the server\n");
@@ -132,7 +158,6 @@ main(int argc, char* argv[])
         memset(&client, 0, sizeof(struct sockaddr_in));
 
         client.sin_family = AF_INET;
-
         client.sin_addr.s_addr = inet_addr("127.0.0.1");
         client.sin_port = htons(links[i].port);
 
@@ -254,28 +279,4 @@ main(int argc, char* argv[])
 error : {
   exit(EXIT_FAILURE);
 }
-}
-
-/*
- *   Function used to close the file descriptor and mark the port as CLOSED if
- * it is a command line argument and updates the table input parament - file
- * descriptor to be closed, return -1
- */
-int
-close_connections(int fd)
-{
-  close(fd);
-
-  /* find the port  in the list and mark it as closed */
-  for (int j = 0; j < MAX_CLIENT; j++) {
-    if (links[j].fd == fd) {
-      links[j].flag = CLOSED;
-      break;
-    }
-  }
-
-  route_disconnected(fd); /* update the router table */
-  debug("Connection Closed");
-
-  return -1;
 }
