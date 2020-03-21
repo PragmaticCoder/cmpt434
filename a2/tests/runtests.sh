@@ -1,3 +1,7 @@
+# Name: Alvi AKbar
+# NSID: ala273
+# Student No: 11118887
+
 echo "Running Unit Tests:"
 
 for i in tests/*_tests; do
