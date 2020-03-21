@@ -15,8 +15,7 @@
 #include <dbg.h>
 #include <router.h>
 
-#define MAX_CLIENT 32UL // Maximum Number of Client
-
+#define MAX_CLIENT 32UL
 #define OPENED 1
 #define CLOSED 0
 
@@ -27,12 +26,15 @@ struct connections
   uint16_t port;
 };
 
-struct pollfd listFD[MAX_CLIENT];     // client list to poll
-struct connections links[MAX_CLIENT]; // client list to keep track of opened and
-                                      // closed connections
+/* List of clients */
+struct pollfd listFD[MAX_CLIENT];
+
+/* Keeping track of open and closed connections */
+struct connections links[MAX_CLIENT];
 
 int
 close_connections(int fd);
+
 /*
  *   Function Called at the end of the program execution to clear any resources
  * allocated while execution no input parameter , no return arguments
@@ -41,6 +43,7 @@ void
 closeFD()
 {
   log_info("Program Closing, Clearing Resources Allocation . . .\n");
+
   for (int i = 0; i < MAX_CLIENT; i++) {
     if (listFD[i].fd == -1) {
       continue;
@@ -145,7 +148,6 @@ main(int argc, char* argv[])
           listFD[clientNum].fd = links[i].fd;
           listFD[clientNum].events = POLLIN;
           clientNum++;
-
         } else {
           close(links[i].fd); // if the array overflows close the file
                               // descriptor (connection)
@@ -194,7 +196,6 @@ main(int argc, char* argv[])
           listFD[clientNum].fd = clientFD;
           listFD[clientNum].events = POLLIN;
           clientNum++;
-
         } else {
 
           close(clientFD); // if the array overflows close the file descriptor
@@ -203,7 +204,7 @@ main(int argc, char* argv[])
       }
 
       for (int i = 1; i < MAX_CLIENT; i++) { // loop rest of the descriptor list
-                                             // to check if any have IO ready
+        // to check if any have IO ready
         if (listFD[i].fd == -1) {
           continue; // skip the unimplemented sockets
         }
@@ -215,7 +216,7 @@ main(int argc, char* argv[])
           listFD[i].fd = close_connections(listFD[i].fd);
           debug("Remote connection Closed\n");
         }
-        
+
         if ((listFD[i].revents & POLLERR) ==
             POLLERR) { // check if the connection have error in Connection
           listFD[i].fd = close_connections(listFD[i].fd);
