@@ -5,12 +5,68 @@
 /* -------------------------------------------------------------------------- */
 /*                            REQUIREMENTS ANALYSIS                           */
 /* -------------------------------------------------------------------------- */
+- The aim of the project is to find the minimum distance to the desired 
+  destination address.
 
+- In order to find the minimum distance here in terms how many intermediate routers
+  data have to pass to reach its destination (usually referred to cost), each router
+  stores a table of all known destination and how many intermediaries are between 
+  them. 
+
+- Router list is gathered by communicating the neighbouring routers with distance 
+  vector from their routing tables. It does NOT need to communicate with all known
+  destination,just ones those connected directly to it. 
+  
+- Similarly all the neighbouring router does the same to their neighbours which 
+  inturn maps the entire network. 
+
+- This communication happens once very 2 - 10 secs so it can update its table if 
+  any of the destination is unreachable like network lost situation. 
+
+- At the same time the period shouldn't be very small since it'll congest the 
+  network and fast enough to update the network map.
 
 /* -------------------------------------------------------------------------- */
-/*                       SERVER ARCHITECTURE COMPONENTS                       */
+/*                   SERVER ARCHITECTURE & DESIGN DECISIONS                   */
 /* -------------------------------------------------------------------------- */
 
+Design Decision Based on Calculation:
+
+- In order to the minimum distance cost for each router destination is compared 
+  and best route is chosen.
+
+- Router table initially will contains only one router address of itself with 
+  cost 0 so it can present itself to the neighours which can update it in their 
+  tables and for further communication.
+
+- Once a router receives a table information it'll check its cost if its 0 then
+  its a neighbouring router , it'll store the receviced address in its table with
+  cost 1 since its the cost of hopping in between its those neighours. 
+
+- Similarly, the address of the different destination from same router is added 
+  with the cost +1 and stored in its table.
+
+- If there is a situation where the network connection failed in between any link
+  then there must be cost to indicate that connection is unreachable.
+  
+- We assume the cost for unreachable connection as INFINITY. Value of INFINITY 
+  should be choosen as low and high as possible in this case its choosen as 16 
+  because if the connection is broken the neighbouring routers starts incrementing
+  the cost with +1 and stored in the table as the connection is broken the router 
+  wont able to send itself with cost of 0, instead the neighour get the broken
+  connection cost from its neighours which is connected it to, where
+  the cost is not 0 might be greater then 1 , because the router think that it have
+  connections to that broken connection via its neighour.
+ 
+- It send the router table to the neighbour router where the router table is updated
+  with the new value and cost got incremented for message and it propagate downstream.
+
+- If the value of INFINITY is Higher then the routers in the downstream realize the 
+  broken connection very late, since their is a considerable time delay between the 
+  message and INFINITY should be higher all valid cost value. 
+
+- Therefore, the INFINITY value is selected so every router in the network update 
+  maps and satisfies the timing constraints.
 
 /* -------------------------------------------------------------------------- */
 /*                                  TEST PLAN                                 */
