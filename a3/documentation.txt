@@ -2,11 +2,53 @@
 # NSID: ala273
 # Student No: 11118887
 
+
+
 /* -------------------------------------------------------------------------- */
 /*                                  Test Plan                                 */
 /* -------------------------------------------------------------------------- */
 
+We will be constructing the following routing table network check the validity
+of our implementation applying distance vector algorithm.
 
+ +-------+         +-------+        +-------+
+ |       |   1     |       |   1    |       |
+ |   E   |---------|   B   |--------|   A   |
+ |       |         |       |        |       |
+ +-------+         +-------+        +-------+
+     |                 |
+    1|                 |1
+     |                 |
+ +-------+         +-------+
+ |       |         |       |
+ |   D   |---------|   C   |
+ |       |    1    |       |
+ +-------+         +-------+
+
+In order to construct this routing table, we run the following commands in
+separate terminals and wait for sometimes:
+ 
+Terminal 1:
+ ./run.sh -mr A 40000 40001
+
+Terminal 2:
+./run.sh -r B 40001 40002 40004
+
+Terminal 3:
+./run.sh -r C 40002 40001 40003
+
+Terminal 4
+./run.sh -r D 40003 40002 40004
+
+Terminal 5
+./run.sh -r E 40004 40001 40003
+
+After executing the commands, we wait for sometimes for the routers to
+configure itself using the distance vector algorithm. The test results
+should match the test results below and validity of our implementation
+can be verified calculating the distance manually using the distance 
+vector algorithm. The tests are results generated is in keeping with 
+expected routing tables.
 
 /* -------------------------------------------------------------------------- */
 /*                                Test Results                                */
