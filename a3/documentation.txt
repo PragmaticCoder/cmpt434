@@ -68,6 +68,49 @@ Design Decision Based on Calculation:
 - Therefore, the INFINITY value is selected so every router in the network update 
   maps and satisfies the timing constraints.
 
+
+Server Architecture & Implementation:
+
+- The program opens a socket for the server and bind the socket and starts listening 
+  for incoming connections.
+
+- It slso connects to the port which is received via command line arguments and respond
+  to the clients it connected to.
+
+- To manage all normal blocking connection wont work, so polling function is used to
+  monitor the activity on all the sockets. 
+
+- If the IO ready for the server socket, then accept the incoming connection and add 
+  to the list to monitor on its message. 
+
+- If the I/O is ready for any of its clients, then the server reads the incoming message 
+  and process it. 
+
+- If the connection is broken or lost or pipe is closed, then update the router table to
+  reflect the lost connection to a specific destination. 
+  
+- If the connection is lost for the address given as command line arguments then mark
+  those address and retry later.
+
+- The router table is linked list with five fields destination address, destination name, 
+  next hop address, next hop name and cost. 
+  
+- Whenever a message is received, loop through all the destination address and if its
+  not already in the table, then it creates a new node and adds the next hop address, 
+  address of the router which it received the message from. Usually the router table entry 
+  is with cost 0.
+  
+- If its already on the table, then check if the cost is lower but if its lower then update 
+  the next hop address and cost by +1 which is the hop between them.
+
+- However, in this method there will be an issue when connection lost, where the cost is 
+  INFINITY which is higher than any other value and hence it doesn't get updated. Therefore,
+  to overcome the issue, it checks the next hop address of the router table and received 
+  message for the destination is same. 
+
+- If it is same, then copy the value directly. Do not compare. If the message received
+  is from different router then compare the cost and update the router table.
+
 /* -------------------------------------------------------------------------- */
 /*                                  TEST PLAN                                 */
 /* -------------------------------------------------------------------------- */
