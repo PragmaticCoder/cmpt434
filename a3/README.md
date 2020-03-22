@@ -6,7 +6,7 @@
   Student No: 11118887
 ```
 
-We use the run.sh script to run all commands:
+We use the run.sh script to run our program:
 If `run.sh` file is not executable, please run:
 `chmod +x run.sh` first.
 
@@ -21,22 +21,56 @@ Incase automated testing suite is not running, please run `chmod +x tests/runtes
 
 ## Make
 
-`make all`
+`make clean && make all`
 
-## Client
+## Usage
 
-`./run.sh -r client <localhost/hostname> <port-no> <window-size> <timeout(s)>`
+`./run.sh -r name host_port connect_port1 [connect_port2]`
 
-## Server
+## Example Program
 
-`./run.sh -r server <port-no> <probability>`
+Following commands are to be **executed** in **sequence** to construct the router network as shown in the figure below:
 
-## Forwarder
+**Terminal 1**
+`./run.sh -mr A 40000 40001`
 
-`./run.sh -r forwarder <localhost/hostname> <dest-port> <window-size> <timeout> <src-port> <probability>`
+**Terminal 2**
+`./run.sh -r B 40001 40002 40004`
+
+**Terminal 3**
+`./run.sh -r C 40002 40001 40003`
+
+**Terminal 4**
+`./run.sh -r D 40003 40002 40004`
+
+**Terminal 5**
+`./run.sh -r E 40004 40001 40003`
+
+**Router Diagram**
+```
+ +-------+         +-------+        +-------+
+ |       |   1     |       |   1    |       |
+ |   E   |---------|   B   |--------|   A   |
+ |       |         |       |        |       |
+ +-------+         +-------+        +-------+
+     |                 |
+    1|                 |1
+     |                 |
+ +-------+         +-------+
+ |       |         |       |
+ |   D   |---------|   C   |
+ |       |    1    |       |
+ +-------+         +-------+
+```
+
+Refer to `documentation.txt` about more info about calculation for the routing table constructor above
 
 ## Troubleshooting Steps
 
-If for any reason, project built fails in test phase, please take out the `tests`
-from Makefile:36 `all: build $(TARGET) $(PROGRAMS) tests`before running the make
-command.
+* If for any reason, generating built fails in test phase, please take out the `tests`
+from Makefile:36 `all: build $(TARGET) $(PROGRAMS) tests` before executing the `make` command.
+
+* Check `run.sh` file is not executable file. If `run.sh` file is not executable, please run: `chmod +x run.sh` before executing `make`
+
+* Incase automated testing suite is not running, please run `chmod +x tests/runtests.sh` command before executing `make`
+  
