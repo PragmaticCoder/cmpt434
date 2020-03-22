@@ -2,10 +2,18 @@
 # NSID: ala273
 # Student No: 11118887
 
+/* -------------------------------------------------------------------------- */
+/*                            REQUIREMENTS ANALYSIS                           */
+/* -------------------------------------------------------------------------- */
 
 
 /* -------------------------------------------------------------------------- */
-/*                                  Test Plan                                 */
+/*                       SERVER ARCHITECTURE COMPONENTS                       */
+/* -------------------------------------------------------------------------- */
+
+
+/* -------------------------------------------------------------------------- */
+/*                                  TEST PLAN                                 */
 /* -------------------------------------------------------------------------- */
 
 We will be constructing the following routing table network check the validity
@@ -47,11 +55,14 @@ After executing the commands, we wait for sometimes for the routers to
 configure itself using the distance vector algorithm. The test results
 should match the test results below and validity of our implementation
 can be verified calculating the distance manually using the distance 
-vector algorithm. The tests are results generated is in keeping with 
+vector algorithm as calculated in "partA_verification.jpg" file in the
+assignment root directory.
+
+The tests are results generated is in keeping with 
 expected routing tables.
 
 /* -------------------------------------------------------------------------- */
-/*                                Test Results                                */
+/*                                TEST RESULTS                                */
 /* -------------------------------------------------------------------------- */
 
 ./run.sh -mr A 40000 40001
