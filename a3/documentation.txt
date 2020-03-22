@@ -30,7 +30,7 @@
 /*                   SERVER ARCHITECTURE & DESIGN DECISIONS                   */
 /* -------------------------------------------------------------------------- */
 
-Design Decision Based on Calculation:
+Design Decision based on Calculation:
 
 - In order to the minimum distance cost for each router destination is compared 
   and best route is chosen.
@@ -80,7 +80,7 @@ Server Architecture & Implementation:
 - To manage all normal blocking connection wont work, so polling function is used to
   monitor the activity on all the sockets. 
 
-- If the IO ready for the server socket, then accept the incoming connection and add 
+- If the I/O is ready for the server socket, then accept the incoming connection and add 
   to the list to monitor on its message. 
 
 - If the I/O is ready for any of its clients, then the server reads the incoming message 
