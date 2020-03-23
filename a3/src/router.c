@@ -30,7 +30,7 @@ add_gateway(uint16_t port, const char* name)
 
 /*
  * Function create space for the list to be linked with router path received
- * from the neighbour routers input argumen - route_path received from the
+ * from the neighbour routers input arguments - route_path received from the
  * neighbour routers
  */
 route_path_t*
@@ -42,8 +42,8 @@ add_route_path(route_path_t* route_path)
 }
 
 /*
- *   Function create space for the list to be linked with router path returned
- * by the add_gateway function input argumen - route_path structure returned by
+ * Function creates space for the list to be linked with router path returned
+ * by the add_gateway function input argument - route_path structure returned by
  * add_gateway function
  */
 void
