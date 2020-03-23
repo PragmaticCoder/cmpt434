@@ -43,11 +43,12 @@ closeFD();
 int
 close_connections(int fd);
 
-/*
- *   Function Called at the end of the program execution to clear any resources
- * allocated while execution no input parameter , no return arguments
+/**
+ * @brief Called at the end of the program execution to clear any resources
+ * allocated while execution
+ * @note
+ * @retval
  */
-
 void
 closeFD()
 {
@@ -63,11 +64,14 @@ closeFD()
   remove_table(); /* remove route table */
 }
 
-/*
- *   Function used to close the file descriptor and mark the port as CLOSED if
- * it is a command line argument and updates the table input parament - file
- * descriptor to be closed, return -1
+/**
+ * @brief Closes the file descriptor and mark the port as CLOSED if
+ * it is a command line argument and updates the table input parament
+ * @note
+ * @param  fd: file descriptor to be closed
+ * @retval -1
  */
+
 int
 close_connections(int fd)
 {
