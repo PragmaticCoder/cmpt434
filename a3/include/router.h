@@ -1,3 +1,9 @@
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * Student Number: 11118887
+ */
+
 #ifndef __ROUTER_H__
 #define __ROUTER_H__
 

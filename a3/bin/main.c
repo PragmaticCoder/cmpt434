@@ -1,3 +1,9 @@
+/**
+ * Name: Alvi Akbar
+ * NSID: ala273
+ * Student Number: 11118887
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -219,7 +225,7 @@ main(int argc, char* argv[])
       debug("Connection: Timeout");
     else {
       if ((listFD[0].revents & POLLIN) == POLLIN) {
-        
+
         /* check if there is any incoming request in server port */
         clientStructSize = sizeof(struct sockaddr_in);
         check(((clientFD = accept(listFD[0].fd,
