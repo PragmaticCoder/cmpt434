@@ -1,0 +1,230 @@
+# Name: Alvi AKbar
+# NSID: ala273
+# Student No: 11118887
+
+/* -------------------------------------------------------------------------- */
+/*                            REQUIREMENTS ANALYSIS                           */
+/* -------------------------------------------------------------------------- */
+- The aim of the project is to find the minimum distance to the desired 
+  destination address.
+
+- In order to find the minimum distance here in terms how many intermediate routers
+  data have to pass to reach its destination (usually referred to cost), each router
+  stores a table of all known destination and how many intermediaries are between 
+  them. 
+
+- Router list is gathered by communicating the neighbouring routers with distance 
+  vector from their routing tables. It does NOT need to communicate with all known
+  destination,just ones those connected directly to it. 
+  
+- Similarly all the neighbouring router does the same to their neighbours which 
+  inturn maps the entire network. 
+
+- This communication happens once very 2 - 10 secs so it can update its table if 
+  any of the destination is unreachable like network lost situation. 
+
+- At the same time the period shouldn't be very small since it'll congest the 
+  network and fast enough to update the network map.
+
+/* -------------------------------------------------------------------------- */
+/*                   SERVER ARCHITECTURE & DESIGN DECISIONS                   */
+/* -------------------------------------------------------------------------- */
+
+Design Decision based on Calculation:
+
+- In order to the minimum distance cost for each router destination is compared 
+  and best route is chosen.
+
+- Router table initially will contains only one router address of itself with 
+  cost 0 so it can present itself to the neighours which can update it in their 
+  tables and for further communication.
+
+- Once a router receives a table information it'll check its cost if its 0 then
+  its a neighbouring router , it'll store the receviced address in its table with
+  cost 1 since its the cost of hopping in between its those neighours. 
+
+- Similarly, the address of the different destination from same router is added 
+  with the cost +1 and stored in its table.
+
+- If there is a situation where the network connection failed in between any link
+  then there must be cost to indicate that connection is unreachable.
+  
+- We assume the cost for unreachable connection as INFINITY. Value of INFINITY 
+  should be choosen as low and high as possible in this case its choosen as 16 
+  because if the connection is broken the neighbouring routers starts incrementing
+  the cost with +1 and stored in the table as the connection is broken the router 
+  wont able to send itself with cost of 0, instead the neighour get the broken
+  connection cost from its neighours which is connected it to, where
+  the cost is not 0 might be greater then 1 , because the router think that it have
+  connections to that broken connection via its neighour.
+ 
+- It send the router table to the neighbour router where the router table is updated
+  with the new value and cost got incremented for message and it propagate downstream.
+
+- If the value of INFINITY is Higher then the routers in the downstream realize the 
+  broken connection very late, since their is a considerable time delay between the 
+  message and INFINITY should be higher all valid cost value. 
+
+- Therefore, the INFINITY value is selected so every router in the network update 
+  maps and satisfies the timing constraints.
+
+
+Server Architecture & Implementation:
+
+- The program opens a socket for the server and bind the socket and starts listening 
+  for incoming connections.
+
+- It slso connects to the port which is received via command line arguments and respond
+  to the clients it connected to.
+
+- To manage all normal blocking connection wont work, so polling function is used to
+  monitor the activity on all the sockets. 
+
+- If the I/O is ready for the server socket, then accept the incoming connection and add 
+  to the list to monitor on its message. 
+
+- If the I/O is ready for any of its clients, then the server reads the incoming message 
+  and process it. 
+
+- If the connection is broken or lost or pipe is closed, then update the router table to
+  reflect the lost connection to a specific destination. 
+  
+- If the connection is lost for the address given as command line arguments then mark
+  those address and retry later.
+
+- The router table is linked list with five fields destination address, destination name, 
+  next hop address, next hop name and cost. 
+  
+- Whenever a message is received, loop through all the destination address and if its
+  not already in the table, then it creates a new node and adds the next hop address, 
+  address of the router which it received the message from. Usually the router table entry 
+  is with cost 0.
+  
+- If its already on the table, then check if the cost is lower but if its lower then update 
+  the next hop address and cost by +1 which is the hop between them.
+
+- However, in this method there will be an issue when connection lost, where the cost is 
+  INFINITY which is higher than any other value and hence it doesn't get updated. Therefore,
+  to overcome the issue, it checks the next hop address of the router table and received 
+  message for the destination is same. 
+
+- If it is same, then copy the value directly. Do not compare. If the message received
+  is from different router then compare the cost and update the router table.
+
+/* -------------------------------------------------------------------------- */
+/*                                  TEST PLAN                                 */
+/* -------------------------------------------------------------------------- */
+
+We will be constructing the following routing table network check the validity
+of our implementation applying distance vector algorithm.
+
+ +-------+         +-------+        +-------+
+ |       |   1     |       |   1    |       |
+ |   E   |---------|   B   |--------|   A   |
+ |       |         |       |        |       |
+ +-------+         +-------+        +-------+
+     |                 |
+    1|                 |1
+     |                 |
+ +-------+         +-------+
+ |       |         |       |
+ |   D   |---------|   C   |
+ |       |    1    |       |
+ +-------+         +-------+
+
+In order to construct this routing table, we run the following commands in
+separate terminals and wait for sometimes:
+ 
+Terminal 1:
+ ./run.sh -mr A 40000 40001
+
+Terminal 2:
+./run.sh -r B 40001 40002 40004
+
+Terminal 3:
+./run.sh -r C 40002 40001 40003
+
+Terminal 4
+./run.sh -r D 40003 40002 40004
+
+Terminal 5
+./run.sh -r E 40004 40001 40003
+
+After executing the commands, we wait for sometimes for the routers to
+configure itself using the distance vector algorithm. The test results
+should match the test results below and validity of our implementation
+can be verified calculating the distance manually using the distance 
+vector algorithm as calculated in "partA_verification.jpg" file in the
+assignment root directory.
+
+The tests are results generated is in keeping with 
+expected routing tables.
+
+/* -------------------------------------------------------------------------- */
+/*                                TEST RESULTS                                */
+/* -------------------------------------------------------------------------- */
+
+./run.sh -mr A 40000 40001
+-----------------------------------------
+ROUTER A
+-----------------------------------------
+|  Name |  Port |  GWay |  Port |  Cost |
+-----------------------------------------
+|     A | 40000 |       |     0 |     0 |
+|     B | 40001 |     B | 40001 |     1 |
+|     C | 40002 |     B | 40001 |     2 |
+|     D | 40003 |     B | 40001 |     3 |
+|     E | 40004 |     B | 40001 |     2 |
+-----------------------------------------
+
+./run.sh -r B 40001 40002 40004
+-----------------------------------------
+ROUTER B
+-----------------------------------------
+|  Name |  Port |  GWay |  Port |  Cost |
+-----------------------------------------
+|     B | 40001 |       |     0 |     0 |
+|     A | 40000 |     A | 40000 |     1 |
+|     C | 40002 |     C | 40002 |     1 |
+|     D | 40003 |     C | 40002 |     2 |
+|     E | 40004 |     E | 40004 |     1 |
+-----------------------------------------
+
+./run.sh -r C 40002 40001 40003
+-----------------------------------------
+ROUTER C
+-----------------------------------------
+|  Name |  Port |  GWay |  Port |  Cost |
+-----------------------------------------
+|     C | 40002 |       |     0 |     0 |
+|     B | 40001 |     B | 40001 |     1 |
+|     A | 40000 |     B | 40001 |     2 |
+|     D | 40003 |     D | 40003 |     1 |
+|     E | 40004 |     D | 40003 |     2 |
+-----------------------------------------
+
+./run.sh -r D 40003 40002 40004
+-----------------------------------------
+ROUTER D
+-----------------------------------------
+|  Name |  Port |  GWay |  Port |  Cost |
+-----------------------------------------
+|     D | 40003 |       |     0 |     0 |
+|     C | 40002 |     C | 40002 |     1 |
+|     B | 40001 |     C | 40002 |     2 |
+|     A | 40000 |     C | 40002 |     3 |
+|     E | 40004 |     E | 40004 |     1 |
+-----------------------------------------
+
+./run.sh -r E 40004 40001 40003
+-----------------------------------------
+ROUTER E
+-----------------------------------------
+|  Name |  Port |  GWay |  Port |  Cost |
+-----------------------------------------
+|     E | 40004 |       |     0 |     0 |
+|     B | 40001 |     B | 40001 |     1 |
+|     A | 40000 |     B | 40001 |     2 |
+|     C | 40002 |     B | 40001 |     2 |
+|     D | 40003 |     D | 40003 |     1 |
+-----------------------------------------

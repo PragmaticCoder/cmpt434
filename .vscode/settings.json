@@ -1,0 +1,12 @@
+{
+  "files.associations": {
+    "*.c": "c",
+    "*.h": "c",
+    "typeinfo": "c",
+    "*.tcc": "c",
+    "fstream": "c",
+    "system_error": "c"
+  },
+  "clang-format.fallbackStyle": "Mozilla",
+  "python.pythonPath": "/usr/local/bin/python3"
+}
